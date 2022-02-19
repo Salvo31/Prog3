@@ -1,31 +1,26 @@
 <html>
-<head> <title> Random Workout Generator </title> </head>
+<head>
+  <title> Random Workout Generator </title>
+  <meta charset="UTF-8">
+</head>
 <body>
   <!--- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati --->
+
+<script>
+
+</script>
+
 <button> Area riservata </button> <br> <br> <!--- Da mettere in alto a destra  --->
 <div id="DescrizionewWorkout">
-  <ol id="ListaAllenamenti"> <!--- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout --->
+  <ul id="ListaAllenamenti"> <!--- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout --->
     <li>
-        <h2> <strong> AMRAP </strong> </h2> <br>
-        Letteralmente "As Many Rounds As Possible", è un allenamento a circuito <br>
-        che metterà alla prova non solo il tuo corpo ma anche la tua mente! <br>
-        L'obiettivo è appunto ripetere il ciclo di esercizi il maggior numero di volte possibili <br>
-        nel tempo prestabilito.
+        <a href="AMRAP.html"> AMRAP </a>
     </li>
     <li>
-        <h2> <strong> EMOM </strong> </h2> <br>
-        Dall'acronimo "Each Minute On Minute" è un protocollo di allenamento un pò <br>
-        più strutturato, inquanto per ogni minuto di allenamento sarà presente 1 esercizio soltanto <br>
-        con delle ripetizioni ben stabilite da portare a termine entro il minuto corrente! <br>
-        Il tempo restante è dedicato al recupero... dunque è meglio darsi da fare ed essere rapidi!
+        <a href="EMOM.html"> EMOM </a>
     </li>
     <li>
-        <h2> <strong> TABATA </strong> </h2> <br>
-        Anche questo protocollo è basato sul "tempo", ma non solo... lo è anche sulla tua resistenza! <br>
-        Gli esercizi prestabiliti verranno eseguiti per un determinato numero di rounds, e similmente all'EMOM <br>
-        per ogni minuto si tratterà un singolo esercizio, con la differenza che qui non sono presenti delle ripetizioni fisse... <br>
-        Infatti ci sono degli intervalli di tempo detti "ON" e "OFF", durante il primo dovrai eseguire l'esercizio senza fermarti! <br>
-        durante il secondo avrai a disposizione il tuo recupero.
+        <a href="TABATA.html"> TABATA </a>
     </li>
     <li>
         <h2> <strong> FOR TIME </strong> </h2> <br>
@@ -36,9 +31,47 @@
     <li>
         <h2> <strong> Scheda </strong> </h2> <br>
         Con questa opzione potrai generare una classica scheda di allenamento con serie e ripetizioni ben definite <br>
-        Proprio come quelle che si utilizzano in sala attrezzi! Con la differenza che qui ti dovrai affidare al caso... 
+        Proprio come quelle che si utilizzano in sala attrezzi! Con la differenza che qui ti dovrai affidare al caso...
     </li>
-  </ol>
+  </ul>
+</div> <!-- Fine Div che descrive i workout (Menù a tendina) --> <br> <br>
+
+<div id="pannelloWorkout">
+  <div id="timer"> <!-- https://css-tricks.com/how-to-create-an-animated-countdown-timer-with-html-css-and-javascript/ timer -->
+    <button id="start"> Start workout! </button> <br> <br>
+  </div>
+  <div id="opzioniAllenamento">
+
+    <select id="tipoAllenamento">
+      <option value="Random"> Allenamento random </option>
+      <option value="AMRAP"> AMRAP </option>
+      <option value="EMOM"> EMOM </option>
+      <option value="TABATA"> TABATA </option>
+      <option value="FORTIME"> FOR TIME </option>
+      <option value="SCHEDA"> Scheda </option>
+    </select>
+    <br> <br>
+      <div id="selezioneMinuti">
+        <script>
+          var i=0;
+          var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+          var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+          select.id="tempo"; //Imposto l'id del tag select
+          optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+          optionDef.text = "Random";
+          select.appendChild(optionDef);
+          for(i;i<60;i++){
+            var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+            option.value = i+1; //imposto l'attributo value
+            option.text = option.value + " minuti"; //imposto il testo che va dentro l'elemento option
+            select.appendChild(option);
+          }
+          document.getElementById("selezioneMinuti").innerHTML = "Minuti di allenamento: ";
+          document.getElementById("selezioneMinuti").appendChild(select);
+        </script>
+      </div> <br> <br>
+  </div>
 </div>
+
 </body>
 </html>
