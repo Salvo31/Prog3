@@ -47,13 +47,18 @@ document.getElementById("app").innerHTML = `
 function onTimesUp() {
   clearInterval(timerInterval);
   //Reinizializza il timer
-  document.getElementById("start").disabled = false;
-  document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
-  document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
   timerInterval = null;
   timeLeft = TIME_LIMIT;
   timePassed = 0;
+  for(let i = 0;i< workoutParameters.length;i++){
+    workoutParameters[i].style.display = "block";
+  }
+
+  document.getElementById("start").disabled = false;
+  document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
+  document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
 }
+
 
 function startTimer() {
   document.getElementById("start").disabled = true;
