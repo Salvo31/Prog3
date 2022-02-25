@@ -54,14 +54,12 @@ function onTimesUp() {
     workoutParameters[i].style.display = "block";
   }
 
-  document.getElementById("start").disabled = false;
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
   document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
 }
 
 
 function startTimer() {
-  document.getElementById("start").disabled = true;
   timerInterval = setInterval(() => {
     timePassed = timePassed += 1;
     timeLeft = TIME_LIMIT - timePassed;

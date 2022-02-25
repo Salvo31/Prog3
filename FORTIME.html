@@ -2,14 +2,82 @@
 
 <head>
 <meta charset="utf-8">
-<title> AMRAP </title>
+<link rel="stylesheet" href="Css/timer.css">
+<link rel="stylesheet" href="Css/cssTemporanei.css">
+<title> FOR TIME </title>
 </head>
 
 <body>
-  <h2> <strong> FOR TIME </strong> </h2> <br>
-  Questo tipo di workout è più semplice dei primi, e può essere considerato un circuito "base" dove ci sono <br>
-  un numero di round prestabiliti e gli esercizi da eseguire in successione. A seconda della difficoltà o dello scopo <br>
-  può avere 1 o più round!
+
+  <script>
+    window.onload = bindEvents;
+    TIME_LIMIT = 0;
+
+    function bindEvents(){
+      document.getElementById("start").addEventListener("click",startWorkout);
+      document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
+    }
+
+    function startWorkout(){
+      for(let i = 0; i<workoutParameters.length; i++){
+        workoutParameters[i].style.display = "none";
+      }
+      startTimer();
+    }
+
+    function setMinuteOnTimer(){
+      TIME_LIMIT = document.getElementById("tempo").value;
+      if(TIME_LIMIT != 0){
+        TIME_LIMIT = TIME_LIMIT * 60;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("pannelloWorkout").innerHTML = "FOR TIME " + formatTime(TIME_LIMIT) + " minuti";
+      }
+      else{
+        //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
+        alert("Allenamento con minuti random");
+      }
+    }
+
+  </script>
+
+  <div id="descrizione">
+    <h2> <strong> FOR TIME </strong> </h2> <br>
+    Questo tipo di workout è più semplice dei primi, e può essere considerato un circuito "base" dove ci sono <br>
+    un numero di round prestabiliti e gli esercizi da eseguire in successione. A seconda della difficoltà o dello scopo <br>
+    può avere 1 o più round!
+  </div>
+
+  <div id="timer">
+    <div id="app">
+      <script src="ExternalJs/timer.js"> </script>
+    </div>
+    <button id="start"> Start workout </button>
+  </div>
+
+  <div id="opzioniAllenamento">
+    Time cap :
+    <input type="checkbox" id="timecapSiNo">
+    <div id="selezioneMinuti">
+      <script>
+        var i=0;
+        var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+        select.id="tempo"; //Imposto l'id del tag select
+        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+        optionDef.text = "Random";
+        select.appendChild(optionDef);
+        for(i;i<60;i++){
+          var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+          option.value = i+1; //imposto l'attributo value
+          option.text = option.value; //imposto il testo che va dentro l'elemento option
+          select.appendChild(option);
+        }
+        document.getElementById("selezioneMinuti").appendChild(select);
+        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
+      </script>
+    </div>
+  </div>
+
 </body>
 
 </html>

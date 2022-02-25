@@ -10,7 +10,6 @@
 <script>
  window.onload = bindEvents;
  TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
- workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")]; //Array che mantiene gli elementi dove vengono inseriti i parametri. Utilizzato per renderli a scomparsa
 
  function bindEvents(){
    document.getElementById("start").addEventListener("click",startWorkout); //richiama lo start del timer nel momento in cui clicco sul bottone
@@ -22,7 +21,6 @@
    for(let i = 0; i<workoutParameters.length; i++){
      workoutParameters[i].style.display = "none";
    }
-   //workoutParameters[0].style.display = "none"; //Decidere se è meglio display o visibility
    startTimer();
  }
 
@@ -112,7 +110,7 @@
           select.appendChild(option);
         }
         document.getElementById("selezioneMinuti").appendChild(select);
-        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")]; //Array che mantiene gli elementi dove vengono inseriti i parametri. Utilizzato per renderli a scomparsa
+        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
     </div>
 </div>
