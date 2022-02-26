@@ -16,11 +16,30 @@
     function bindEvents(){
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
+      document.getElementById("timecapSiNo").addEventListener("change",setTimecap);
+    }
+
+    function setTimecap(){
+      if(document.getElementById("timecapSiNo").checked){
+        document.getElementsByClassName("selezioneForTime")[0].style.display = "block";
+        document.getElementById("timerForTime").style.display = "block";
+      }
+      else if (!document.getElementById("timecapSiNo").checked) {
+        document.getElementsByClassName("selezioneForTime")[0].style.display = "none";
+        document.getElementById("timerForTime").style.display = "none";
+
+      }
     }
 
     function startWorkout(){
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
+      }
+      if(document.getElementById("timecapSiNo").checked){
+        document.getElementById("pannelloWorkout").innerHTML = "FOR TIME con time cap di " + formatTime(TIME_LIMIT) + " minuti";
+      }
+      else if (!document.getElementById("timecapSiNo").checked) {
+        document.getElementById("pannelloWorkout").innerHTML = "FOR TIME ";
       }
       startTimer();
     }
@@ -30,7 +49,6 @@
       if(TIME_LIMIT != 0){
         TIME_LIMIT = TIME_LIMIT * 60;
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-        document.getElementById("pannelloWorkout").innerHTML = "FOR TIME " + formatTime(TIME_LIMIT) + " minuti";
       }
       else{
         //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
@@ -47,17 +65,19 @@
     può avere 1 o più round!
   </div>
 
-  <div id="timer">
+  <div id="timerForTime">
     <div id="app">
       <script src="ExternalJs/timer.js"> </script>
     </div>
-    <button id="start"> Start workout </button>
   </div>
+  <button id="start"> Start workout </button>
+
+  <div id="pannelloWorkout"> </div>
 
   <div id="opzioniAllenamento">
     Time cap :
     <input type="checkbox" id="timecapSiNo">
-    <div id="selezioneMinuti">
+    <div id="selezioneMinuti" class="selezioneForTime">
       <script>
         var i=0;
         var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
@@ -73,9 +93,9 @@
           select.appendChild(option);
         }
         document.getElementById("selezioneMinuti").appendChild(select);
-        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
     </div>
+    <script> workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")]; </script>
   </div>
 
 </body>

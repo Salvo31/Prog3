@@ -1,7 +1,15 @@
-#checkPause {
+#checkPause { /* PER PAUSE EMOM */
+  display : none;
+}
+
+#timerForTime {
   display : none;
 }
 
 .selezioneForTime {
   display : none;
+}
+
+.invisibles { /* SOSTITUIRE TUTTE LE REGOLE SOPRA CON QUESTA CLASSE */
+  display : none
 }

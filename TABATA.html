@@ -2,16 +2,124 @@
 
 <head>
 <meta charset="utf-8">
-<title> EMOM </title>
+<link rel="stylesheet" href="Css/timer.css">
+<link rel="stylesheet" href="Css/cssTemporanei.css">
+<title> TABATA </title>
 </head>
 
 <body>
-  <h2> <strong> TABATA </strong> </h2> <br>
-  Anche questo protocollo è basato sul "tempo", ma non solo... lo è anche sulla tua resistenza! <br>
-  Gli esercizi prestabiliti verranno eseguiti per un determinato numero di rounds, e similmente all'EMOM <br>
-  per ogni minuto si tratterà un singolo esercizio, con la differenza che qui non sono presenti delle ripetizioni fisse... <br>
-  Infatti ci sono degli intervalli di tempo detti "ON" e "OFF", durante il primo dovrai eseguire l'esercizio senza fermarti! <br>
-  durante il secondo avrai a disposizione il tuo recupero.
+
+  <script src="ExternalJs/selectGenerator.js">
+    window.onload = bindEvents;
+    TIME_LIMIT = 0;
+    var minuteGenerator = new selectGen("tempo",60,1);
+
+    function bindEvents(){
+      document.getElementById("start").addEventListener("click",startWorkout);
+      document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
+      document.getElementById("secOn").addEventListener("change",validateIntervals);
+      document.getElementById("intervalliSiNo").addEventListener("change",spawnIntervals);
+    }
+
+    function startWorkout(){
+      for(let i = 0; i<workoutParameters.length; i++){
+        workoutParameters[i].style.display = "none";
+      }
+      startTimer();
+    }
+
+    function setMinuteOnTimer(){
+      TIME_LIMIT = document.getElementById("tempo").value;
+      if(TIME_LIMIT != 0){
+        TIME_LIMIT = TIME_LIMIT * 60;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("pannelloWorkout").innerHTML = "TABATA " + formatTime(TIME_LIMIT) + " minuti. \n
+        Sono " + ;
+      }
+      else{
+        //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
+        alert("Allenamento con minuti random");
+      }
+    }
+
+    function validateIntervals(){
+      var on = document.getElementById("secOn");
+      var off = document.getElementById("secOff");
+
+      if(on.value >= 55){
+        alert("I secondi on massimi sono 55!");
+        on.value = 55;
+      }
+      else if (on.value <= 10) {
+        alert("I secondi on minimi sono 10!");
+        on.value = 10;
+      }
+
+      off.value = 60 - on.value;
+    }
+
+    function spawnIntervals(){
+      if(document.getElementById("intervalliSiNo").checked){
+        document.getElementsByClassName("invisibles")[0].style.display = "block";
+      }
+      else if (!document.getElementById("intervalliSiNo").checked) {
+        document.getElementsByClassName("invisibles")[0].style.display = "none";
+      }
+    }
+
+  </script>
+
+  <div id="descrizione">
+    <h2> <strong> TABATA </strong> </h2> <br>
+    Anche questo protocollo è basato sul "tempo", ma non solo... lo è anche sulla tua resistenza! <br>
+    Gli esercizi prestabiliti verranno eseguiti per un determinato numero di rounds, e similmente all'EMOM <br>
+    per ogni minuto si tratterà un singolo esercizio, con la differenza che qui non sono presenti delle ripetizioni fisse... <br>
+    Infatti ci sono degli intervalli di tempo detti "ON" e "OFF", durante il primo dovrai eseguire l'esercizio senza fermarti! <br>
+    durante il secondo avrai a disposizione il tuo recupero.
+  </div>
+
+  <div id="pannelloWorkout"> </div>
+
+  <div id="timer">
+    <div id="app"> <script src="ExternalJs/timer.js"> </script> </div>
+    <button id="start"> Start workout </button>
+  </div>
+
+  <div id="opzioniAllenamento">
+
+    Definizione intervalli:
+    <input type="checkbox" id="intervalliSiNo"> <br>
+
+    <div id="rounds">
+
+    </div>
+
+    <div id="intervalli" class="invisibles">
+      Intervallo ON: <input type="number" placeholder="30" id="secOn"> <br>
+      Intervallo OFF: <input type="number" placeholder="recupero..." id="secOff" readonly> <br>
+    </div>
+
+    <div id="selezioneMinuti">
+      Minuti di allenamento :
+      <script>
+        var i=0;
+        var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+        select.id="tempo"; //Imposto l'id del tag select
+        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+        optionDef.text = "Random";
+        select.appendChild(optionDef);
+        for(i;i<60;i++){
+          var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+          option.value = i+1; //imposto l'attributo value
+          option.text = option.value; //imposto il testo che va dentro l'elemento option
+          select.appendChild(option);
+        }
+        document.getElementById("selezioneMinuti").appendChild(select);
+        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
+      </script>
+    </div>
+  </div>
 </body>
 
 </html>
