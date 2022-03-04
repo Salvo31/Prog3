@@ -2,13 +2,13 @@
   display : none;
 }
 
-#timerForTime {
+/*#timerForTime {
   display : none;
 }
 
 .selezioneForTime {
   display : none;
-}
+}*/
 
 .invisibles { /* SOSTITUIRE TUTTE LE REGOLE SOPRA CON QUESTA CLASSE */
   display : none

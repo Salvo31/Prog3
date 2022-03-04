@@ -10,6 +10,7 @@
 <body>
 
   <script>
+
     window.onload = bindEvents;
     TIME_LIMIT = 0;
 
@@ -23,12 +24,13 @@
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      //timer random qua
       startTimer();
     }
 
     function setMinuteOnTimer(){
       TIME_LIMIT = document.getElementById("tempo").value;
-      document.getElementById("checkPause").style.display = "block";
+      document.getElementsByClassName("invisibles")[0].style.display = "block";
       if(TIME_LIMIT != 0){
         TIME_LIMIT = TIME_LIMIT * 60;
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
@@ -89,7 +91,7 @@
           workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
         </script>
       </div> <br>
-      <div id="checkPause">
+      <div id="checkPause" class="invisibles">
         Minuti di recupero?
         <input type="checkBox" id="pauseSiNo">
       <div>

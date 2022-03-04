@@ -9,22 +9,33 @@
 
 <body>
 
-  <script src="ExternalJs/selectGenerator.js">
+  <script>
     window.onload = bindEvents;
     TIME_LIMIT = 0;
-    var minuteGenerator = new selectGen("tempo",60,1);
 
     function bindEvents(){
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
       document.getElementById("secOn").addEventListener("change",validateIntervals);
       document.getElementById("intervalliSiNo").addEventListener("change",spawnIntervals);
+      document.getElementById("esercizi").addEventListener("change",spawnMinuteSelector);
+    }
+
+    function spawnMinuteSelector(){
+      if(document.getElementById("esercizi").value != 0){
+        document.getElementsByClassName("invisibles")[1].style.display = "block";
+      }
+      else if(document.getElementById("esercizi").value  == 0){
+        document.getElementsByClassName("invisibles")[1].style.display = "none";
+        alert("minuti e numero di esercizi random");
+      }
     }
 
     function startWorkout(){
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      //timer random qua
       startTimer();
     }
 
@@ -32,12 +43,10 @@
       TIME_LIMIT = document.getElementById("tempo").value;
       if(TIME_LIMIT != 0){
         TIME_LIMIT = TIME_LIMIT * 60;
-        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-        document.getElementById("pannelloWorkout").innerHTML = "TABATA " + formatTime(TIME_LIMIT) + " minuti. \n
-        Sono " + ;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
+        document.getElementById("pannelloWorkout").innerHTML = "TABATA " + formatTime(TIME_LIMIT) + " minuti.";
       }
-      else{
-        //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
+      else {
         alert("Allenamento con minuti random");
       }
     }
@@ -81,7 +90,9 @@
   <div id="pannelloWorkout"> </div>
 
   <div id="timer">
-    <div id="app"> <script src="ExternalJs/timer.js"> </script> </div>
+    <div id="app">
+      <script src="ExternalJs/timer.js"> </script>
+    </div>
     <button id="start"> Start workout </button>
   </div>
 
@@ -99,7 +110,27 @@
       Intervallo OFF: <input type="number" placeholder="recupero..." id="secOff" readonly> <br>
     </div>
 
-    <div id="selezioneMinuti">
+    <div id="numEsercizi">
+      Quanti esercizi vuoi inserire? (per un allenamento ottimale ne consigliamo circa 5/6) <br>
+      <script>
+        var i=0;
+        var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+        select.id = "esercizi"; //Imposto l'id del tag select
+        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+        optionDef.text = "Random";
+        select.appendChild(optionDef);
+        for(i;i<20;i++){
+          var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+          option.value = i+1; //imposto l'attributo value
+          option.text = option.value; //imposto il testo che va dentro l'elemento option
+          select.appendChild(option);
+        }
+        document.getElementById("numEsercizi").appendChild(select);
+      </script>
+    </div>
+
+    <div id="selezioneMinuti" class="invisibles">
       Minuti di allenamento :
       <script>
         var i=0;

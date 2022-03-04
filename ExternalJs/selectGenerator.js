@@ -1,8 +1,8 @@
-function selectGen(idSelect,max,incAmount){
-  this.id = idSelect;
-  this.max = max;
-  this.inc = incAmount;
-  this.generate = function(){
+class selectGenerator{
+  constructor(idSelect,max,incAmount){
+    this.id = idSelect;
+    this.max = max;
+    this.inc = incAmount;
     var i=0;
     var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
     var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
@@ -17,5 +17,9 @@ function selectGen(idSelect,max,incAmount){
       select.appendChild(option);
     }
     document.getElementById("selezioneMinuti").appendChild(select);
+  }
+
+  getSelectValue(){
+    return document.getElementById(this.id).value;
   }
 }
