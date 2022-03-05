@@ -91,7 +91,7 @@ Create Table Emom (
   FOREIGN KEY (AllenamentoGenerato) REFERENCES allenamentoGenerato(IdWorkoutGen)
 );
 
-Create Table For_Time (
+Create Table ForTime (
   IdForTime int AUTO_INCREMENT NOT NULL PRIMARY KEY,
   RoundPrevisti int,
   TimeCap int,

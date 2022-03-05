@@ -21,12 +21,12 @@
 
     function setTimecap(){
       if(document.getElementById("timecapSiNo").checked){
-        document.getElementsByClassName("invisibles")[1].style.display = "block";
         document.getElementsByClassName("invisibles")[0].style.display = "block";
+        document.getElementsByClassName("invisibles")[1].style.display = "block";
       }
       else if (!document.getElementById("timecapSiNo").checked) {
-        document.getElementsByClassName("invisibles")[1].style.display = "none";
-        document.getElementsByClassName("invisibles")[0].style.display = "block";
+        document.getElementsByClassName("invisibles")[0].style.display = "none";
+        document.getElementsByClassName("invisibles")[1].style.display = "block";
       }
     }
 
