@@ -44,6 +44,7 @@ Create Table Allenamento_Generato (
 Create Table ComposizioneWE (
   ID_Composizione int AUTO_INCREMENT NOT NULL PRIMARY KEY,
   NumRep int,
+  NumSets int,
   AllenamentoGenerato int,
   Esercizio int,
   FOREIGN KEY (AllenamentoGenerato) REFERENCES Allenamento_Generato(ID_WorkoutGen),
