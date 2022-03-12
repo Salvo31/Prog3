@@ -22,16 +22,39 @@
     <input type="checkbox" id="checkGruppi"> <br>
 
     <div id="selezioneGruppi" class="invisibles">
+      <div id="gruppi">
 
+      </div>
     </div>
 
   </div>
 
-  <script>
+  <script src="ExternalJs/listaGruppi.js">
 
     window.onload = bindEvents;
+    var placeholder = document.getElementById("gruppi");
+    var gruppiScelti = new listaGruppi();
     function bindEvents(){
       document.getElementById("checkGruppi").addEventListener("change",setGruppiMuscolari);
+      placeholder.addEventListener("change",blockSelection);
+    }
+
+    function blockSelection(){
+      if(gruppiScelti.count == 3){
+        alert("Non puoi scegliere più di 3 gruppi muscolari!");
+      }
+      else{
+        var childrens = placeholder.children;
+        for(var i=0;i<childrens.length;i++){
+          if(childrens[i].checked){
+            gruppiScelti.scelte.addElement(childrens[i].value);
+          }
+          else if (!childrens[i].checked) {
+            gruppiScelti.scelte.removeElement(childrens[i].value);
+          }
+        }
+      }
+      gruppiScelti.printList();
     }
 
     function setGruppiMuscolari(){
@@ -41,6 +64,21 @@
       }
       else if (!document.getElementById("checkGruppi").checked) {
         document.getElementsByClassName("invisibles")[0].style.display = "none";
+        placeholder.innerHTML = " ";
+      }
+    }
+
+    function generaLista(gruppi){
+      var i = 0;
+
+      for(var i=0;i<gruppi.length;i++){ //genero dinamicamente una serie di checkbox per i gruppi muscolari
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = i;
+        placeholder.innerHTML += gruppi[i].Nome;
+        checkbox.value = gruppi[i].IdGruppoMuscolare;
+        placeholder.appendChild(checkbox);
+        placeholder.innerHTML += "<br>";
       }
     }
 
@@ -48,8 +86,8 @@
       var ajax = new XMLHttpRequest();
       ajax.onreadystatechange = function(){
         if(ajax.readyState == 4){
-          var gruppi = ajax.responseText;
-          document.getElementById("selezioneGruppi").innerHTML = gruppi;
+          var gruppi = JSON.parse(ajax.responseText);
+          generaLista(gruppi);
         }
       };
       ajax.open("GET","apiDb.php/gruppomuscolare",true);
