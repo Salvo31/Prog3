@@ -7,6 +7,7 @@
 </head>
 
 <body>
+
   <div id="descrizione">
     <h2> <strong> Scheda </strong> </h2> <br>
     Con questa opzione potrai generare una classica scheda di allenamento con serie e ripetizioni ben definite <br>
@@ -21,10 +22,41 @@
     <input type="checkbox" id="checkGruppi"> <br>
 
     <div id="selezioneGruppi" class="invisibles">
-      
+
     </div>
 
   </div>
+
+  <script>
+
+    window.onload = bindEvents;
+    function bindEvents(){
+      document.getElementById("checkGruppi").addEventListener("change",setGruppiMuscolari);
+    }
+
+    function setGruppiMuscolari(){
+      if(document.getElementById("checkGruppi").checked){
+        document.getElementsByClassName("invisibles")[0].style.display = "block";
+        richiestaGruppiMuscolari();
+      }
+      else if (!document.getElementById("checkGruppi").checked) {
+        document.getElementsByClassName("invisibles")[0].style.display = "none";
+      }
+    }
+
+    function richiestaGruppiMuscolari(){
+      var ajax = new XMLHttpRequest();
+      ajax.onreadystatechange = function(){
+        if(ajax.readyState == 4){
+          var gruppi = ajax.responseText;
+          document.getElementById("selezioneGruppi").innerHTML = gruppi;
+        }
+      };
+      ajax.open("GET","apiDb.php/gruppomuscolare",true);
+      ajax.send(null);
+    }
+
+  </script>
 
 </body>
 

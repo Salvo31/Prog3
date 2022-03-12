@@ -1,12 +1,11 @@
 <?php
-  include "Php/connection.php";
+  require "connection.php";
   $method = $_SERVER['REQUEST_METHOD'];
   $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
   $input = json_decode(file_get_contents('php://input'),true);
 
 
   $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
-  echo $table;
   $_key = array_shift($request);
   $key = $_key;
 
@@ -19,7 +18,7 @@
   }
 
   if($method == 'GET' && $table == 'gruppomuscolare'){
-    $sql = $conn->prepare("select * from".$table);
+    $sql = $conn->prepare("select * from $table");
     $sql->execute();
     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
     if($result){
@@ -31,4 +30,5 @@
     }
   }
 
+$conn = null; //chiusura della connessione
  ?>
