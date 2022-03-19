@@ -21,4 +21,5 @@ class listaGruppi {
       alert(this.scelte[i]);
     }
   }
+  //Aggiungere funzione di "void" che svuota tutto
 }
