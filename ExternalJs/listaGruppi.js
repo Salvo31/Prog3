@@ -19,7 +19,13 @@ class listaGruppi {
   printList(){
     for(var i=0;i<this.count;i++){
       alert(this.scelte[i]);
+      alert(this.count); //Lasciarlo per prova/debug
     }
   }
-  //Aggiungere funzione di "void" che svuota tutto
+
+  emptyList(){ //Vedere perchè non va
+    this.count = 0;
+    this.scelte.splice(0,this.scelte.length);
+  }
+
 }
