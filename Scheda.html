@@ -26,16 +26,18 @@
 
       </div>
     </div>
+    <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> //File col player di DEEZER
+    <script src="ExternalJs/deezerApi.js"> </script>
+    <div id="dz-root"> </div> //Div richiesto dalle API di DEEZER
+    <div id="player"> </div>
 
-    <script src="ExternalJs/listaGruppi.js">
-      //In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi
-    </script>
-
+    <script src="ExternalJs/listaGruppi.js"> </script>//In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi
   </div>
 
   <script>
 
     window.onload = bindEvents;
+    alert(window.id);
     var placeholder = document.getElementById("gruppi");
     var gruppiScelti = new listaGruppi();
     function bindEvents(){
@@ -44,7 +46,7 @@
     }
 
     function startWorkout(){
-
+      DZ.player.playPlaylist(2035204344);
     }
 
     function verificaSelezione(){
@@ -53,6 +55,7 @@
       var gruppoSelezionato = document.getElementById(event.srcElement.id);
       if(gruppiScelti.count == 3){
         alert("Non puoi scegliere più di 3 gruppi muscolari!");
+        gruppoSelezionato.checked = false;
       }
       else{
         if(gruppoSelezionato.checked){
@@ -71,7 +74,6 @@
         document.getElementsByClassName("invisibles")[0].style.display = "none";
         placeholder.innerHTML = " ";
         //Aggiungere svuotamento dell'oggetto
-        debugger;
         gruppiScelti.emptyList(); //Svuoto gli elementi selezionati
       }
     }

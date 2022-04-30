@@ -19,7 +19,6 @@ class listaGruppi {
   printList(){
     for(var i=0;i<this.count;i++){
       alert(this.scelte[i]);
-      alert(this.count); //Lasciarlo per prova/debug
     }
   }
 
