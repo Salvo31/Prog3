@@ -26,18 +26,16 @@
 
       </div>
     </div>
-    <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> //File col player di DEEZER
-    <script src="ExternalJs/deezerApi.js"> </script>
-    <div id="dz-root"> </div> //Div richiesto dalle API di DEEZER
+    <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
+    <div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
     <div id="player"> </div>
 
-    <script src="ExternalJs/listaGruppi.js"> </script>//In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi
+    <script src="ExternalJs/listaGruppi.js"> </script> <!-- In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi -->
   </div>
 
   <script>
 
     window.onload = bindEvents;
-    alert(window.id);
     var placeholder = document.getElementById("gruppi");
     var gruppiScelti = new listaGruppi();
     function bindEvents(){
@@ -47,6 +45,7 @@
 
     function startWorkout(){
       DZ.player.playPlaylist(2035204344);
+      DZ.player.setShuffle(true);
     }
 
     function verificaSelezione(){
@@ -107,8 +106,22 @@
       ajax.send(null);
     }
 
-  </script>
+    DZ.init({
+      appId  : '539622',
+      channelUrl : 'deezerChannel.html',
+      player: {
+        container: 'player',
+        cover : true,
+        layout : 'dark',
+        width : 650,
+        height : 300,
+        onload : function(){
+        }
+      }
+    });
 
+  </script>
+  <!--<script src="ExternalJs/deezerApi.js"> </script> -->
 </body>
 
 </html>
