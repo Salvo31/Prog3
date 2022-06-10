@@ -26,7 +26,7 @@
       }
       else if (!document.getElementById("timecapSiNo").checked) {
         document.getElementsByClassName("invisibles")[0].style.display = "none";
-        document.getElementsByClassName("invisibles")[1].style.display = "block";
+        document.getElementsByClassName("invisibles")[1].style.display = "none";
       }
     }
 
@@ -40,6 +40,9 @@
       else if (!document.getElementById("timecapSiNo").checked) {
         document.getElementById("pannelloWorkout").innerHTML = "FOR TIME ";
       }
+      DZ.player.next();
+      document.getElementById("player").style.display = "block";
+      DZ.player.play();
       //timer random qua
       startTimer();
     }
@@ -97,6 +100,32 @@
     </div>
     <script> workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")]; </script>
   </div>
+  <!-- API DEEZER -->
+  <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
+  <div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
+  <div id="player"> </div>
+
+  <script>
+    document.getElementById("player").style.display = "none";
+    DZ.init({
+      appId  : '539622',
+      channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
+      //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+      player: {
+        container: 'player',
+        cover : true,
+        layout : 'dark',
+        width : 650,
+        height : 300,
+        onload : playerLoaded
+      }
+    });
+
+    function playerLoaded(){
+      DZ.player.playPlaylist(8424675842);
+      DZ.player.setShuffle(true);
+    }
+  </script>
 
 </body>
 

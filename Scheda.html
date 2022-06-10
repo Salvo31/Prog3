@@ -15,7 +15,8 @@
   </div> <br> <br>
 
   <div id="pannelloWorkout"> </div> <br>
-  <button id="start"> Start workout </button> <br>
+  <button id="start"> Start workout </button>
+  <button id="stop"> Stop workout </button> <br>
 
   <div id="opzioniAllenamento">
     Vuoi selezionare un focus di gruppi muscolari per l'allenamento di oggi?
@@ -26,26 +27,58 @@
 
       </div>
     </div>
-    <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
-    <div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
-    <div id="player"> </div>
-
     <script src="ExternalJs/listaGruppi.js"> </script> <!-- In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi -->
   </div>
+  <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
+  <div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
+  <div id="player"> </div>
 
   <script>
 
     window.onload = bindEvents;
     var placeholder = document.getElementById("gruppi");
     var gruppiScelti = new listaGruppi();
+    document.getElementById("player").style.display = "none";
+    document.getElementById("stop").style.display = "none";
+    DZ.init({
+      appId  : '539622',
+      channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
+      //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+      player: {
+        container: 'player',
+        cover : true,
+        layout : 'dark',
+        width : 650,
+        height : 300,
+        onload : playerLoaded
+      }
+    });
+
+    function playerLoaded(){
+      DZ.player.playPlaylist(8424675842);
+      DZ.player.setShuffle(true);
+    }
+
     function bindEvents(){
       document.getElementById("checkGruppi").addEventListener("change",setGruppiMuscolari);
       document.getElementById("start").addEventListener("click",startWorkout);
+      document.getElementById("stop").addEventListener("click",stopWorkout);
+    }
+
+
+    function stopWorkout(){
+      document.getElementById("start").style.display = "block";
+      document.getElementById("stop").style.display = "none";
+      DZ.player.pause();
     }
 
     function startWorkout(){
-      DZ.player.playPlaylist(2035204344);
-      DZ.player.setShuffle(true);
+      DZ.player.next();
+      DZ.player.play();
+      document.getElementById("opzioniAllenamento").style.display = "none";
+      document.getElementById("player").style.display = "block";
+      document.getElementById("start").style.display = 'none';
+      document.getElementById("stop").style.display = "block";
     }
 
     function verificaSelezione(){
@@ -106,19 +139,6 @@
       ajax.send(null);
     }
 
-    DZ.init({
-      appId  : '539622',
-      channelUrl : 'deezerChannel.html',
-      player: {
-        container: 'player',
-        cover : true,
-        layout : 'dark',
-        width : 650,
-        height : 300,
-        onload : function(){
-        }
-      }
-    });
 
   </script>
   <!--<script src="ExternalJs/deezerApi.js"> </script> -->
