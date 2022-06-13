@@ -21,6 +21,9 @@
    for(let i = 0; i<workoutParameters.length; i++){
      workoutParameters[i].style.display = "none";
    }
+   DZ.player.next();
+   document.getElementById("player").style.display = "block";
+   DZ.player.play();
    startTimer();
  }
 
@@ -114,6 +117,32 @@
       </script>
     </div>
 </div>
+<!-- API DEEZER -->
+<script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
+<div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
+<div id="player"> </div>
+
+<script>
+  document.getElementById("player").style.display = "none";
+  DZ.init({
+    appId  : '539622',
+    channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
+    //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+    player: {
+      container: 'player',
+      cover : true,
+      layout : 'dark',
+      width : 650,
+      height : 300,
+      onload : playerLoaded
+    }
+  });
+
+  function playerLoaded(){
+    DZ.player.playPlaylist(8424675842);
+    DZ.player.setShuffle(true);
+  }
+</script>
 
 </body>
 </html>

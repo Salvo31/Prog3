@@ -23,7 +23,13 @@
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
-      //timer random qua
+      if(document.getElementById("tempo").value == 0)
+      {
+        TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
+        TIME_LIMIT = TIME_LIMIT * 60;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
+      }
       startTimer();
     }
 
@@ -34,10 +40,12 @@
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
         document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
       }
+      /* COMMENTATO Perchè voglio che resti "random" sulla scelta. Così faccio anche meno chiamate al DB.
+      Se il timer è random, gestisce tutto PHP e la funzione startWorkout
       else{
         //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
         alert("Allenamento con minuti random");
-      }
+      }*/
     }
 
   </script>
@@ -79,6 +87,10 @@
         document.getElementById("selezioneMinuti").appendChild(select);
         workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
+    </div>
+    <div id="tipoEsercizi">
+      Disponi di manubri/pesi?
+      <input type="checkbox" id="pesiSiNo">
     </div>
   </div>
   <!-- API DEEZER -->

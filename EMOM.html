@@ -24,10 +24,16 @@
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
-      //timer random qua
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
+      if(document.getElementById("tempo").value == 0)
+      {
+        TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
+        TIME_LIMIT = TIME_LIMIT * 60;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("pannelloWorkout").innerHTML = "EMOM " + formatTime(TIME_LIMIT) + " minuti";
+      }
       startTimer();
     }
 
@@ -39,10 +45,10 @@
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
         document.getElementById("pannelloWorkout").innerHTML = "EMOM " + formatTime(TIME_LIMIT) + " minuti";
       }
-      else{
+      /*else{
         //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
         alert("Allenamento con minuti random");
-      }
+      }*/
       if(document.getElementById("pauseSiNo").checked){
         document.getElementById("pauseSiNo").checked = false;
         document.getElementById("pannelloWorkout").innerHTML = "EMOM " + formatTime(TIME_LIMIT) + " minuti";
@@ -105,7 +111,11 @@
       <div id="checkPause" class="invisibles">
         Minuti di recupero?
         <input type="checkBox" id="pauseSiNo">
-      <div>
+      </div> <br>
+      <div id="tipoEsercizi">
+        Disponi di manubri/pesi?
+        <input type="checkbox" id="pesiSiNo">
+      </div>
   </div>
   <script>
     document.getElementById("player").style.display = "none";

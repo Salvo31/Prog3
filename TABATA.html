@@ -15,20 +15,50 @@
 
     function bindEvents(){
       document.getElementById("start").addEventListener("click",startWorkout);
-      document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
       document.getElementById("secOn").addEventListener("change",validateIntervals);
       document.getElementById("intervalliSiNo").addEventListener("change",spawnIntervals);
       document.getElementById("esercizi").addEventListener("change",spawnMinuteSelector);
     }
 
     function spawnMinuteSelector(){
-      if(document.getElementById("esercizi").value != 0){
-        document.getElementsByClassName("invisibles")[1].style.display = "block";
+      if(document.getElementById("esercizi").value != 0 && !document.getElementById("tempo"))
+      {
+        generateSelectTime();
+        setMinuteOnTimer();
       }
-      else if(document.getElementById("esercizi").value  == 0){
+      else if(document.getElementById("tempo"))
+      {
+        document.getElementById("selezioneMinuti").removeChild(document.getElementById("tempo"));
+        generateSelectTime();
+        setMinuteOnTimer(); 
+      }
+      else if(document.getElementById("esercizi").value  == 0)
+      {
         document.getElementsByClassName("invisibles")[1].style.display = "none";
-        alert("minuti e numero di esercizi random");
       }
+    }
+
+    function generateSelectTime(){
+      var numEsercizi = document.getElementById("esercizi").value;
+      var i=1;
+      var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+      select.id="tempo"; //Imposto l'id del tag select
+      for(i;i<=Math.ceil(60/numEsercizi);i++){
+        var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+        if(i*numEsercizi >60)
+        {
+          break;
+        }
+        else
+        {
+          option.value = i*numEsercizi; //imposto l'attributo value
+          option.text = option.value; //imposto il testo che va dentro l'elemento option
+          select.appendChild(option);
+        }
+      }
+      document.getElementById("selezioneMinuti").appendChild(select);
+      document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
+      document.getElementsByClassName("invisibles")[1].style.display = "block";
     }
 
     function startWorkout(){
@@ -38,7 +68,6 @@
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
-      //timer random qua
       startTimer();
     }
 
@@ -48,9 +77,6 @@
         TIME_LIMIT = TIME_LIMIT * 60;
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
         document.getElementById("pannelloWorkout").innerHTML = "TABATA " + formatTime(TIME_LIMIT) + " minuti.";
-      }
-      else {
-        alert("Allenamento con minuti random");
       }
     }
 
@@ -105,24 +131,25 @@
     <input type="checkbox" id="intervalliSiNo"> <br>
 
     <div id="rounds">
-
+      <!-- Div per calcolare i round che ne escono fuori (?) -->
     </div>
 
     <div id="intervalli" class="invisibles">
-      Intervallo ON: <input type="number" placeholder="30" id="secOn"> <br>
-      Intervallo OFF: <input type="number" placeholder="recupero..." id="secOff" readonly> <br>
-    </div>
+      Intervallo ON: <input type="number" value="10" id="secOn"> <br>
+      Intervallo OFF: <input type="number" value="50" id="secOff" readonly> <br>
+    </div> <br>
+
+    <div id="tipoEsercizi">
+      Disponi di manubri/pesi?
+      <input type="checkbox" id="pesiSiNo">
+    </div> <br>
 
     <div id="numEsercizi">
       Quanti esercizi vuoi inserire? (per un allenamento ottimale ne consigliamo circa 5/6) <br>
       <script>
         var i=0;
         var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
-        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
         select.id = "esercizi"; //Imposto l'id del tag select
-        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
-        optionDef.text = "Random";
-        select.appendChild(optionDef);
         for(i;i<20;i++){
           var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
           option.value = i+1; //imposto l'attributo value
@@ -136,21 +163,7 @@
     <div id="selezioneMinuti" class="invisibles">
       Minuti di allenamento :
       <script>
-        var i=0;
-        var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
-        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-        select.id="tempo"; //Imposto l'id del tag select
-        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
-        optionDef.text = "Random";
-        select.appendChild(optionDef);
-        for(i;i<60;i++){
-          var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-          option.value = i+1; //imposto l'attributo value
-          option.text = option.value; //imposto il testo che va dentro l'elemento option
-          select.appendChild(option);
-        }
-        document.getElementById("selezioneMinuti").appendChild(select);
-        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
+      workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
     </div>
   </div>

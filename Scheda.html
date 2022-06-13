@@ -27,6 +27,10 @@
 
       </div>
     </div>
+    <div id="tipoEsercizi">
+      Disponi di manubri/pesi?
+      <input type="checkbox" id="pesiSiNo">
+    </div>
     <script src="ExternalJs/listaGruppi.js"> </script> <!-- In questo tag è inserito il codice che definisce l'oggetto per la lista dei gruppi -->
   </div>
   <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
@@ -69,6 +73,8 @@
     function stopWorkout(){
       document.getElementById("start").style.display = "block";
       document.getElementById("stop").style.display = "none";
+      document.getElementById("tipoEsercizi").style.display = "block";
+      document.getElementById("opzioniAllenamento").style.display = "block";
       DZ.player.pause();
     }
 
@@ -79,21 +85,23 @@
       document.getElementById("player").style.display = "block";
       document.getElementById("start").style.display = 'none';
       document.getElementById("stop").style.display = "block";
+      document.getElementById("tipoEsercizi").style.display = "none";
     }
 
     function verificaSelezione(){
       /*Modificare per scegliere se nell'oggetto bisogna memorizzare anche l'id
       del db o solo questo e poi sommare/sottrarre. Dal punto di vista computazionale */
       var gruppoSelezionato = document.getElementById(event.srcElement.id);
-      if(gruppiScelti.count == 3){
-        alert("Non puoi scegliere più di 3 gruppi muscolari!");
-        gruppoSelezionato.checked = false;
+      if(gruppoSelezionato.checked && gruppiScelti.count < 3){
+        gruppiScelti.addElement(gruppoSelezionato.id);
+      }
+      else if(!gruppoSelezionato.checked){
+        gruppiScelti.removeElement(gruppoSelezionato.id);
       }
       else{
-        if(gruppoSelezionato.checked){
-          gruppiScelti.addElement(gruppoSelezionato.id)
+        alert("Non puoi scegliere più di 3 gruppi muscolari!");
+        gruppoSelezionato.checked = false;
         }
-      }
       gruppiScelti.printList();
     }
 
@@ -105,7 +113,6 @@
       else if (!document.getElementById("checkGruppi").checked) {
         document.getElementsByClassName("invisibles")[0].style.display = "none";
         placeholder.innerHTML = " ";
-        //Aggiungere svuotamento dell'oggetto
         gruppiScelti.emptyList(); //Svuoto gli elementi selezionati
       }
     }
@@ -141,7 +148,6 @@
 
 
   </script>
-  <!--<script src="ExternalJs/deezerApi.js"> </script> -->
 </body>
 
 </html>
