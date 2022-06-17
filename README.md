@@ -15,15 +15,27 @@ Progetto sul random workout generator
   <li> Automatizzati i calcoli nel tabata, rimossa le possibilità di parametri random per scelta, fixati gli intervalli </li>
   <li> Aggiornato il dataset ed il relativo file, per inserire esercizi e relativi gruppi colpiti </li>
   <li> Aggiunto DEEZER anche su index.html </li>
+</ul> <br>
+
+17/06/2022 -> COSE FATTE: <br>
+<ul>
+  <li> Aggiunte le logiche coi tasti di stop workout , resume workout e pause workout ad: AMRAP <br>
+  , TABATA, EMOM e FORTIME. Inoltre è stato modificato il file timer.js per alcune di esse. <br>
+  Il fortime ha la particolarità che anche senza timer (timecap = no) ha i pulsanti. </li>
+  <li> Levati i riferimenti agli elementi class="invisibles" con la funzione getElementsByclassName <br>
+  li ho ripresi dall'id </li>
+  <li> Il div di scelta del timeCap è stato messo in una variabile, date le svariate chiamate </li>
 </ul>
 
 FIX DA RIVEDERE: <br>
 <ul>
-  <li> ~~Migliorare l'interattività nel tabata; automatizzare il calcolo del timer in base agli esercizi <br>
-    selezionati o limitarne la scelta.~~ </li>
+  <li> ***Migliorare l'interattività nel tabata; automatizzare il calcolo del timer in base agli esercizi <br>
+    selezionati o limitarne la scelta.*** </li>
   <li> CAPIRE SE DEEZER HA PROBLEMI DI SUO O STO SBAGLIANDO QUALCOSA IO. Guardare con attenzione gli errori lanciati <br>
   in console. EVENTUALMENTE fixare il problema dell'autoplay iniziale: non parte in automatico la canzone all'inizio <br>
   Devo necessariamente farla partire io col click </li>
-  <li> AGGIUNGERE tasto stop al workout </li>
+  <li> ***AGGIUNGERE tasto stop al workout*** </li>
   <li> CAPIRE a che pro ho il div "rounds" in TABATA.html </li>
+  <li> Vagliare l'ipotesi di usare più variabili al posto delle chiamate ai div classiche </li>
+  <li> Rivedere logica dei "workoutParameters" , se mantenerla o meno </li>
 </ul>

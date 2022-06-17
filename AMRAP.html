@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="Css/timer.css">
+<link rel="stylesheet" href="Css/cssTemporanei.css">
 <title> AMRAP </title>
 </head>
 
@@ -14,12 +15,16 @@
     function bindEvents(){
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
+      document.getElementById("stop").addEventListener("click",stopWorkout);
+      document.getElementById("pause").addEventListener("click",pauseWorkout);
     }
 
     function startWorkout(){
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      document.getElementById("stop").style.display="block";
+      document.getElementById("pause").style.display="block";
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
@@ -33,11 +38,33 @@
       startTimer();
     }
 
+    function stopWorkout(){
+      DZ.player.pause();
+      stopTimer();
+    }
+
+    function pauseWorkout(){
+      var resumeButton = document.getElementById("resume");
+      DZ.player.pause();
+      clearInterval(timerInterval);
+      document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+      resumeButton.style.display="Block";
+      resumeButton.addEventListener("click",resumeWorkout);
+      document.getElementById("pause").style.display="none";
+    }
+
+    function resumeWorkout(){
+      DZ.player.play();
+      document.getElementById("pause").style.display="block";
+      document.getElementById("resume").style.display="none";
+      startTimer();
+    }
+
     function setMinuteOnTimer(){
       TIME_LIMIT = document.getElementById("tempo").value;
       if(TIME_LIMIT != 0){
         TIME_LIMIT = TIME_LIMIT * 60;
-        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
         document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
       }
       /* COMMENTATO Perchè voglio che resti "random" sulla scelta. Così faccio anche meno chiamate al DB.
@@ -63,6 +90,9 @@
       <script src="ExternalJs/timer.js"> </script>
     </div>
     <button id="start"> Start workout </button>
+    <button id="stop" class="invisibles"> Stop workout </button>
+    <button id="pause" class="invisibles"> Pause workout </button>
+    <button id="resume" class="invisibles"> Resume workout </button>
   </div>
 
   <div id="pannelloWorkout"> </div>

@@ -1,3 +1,4 @@
+//SE IL BROWSER NON VEDE LA VERSIONE PIU' RECENTE DI QUESTO FILE, FARE CTRL+FN+F5
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 10;
 const ALERT_THRESHOLD = 5;
@@ -50,9 +51,11 @@ function onTimesUp() {
   timerInterval = null;
   timeLeft = TIME_LIMIT;
   timePassed = 0;
+  // Aggiunta mia - Commit precedenti - start
   for(let i = 0;i< workoutParameters.length;i++){
     workoutParameters[i].style.display = "block";
   }
+  //Aggiunta mia - end
 
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
   document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
@@ -69,6 +72,13 @@ function startTimer() {
 
     if (timeLeft === 0) {
       onTimesUp();
+      //Aggiunta mia - 17/06/2022 -start
+      document.getElementById("stop").style.display="none";
+      document.getElementById("pause").style.display="none";
+      document.getElementById("start").style.display="block";
+      document.getElementById("resume").style.display="none";
+      setMinuteOnTimer();
+      // - end
     }
   }, 1000);
 }
@@ -104,3 +114,34 @@ function setCircleDasharray() {
   const circleDasharray = `${(calculateTimeFraction() * FULL_DASH_ARRAY).toFixed(0)} 283`;
   document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
 }
+//Aggiunta mia - 17/06/2022 - start
+function stopTimer(){
+  /*timeLeft = 0;
+  clearInterval(timerInterval);
+  timePassed = 0;*/
+  onStopWorkout();
+  //document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+  document.getElementById("pannelloWorkout").innerHTML = " ";
+  document.getElementById("stop").style.display="none";
+  document.getElementById("pause").style.display="none";
+  document.getElementById("start").style.display="block";
+  document.getElementById("resume").style.display="none";
+  for(let i = 0; i<workoutParameters.length; i++){
+    workoutParameters[i].style.display = "block";
+  }
+  setMinuteOnTimer();
+  setRemainingPathColor(timeLeft);
+  setCircleDasharray();
+}
+
+function onStopWorkout() {
+  clearInterval(timerInterval);
+  //Reinizializza il timer
+  timerInterval = null;
+  timeLeft = TIME_LIMIT;
+  timePassed = 0;
+
+  document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
+  document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.warning.color);
+  document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
+} // - end

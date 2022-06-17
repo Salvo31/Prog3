@@ -16,17 +16,19 @@
     function bindEvents(){
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
-      document.getElementById("timecapSiNo").addEventListener("change",setTimecap);
+      flagTimeCap.addEventListener("change",setTimecap);
+      document.getElementById("stop").addEventListener("click",stopWorkout);
+      document.getElementById("pause").addEventListener("click",pauseWorkout);
     }
 
     function setTimecap(){
-      if(document.getElementById("timecapSiNo").checked){
-        document.getElementsByClassName("invisibles")[0].style.display = "block";
-        document.getElementsByClassName("invisibles")[1].style.display = "block";
+      if(flagTimeCap.checked){
+        document.getElementById("timerForTime").style.display = "block";
+        document.getElementById("selezioneMinuti").style.display = "block";
       }
-      else if (!document.getElementById("timecapSiNo").checked) {
-        document.getElementsByClassName("invisibles")[0].style.display = "none";
-        document.getElementsByClassName("invisibles")[1].style.display = "none";
+      else if (!flagTimeCap.checked) {
+        document.getElementById("timerForTime").style.display = "none";
+        document.getElementById("selezioneMinuti").style.display = "none";
       }
     }
 
@@ -34,23 +36,63 @@
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
-      if(document.getElementById("timecapSiNo").checked){
+      if(flagTimeCap.checked){
         document.getElementById("pannelloWorkout").innerHTML = "FOR TIME con time cap di " + formatTime(TIME_LIMIT) + " minuti";
+        if(document.getElementById("tempo").value == 0)
+        {
+          TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
+          TIME_LIMIT = TIME_LIMIT * 60;
+          document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+          document.getElementById("pannelloWorkout").innerHTML = "FOR TIME " + formatTime(TIME_LIMIT) + " minuti";
+        }
+        startTimer();
       }
-      else if (!document.getElementById("timecapSiNo").checked) {
+      else if (!flagTimeCap.checked) {
         document.getElementById("pannelloWorkout").innerHTML = "FOR TIME ";
       }
+      document.getElementById("stop").style.display="block";
+      document.getElementById("pause").style.display="block";
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
-      if(document.getElementById("tempo").value == 0)
-      {
-        TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
-        TIME_LIMIT = TIME_LIMIT * 60;
-        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-        document.getElementById("pannelloWorkout").innerHTML = "FOR TIME " + formatTime(TIME_LIMIT) + " minuti";
+    }
+
+    function stopWorkout(){
+      DZ.player.pause();
+      if(flagTimeCap.checked){
+        stopTimer();
       }
-      startTimer();
+      else{
+        document.getElementById("pannelloWorkout").innerHTML = " ";
+        document.getElementById("stop").style.display="none";
+        document.getElementById("pause").style.display="none";
+        document.getElementById("start").style.display="block";
+        document.getElementById("resume").style.display="none";
+        for(let i = 0; i<workoutParameters.length; i++){
+          workoutParameters[i].style.display = "block";
+        }
+      }
+    }
+
+    function pauseWorkout(){
+      var resumeButton = document.getElementById("resume");
+      DZ.player.pause();
+      if(flagTimeCap.checked){
+        clearInterval(timerInterval);
+        document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+      }
+      resumeButton.style.display="Block";
+      resumeButton.addEventListener("click",resumeWorkout);
+      document.getElementById("pause").style.display="none";
+    }
+
+    function resumeWorkout(){
+      DZ.player.play();
+      document.getElementById("pause").style.display="block";
+      document.getElementById("resume").style.display="none";
+      if(flagTimeCap.checked){
+        startTimer();
+      }
     }
 
     function setMinuteOnTimer(){
@@ -77,6 +119,9 @@
     </div>
   </div>
   <button id="start"> Start workout </button>
+  <button id="stop" class="invisibles"> Stop workout </button>
+  <button id="pause" class="invisibles"> Pause workout </button>
+  <button id="resume" class="invisibles"> Resume workout </button>
 
   <div id="pannelloWorkout"> </div>
 
@@ -85,6 +130,7 @@
     <input type="checkbox" id="timecapSiNo">
     <div id="selezioneMinuti" class="invisibles">
       <script>
+        var flagTimeCap = document.getElementById("timecapSiNo");
         var i=0;
         var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
         var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile

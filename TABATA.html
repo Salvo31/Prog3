@@ -18,6 +18,8 @@
       document.getElementById("secOn").addEventListener("change",validateIntervals);
       document.getElementById("intervalliSiNo").addEventListener("change",spawnIntervals);
       document.getElementById("esercizi").addEventListener("change",spawnMinuteSelector);
+      document.getElementById("stop").addEventListener("click",stopWorkout);
+      document.getElementById("pause").addEventListener("click",pauseWorkout);
     }
 
     function spawnMinuteSelector(){
@@ -30,11 +32,11 @@
       {
         document.getElementById("selezioneMinuti").removeChild(document.getElementById("tempo"));
         generateSelectTime();
-        setMinuteOnTimer(); 
+        setMinuteOnTimer();
       }
       else if(document.getElementById("esercizi").value  == 0)
       {
-        document.getElementsByClassName("invisibles")[1].style.display = "none";
+        document.getElementById("selezioneMinuti").style.display = "none";
       }
     }
 
@@ -58,16 +60,40 @@
       }
       document.getElementById("selezioneMinuti").appendChild(select);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
-      document.getElementsByClassName("invisibles")[1].style.display = "block";
+      document.getElementById("selezioneMinuti").style.display = "block";
     }
 
     function startWorkout(){
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      document.getElementById("stop").style.display="block";
+      document.getElementById("pause").style.display="block";
       DZ.player.next();
       document.getElementById("player").style.display = "block";
       DZ.player.play();
+      startTimer();
+    }
+
+    function stopWorkout(){
+      DZ.player.pause();
+      stopTimer();
+    }
+
+    function pauseWorkout(){
+      var resumeButton = document.getElementById("resume");
+      DZ.player.pause();
+      clearInterval(timerInterval);
+      document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+      resumeButton.style.display="Block";
+      resumeButton.addEventListener("click",resumeWorkout);
+      document.getElementById("pause").style.display="none";
+    }
+
+    function resumeWorkout(){
+      DZ.player.play();
+      document.getElementById("pause").style.display="block";
+      document.getElementById("resume").style.display="none";
       startTimer();
     }
 
@@ -98,10 +124,10 @@
 
     function spawnIntervals(){
       if(document.getElementById("intervalliSiNo").checked){
-        document.getElementsByClassName("invisibles")[0].style.display = "block";
+        document.getElementById("intervalli").style.display = "block";
       }
       else if (!document.getElementById("intervalliSiNo").checked) {
-        document.getElementsByClassName("invisibles")[0].style.display = "none";
+        document.getElementById("intervalli").style.display = "none";
       }
     }
 
@@ -123,6 +149,9 @@
       <script src="ExternalJs/timer.js"> </script>
     </div>
     <button id="start"> Start workout </button>
+    <button id="stop" class="invisibles"> Stop workout </button>
+    <button id="pause" class="invisibles"> Pause workout </button>
+    <button id="resume" class="invisibles"> Resume workout </button>
   </div>
 
   <div id="opzioniAllenamento">
@@ -163,6 +192,7 @@
     <div id="selezioneMinuti" class="invisibles">
       Minuti di allenamento :
       <script>
+      spawnMinuteSelector();
       workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
     </div>
