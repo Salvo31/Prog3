@@ -25,6 +25,7 @@ Progetto sul random workout generator
   <li> Levati i riferimenti agli elementi class="invisibles" con la funzione getElementsByclassName <br>
   li ho ripresi dall'id </li>
   <li> Il div di scelta del timeCap è stato messo in una variabile, date le svariate chiamate </li>
+  <li> Gestito anche il comportamento della barra e del colore del timer in relazione ai pulsanti </li>
 </ul>
 
 FIX DA RIVEDERE: <br>
