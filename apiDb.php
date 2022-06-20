@@ -17,7 +17,7 @@
   },array_values($input));
   }
 
-  if($method == 'GET' && $table == 'gruppomuscolare'){
+  /*if($method == 'GET' && $table == 'gruppomuscolare'){
     $sql = $conn->prepare("select * from $table");
     $sql->execute();
     $result = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -28,6 +28,49 @@
     else{
       echo "Errore query, poderoso urlo del sinto ".$conn->errorMsg();
     }
+  }*/
+
+
+  if($method == 'GET'){
+    $res;
+    switch($table){
+      case 'gruppomuscolare':
+        $sql = $conn->prepare("select * from $table");
+        $sql->execute();
+        $res = elaborateQuery($sql);
+        break;
+      case 'Esercizio':
+        $sql = $conn->prepare("select * from $table where tipologia='$key'");
+        $sql->execute();
+        $res = elaborateQuery($sql);
+        $res = randomAmrap($res);
+        break;
+    }
+    $json = json_encode($res);
+    echo $json;
+  }
+
+  function elaborateQuery($query){
+    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+    if($result){
+      return $result;
+    }
+    else{
+      return $result = "Errore query, poderoso urlo del sinto ".$conn->errorMsg();
+    }
+  }
+
+
+  function randomAmrap($res){
+    global $conn,$sql;
+    $rowsAffected = $sql->rowCount();
+    $numEs = rand(3,$rowsAffected);
+    $set = new \Ds\Set();
+    for($i=0;$i<$numEs;$i++){
+      $set->add($res[rand(0,$rowsAffected-1)]);
+    }
+    //$tmpArray = array_unique($tmpArray);
+    return $set;
   }
 
 $conn = null; //chiusura della connessione

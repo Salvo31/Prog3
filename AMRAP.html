@@ -13,16 +13,20 @@
     TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
     function bindEvents(){
+      document.getElementById("start").disabled = true;
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
       document.getElementById("stop").addEventListener("click",stopWorkout);
       document.getElementById("pause").addEventListener("click",pauseWorkout);
+      document.getElementById("request").addEventListener("click",requestWorkout);
     }
 
     function startWorkout(){
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      document.getElementById("request").style.display = "none";
+      document.getElementById("start").disabled = true;
       document.getElementById("stop").style.display="block";
       document.getElementById("pause").style.display="block";
       DZ.player.next();
@@ -41,6 +45,8 @@
     function stopWorkout(){
       DZ.player.pause();
       stopTimer();
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      document.getElementById("request").style.display = "block";
     }
 
     function pauseWorkout(){
@@ -75,6 +81,39 @@
       }*/
     }
 
+    function requestWorkout(){
+      document.getElementById("start").disabled = false;
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      var ajax = new XMLHttpRequest();
+      var pesi = Number(document.getElementById("pesiSiNo").checked);
+      var reqURI = "apiDb.php/Esercizio/"+pesi;
+      ajax.onreadystatechange = function(){
+        if(ajax.readyState == 4){
+          console.log(ajax.responseText);
+          var esercizi = JSON.parse(ajax.responseText);
+          //document.getElementById("displayEsercizi").innerHTML = esercizi;
+          displayWorkout(esercizi);
+        }
+      };
+      ajax.open("GET",reqURI,true);
+      ajax.send(null);
+    }
+
+    function displayWorkout(esercizi){
+      var listaEsercizi = document.createElement("ul");
+      listaEsercizi.id = "listaEsercizi";
+      var numRep;
+      for(var i=0;i<esercizi.length;i++){
+        var Esercizio = document.createElement("li");
+        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
+        //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+        listaEsercizi.appendChild(Esercizio);
+      }
+      document.getElementById("displayEsercizi").appendChild(listaEsercizi);
+    }
+
   </script>
 
   <div id="descrizione">
@@ -89,6 +128,12 @@
     <div id="app">
       <script src="ExternalJs/timer.js"> </script>
     </div>
+  </div>
+
+  <div id="displayEsercizi"> </div>
+
+  <div id="pulsanti">
+    <button id="request"> Request workout </button>
     <button id="start"> Start workout </button>
     <button id="stop" class="invisibles"> Stop workout </button>
     <button id="pause" class="invisibles"> Pause workout </button>
@@ -119,7 +164,7 @@
       </script>
     </div>
     <div id="tipoEsercizi">
-      Disponi di manubri/pesi?
+      Allenamento solo pesistica?
       <input type="checkbox" id="pesiSiNo">
     </div>
   </div>
@@ -133,7 +178,7 @@
     DZ.init({
       appId  : '539622',
       channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
-      //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+      //channelUrl : 'https://localhost/Prog3/RandomWorkout/deezerChannel.php',
       player: {
         container: 'player',
         cover : true,

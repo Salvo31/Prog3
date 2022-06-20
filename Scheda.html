@@ -40,6 +40,7 @@
   <script>
 
     window.onload = bindEvents;
+    richiestaGruppiMuscolari();
     var placeholder = document.getElementById("gruppi");
     var gruppiScelti = new listaGruppi();
     document.getElementById("player").style.display = "none";
@@ -108,12 +109,18 @@
     function setGruppiMuscolari(){
       if(document.getElementById("checkGruppi").checked){
         document.getElementsByClassName("invisibles")[0].style.display = "block";
-        richiestaGruppiMuscolari();
       }
       else if (!document.getElementById("checkGruppi").checked) {
         document.getElementsByClassName("invisibles")[0].style.display = "none";
-        placeholder.innerHTML = " ";
         gruppiScelti.emptyList(); //Svuoto gli elementi selezionati
+        var i = placeholder.getElementsByTagName("input").length;
+        for(var j=0;j<i;j++)
+        {
+          if(document.getElementById(j).nodeName == "INPUT")
+          {
+            document.getElementById(j).checked = false;
+          }
+        }
       }
     }
 

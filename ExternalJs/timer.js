@@ -1,4 +1,3 @@
-//SE IL BROWSER NON VEDE LA VERSIONE PIU' RECENTE DI QUESTO FILE, FARE CTRL+FN+F5
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 10;
 const ALERT_THRESHOLD = 5;
@@ -55,6 +54,9 @@ function onTimesUp() {
   for(let i = 0;i< workoutParameters.length;i++){
     workoutParameters[i].style.display = "block";
   }
+  document.getElementById("request").style.display = "block";
+  document.getElementById("start").disabled = true;
+  document.getElementById("displayEsercizi").innerHTML = " ";
   //Aggiunta mia - end
 
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
