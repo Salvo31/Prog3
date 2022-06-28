@@ -3,27 +3,70 @@
   <title> Random Workout Generator </title>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="Css/timer.css">
+  <link rel="stylesheet" href="Css/cssTemporanei.css">
 </head>
 <body>
-  <!--- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati --->
+  <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati -->
 
 <script>
  window.onload = bindEvents;
  TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
  function bindEvents(){
+   document.getElementById("start").disabled = true;
    document.getElementById("start").addEventListener("click",startWorkout); //richiama lo start del timer nel momento in cui clicco sul bottone
+   document.getElementById("stop").addEventListener("click",stopWorkout);
+   document.getElementById("pause").addEventListener("click",pauseWorkout);
    document.getElementById("tipoAllenamento").addEventListener("change",setWorkout);
    document.getElementById("selezioneMinuti").addEventListener("change",setMinuteOnTimer);
+   document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
+   document.getElementById("request").addEventListener("click",requestWorkout);
+ }
+
+ function timerVisibility(){
+   if(tipoAll.value == "SCHEDA"){
+     timer.style.display = "none";
+   }
+   else if(timer.style.display == "none" && tipoAll != "SCHEDA"){
+     timer.style.display = "block";
+   }
  }
 
  function startWorkout(){
    for(let i = 0; i<workoutParameters.length; i++){
      workoutParameters[i].style.display = "none";
    }
+   document.getElementById("request").style.display = "none";
+   document.getElementById("start").disabled = true;
+   document.getElementById("stop").style.display="block";
+   document.getElementById("pause").style.display="block";
    DZ.player.next();
    document.getElementById("player").style.display = "block";
    DZ.player.play();
+   startTimer();
+ }
+
+ function stopWorkout(){
+   DZ.player.pause();
+   stopTimer();
+   document.getElementById("displayEsercizi").innerHTML = " ";
+   document.getElementById("request").style.display = "block";
+ }
+
+ function pauseWorkout(){
+   var resumeButton = document.getElementById("resume");
+   DZ.player.pause();
+   clearInterval(timerInterval);
+   document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+   resumeButton.style.display="Block";
+   resumeButton.addEventListener("click",resumeWorkout);
+   document.getElementById("pause").style.display="none";
+ }
+
+ function resumeWorkout(){
+   DZ.player.play();
+   document.getElementById("pause").style.display="block";
+   document.getElementById("resume").style.display="none";
    startTimer();
  }
 
@@ -33,8 +76,6 @@
      document.getElementById("pannelloWorkout").innerHTML = workoutType;
    }
    else{
-     //Richiesta per workout random
-     alert("Workout random");
      document.getElementById("pannelloWorkout").innerHTML = workoutType;
    }
 
@@ -47,27 +88,111 @@
      document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
    }
    else{
-     //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
-     alert("Allenamento con minuti random");
+     var tempo = Math.floor(Math.random() * (60 - 10) + 10);
+     TIME_LIMIT = tempo * 60;
+     document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
    }
+ }
+
+ function requestWorkout(){
+   var allScelto;
+   var reqURI = "apiDb.php/";
+   if(tipoAll.value == "Random"){
+     var sceltaAll = ["AMRAP","EMOM","SCHEDA"];
+     allScelto = sceltaAll[(Math.floor(Math.random() * (3 - 1+1) + 1)) - 1];
+     reqURI += generateURI(allScelto,reqURI);
+    document.getElementById("pannelloWorkout").innerHTML = allScelto + " " + formatTime(TIME_LIMIT) + " minuti";
+   }
+   else{
+     reqURI += generateURI(tipoAll.value,reqURI);
+     document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
+     }
+   //Gestione casistiche random
+   document.getElementById("start").disabled = false;
+   document.getElementById("displayEsercizi").innerHTML = " ";
+   var ajax = new XMLHttpRequest();
+   ajax.onreadystatechange = function(){
+     if(ajax.readyState == 4){
+       console.log(ajax.responseText);
+       console.log(reqURI);
+       var esercizi = JSON.parse(ajax.responseText);
+       //document.getElementById("displayEsercizi").innerHTML = esercizi;
+       displayWorkout(esercizi);
+     }
+   };
+   ajax.open("GET",reqURI,true);
+   ajax.send(null);
+ }
+
+ function calculateEmomIntervals(){ //CALCOLO QUI IL TEMPO PER L'EMOM
+   var intervallo;
+   var rounds;
+   if(tipoAll.value == "Random"){
+     intervallo = Math.floor(Math.random() * (5 - 2+1) + 2);
+     rounds = Math.floor(Math.random()* ((Math.ceil(60/intervallo)) - intervallo+1) + intervallo);
+     TIME_LIMIT = (rounds*intervallo) * 60;
+     document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
+   }
+   else{
+     var tempo = document.getElementById("tempo").value;
+     rounds = Math.floor(Math.random()* (10 - 2+1)+2);
+     intervallo = Math.ceil(tempo/rounds);
+     TIME_LIMIT = tempo*60;
+   }
+   return intervallo;
+ }
+
+ function generateURI(allScelto,reqURI){
+   reqURI = allScelto;
+   switch(allScelto){
+     case "AMRAP":
+     if(timer.style.display == "none")
+     {
+       timer.style.display = "block"
+     }
+     setMinuteOnTimer();
+      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked);
+      break;
+     case "EMOM":
+     if(timer.style.display == "none")
+     {
+       timer.style.display = "block";
+     }
+      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked)+ "/" + calculateEmomIntervals();
+      break;
+     case "SCHEDA":
+     timer.style.display = "none";
+     //caso scheda da Vedere
+     break;
+   }
+   return reqURI;
+ }
+
+ function displayWorkout(esercizi){
+   var listaEsercizi = document.createElement("ul");
+   listaEsercizi.id = "listaEsercizi";
+   var numRep;
+   for(var i=0;i<esercizi.length;i++){
+     var Esercizio = document.createElement("li");
+     //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+     numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
+     //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+     Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+     listaEsercizi.appendChild(Esercizio);
+   }
+   document.getElementById("displayEsercizi").appendChild(listaEsercizi);
  }
 
 </script>
 
-<button> Area riservata </button> <br> <br> <!--- Da mettere in alto a destra  --->
+<button> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
 <div id="DescrizionewWorkout">
-  <ul id="ListaAllenamenti"> <!--- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout --->
+  <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
     <li>
         <a href="AMRAP.html"> AMRAP </a>
     </li>
     <li>
         <a href="EMOM.html"> EMOM </a>
-    </li>
-    <li>
-        <a href="TABATA.html"> TABATA </a>
-    </li>
-    <li>
-        <a href="FORTIME.html"> FOR TIME </a>
     </li>
     <li>
         <a href="Scheda.html"> Scheda </a>
@@ -79,7 +204,16 @@
   <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
       <script src="ExternalJs/timer.js"> </script>
   </div> <br> <br>
-  <button id="start"> Start workout! </button> <br> <br>
+</div>
+
+<div id="displayEsercizi"> </div>
+
+<div id="pulsanti">
+  <button id="request"> Request workout </button>
+  <button id="start"> Start workout </button>
+  <button id="stop" class="invisibles"> Stop workout </button>
+  <button id="pause" class="invisibles"> Pause workout </button>
+  <button id="resume" class="invisibles"> Resume workout </button>
 </div>
 
 <div id="pannelloWorkout"> <!-- sezione dove compariranno gli esercizi -->
@@ -91,8 +225,6 @@
     <option value="Random"> Allenamento random </option>
     <option value="AMRAP"> AMRAP </option>
     <option value="EMOM"> EMOM </option>
-    <option value="TABATA"> TABATA </option>
-    <option value="FORTIME"> FOR TIME </option>
     <option value="SCHEDA"> Scheda </option>
   </select>
   <br> <br>
@@ -116,6 +248,10 @@
         workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
       </script>
     </div>
+    <div id="tipoEsercizi">
+      Allenamento solo pesistica?
+      <input type="checkbox" id="pesiSiNo">
+    </div>
 </div>
 <!-- API DEEZER -->
 <script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
@@ -123,11 +259,13 @@
 <div id="player"> </div>
 
 <script>
+  timer = document.getElementById("timer");
+  tipoAll = document.getElementById("tipoAllenamento");
   document.getElementById("player").style.display = "none";
   DZ.init({
     appId  : '539622',
-    channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
-    //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+    //channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
+    channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.php',
     player: {
       container: 'player',
       cover : true,

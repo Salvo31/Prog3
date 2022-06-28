@@ -14,12 +14,14 @@
     TIME_LIMIT = 0;
 
     function bindEvents(){
+      document.getElementById("start").disabled = true;
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("secOn").addEventListener("change",validateIntervals);
       document.getElementById("intervalliSiNo").addEventListener("change",spawnIntervals);
       document.getElementById("esercizi").addEventListener("change",spawnMinuteSelector);
       document.getElementById("stop").addEventListener("click",stopWorkout);
       document.getElementById("pause").addEventListener("click",pauseWorkout);
+      document.getElementById("request").addEventListener("click",requestWorkout);
     }
 
     function spawnMinuteSelector(){
@@ -67,6 +69,8 @@
       for(let i = 0; i<workoutParameters.length; i++){
         workoutParameters[i].style.display = "none";
       }
+      document.getElementById("request").style.display = "none";
+      document.getElementById("start").disabled = true;
       document.getElementById("stop").style.display="block";
       document.getElementById("pause").style.display="block";
       DZ.player.next();
@@ -78,6 +82,8 @@
     function stopWorkout(){
       DZ.player.pause();
       stopTimer();
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      document.getElementById("request").style.display = "block";
     }
 
     function pauseWorkout(){
@@ -131,6 +137,47 @@
       }
     }
 
+    function requestWorkout(){
+      if(document.getElementById("tempo").value == 0)
+      {
+        TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
+        TIME_LIMIT = TIME_LIMIT * 60;
+        document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
+        document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
+      }
+      document.getElementById("start").disabled = false;
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      var ajax = new XMLHttpRequest();
+      var pesi = Number(document.getElementById("pesiSiNo").checked);
+      var nEsercizi = document.getElementById("esercizi").value;
+      var reqURI = "apiDb.php/TABATA/"+pesi+"/"+nEsercizi;
+      ajax.onreadystatechange = function(){
+        if(ajax.readyState == 4){
+          console.log(ajax.responseText);
+          var esercizi = JSON.parse(ajax.responseText);
+          //document.getElementById("displayEsercizi").innerHTML = esercizi;
+          displayWorkout(esercizi);
+        }
+      };
+      ajax.open("GET",reqURI,true);
+      ajax.send(null);
+    }
+
+    function displayWorkout(esercizi){
+      var listaEsercizi = document.createElement("ul");
+      listaEsercizi.id = "listaEsercizi";
+      var numRep;
+      for(var i=0;i<esercizi.length;i++){
+        var Esercizio = document.createElement("li");
+        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
+        //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+        listaEsercizi.appendChild(Esercizio);
+      }
+      document.getElementById("displayEsercizi").appendChild(listaEsercizi);
+    }
+
   </script>
 
   <div id="descrizione">
@@ -148,6 +195,12 @@
     <div id="app">
       <script src="ExternalJs/timer.js"> </script>
     </div>
+  </div>
+
+    <div id="displayEsercizi"> </div>
+
+  <div id="pulsanti">
+    <button id="request"> Request workout </button>
     <button id="start"> Start workout </button>
     <button id="stop" class="invisibles"> Stop workout </button>
     <button id="pause" class="invisibles"> Pause workout </button>
@@ -169,7 +222,7 @@
     </div> <br>
 
     <div id="tipoEsercizi">
-      Disponi di manubri/pesi?
+      Allenamento solo pesistica?
       <input type="checkbox" id="pesiSiNo">
     </div> <br>
 
@@ -206,8 +259,8 @@
     document.getElementById("player").style.display = "none";
     DZ.init({
       appId  : '539622',
-      channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
-      //channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.html',
+      //channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
+      channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.php',
       player: {
         container: 'player',
         cover : true,

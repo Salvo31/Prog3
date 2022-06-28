@@ -1,6 +1,7 @@
 # Prog3
 Progetto sul random workout generator
 // --- DECISO. FILE DI VERSIONING. OGNI COMMIT E' DESCRITTO QUI --- // <br>
+***DECISO: PER FARE PRIMA RENDERO' DISPONIBILI SOLO AMRAP,TABATA E LA SCHEDA PER MEMARE*** <br>
 10/06/2022 -> COSE FATTE: <br>
 <ul>
   <li> Fixato deezer. Deciso di rimuovere il file esterno </li>
@@ -35,6 +36,14 @@ Progetto sul random workout generator
   <li> Ottimizzata la gestione della chiamata che genera la lista di gruppi muscolari su scheda.html </li>
   <li> Gestita la richiesta dell'AMRAP randomico </li>
   <li> Aggiunta logica ulteriore con pulsante. Pulsante di richiesta allenamento. Se prima non viene richiesto, non si può abilitare lo start </li>
+</ul> <br>
+
+/ /2022 -> COSE FATTE: <br>
+<ul>
+  <li> Spostato il calcolo del tempo random nella logica di richiesta workout</li>
+  <li> CAMBIATI GLI URI PER DIFFERENZIARE IL FILE apiDb.php . AL POSTO DELLA TABELLA INSERISCO IL NOME DELL'ALLENAMENTO </li>
+  <li> Deciso di tenere amrap ed EMOM (con la logica del tabata esclusi recupero e intervalli) </li>
+  <li> Fixata logica Index.html (spawn timer caso scheda e gestione richieste in caso di allenamenti random) </li>
 </ul>
 
 FIX DA RIVEDERE: <br>
@@ -53,6 +62,12 @@ FIX DA RIVEDERE: <br>
   <li> Gestire in try-catch chiamate ajax (?) </li>
   <li> Decidere come implementare gli aiuti per gli esercizi(se usare GIF da piazzare o usare dei link) </li>
   <li> Ideare pagina per sostituzioni esercizi </li>
+  <li> Verificare se è possibile inoltrare un URI senza il nome della tabella, nel caso in cui essa sia uguale </li>
+  <li> Snellire dove necessario le query, evitando l'uso di * </li>
+  <li> ***BUTTARE FUORI DALLE PALLE FOR TIME E TABATA (aggiungere logica spawn tempi in emom).*** </li>
+  <li> Fixare logica set in richiesta EMOM (caso di meno righe degli esercizi richiesti) </li>
+  <li> Occhio alla restituzione dell'intervallo random in index.html far si che il tempo minimo che esce sia maggiore del numero <br>
+  massimo di esercizi che possono uscire </li>
 </ul> <br>
 
 TIPS AND TRICKS: <br>

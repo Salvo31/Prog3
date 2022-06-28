@@ -37,39 +37,56 @@
       case 'gruppomuscolare':
         $sql = $conn->prepare("select * from $table");
         $sql->execute();
-        $res = elaborateQuery($sql);
+        $res = elaborateQuery($sql,$conn);
         break;
-      case 'Esercizio':
-        $sql = $conn->prepare("select * from $table where tipologia='$key'");
+      case 'AMRAP':
+        $sql = $conn->prepare("select * from Esercizio where tipologia='$key'");
         $sql->execute();
-        $res = elaborateQuery($sql);
-        $res = randomAmrap($res);
+        $res = elaborateQuery($sql,$conn);
+        $res = randomAmrap($res,$sql,$conn);
+        break;
+      case 'EMOM':
+        $intervallo = array_shift($request);
+        $sql = $conn->prepare("select * from Esercizio where tipologia='$key' limit $intervallo");
+        $sql->execute();
+        $res = elaborateQuery($sql,$conn);
+        $res = randomEmom($res,$sql);
         break;
     }
     $json = json_encode($res);
     echo $json;
   }
 
-  function elaborateQuery($query){
+  function elaborateQuery($query,$conn){
     $result = $query->fetchAll(PDO::FETCH_ASSOC);
     if($result){
       return $result;
     }
     else{
-      return $result = "Errore query, poderoso urlo del sinto ".$conn->errorMsg();
+    /*  echo $request." ".$intervallo;
+      print_r("Errore query, poderoso urlo del sinto ".$conn->errorInfo());
+      return $result = "Errore query, poderoso urlo del sinto ".$conn->errorInfo();*/
+      //echo "Errore ".$conn->errorInfo();
+      print_r($conn->errorInfo());
     }
   }
 
+  function randomEmom($res,$sql){
+    $rowsAffected = $sql->rowCount();
+    $set = new \Ds\Set();
+    do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
+      $set->add($res[rand(0,$rowsAffected-1)]);
+    }while($set->count() < $rowsAffected);
+    return $set;
+  }
 
-  function randomAmrap($res){
-    global $conn,$sql;
+  function randomAmrap($res,$sql,$conn){
     $rowsAffected = $sql->rowCount();
     $numEs = rand(3,$rowsAffected);
     $set = new \Ds\Set();
     for($i=0;$i<$numEs;$i++){
       $set->add($res[rand(0,$rowsAffected-1)]);
     }
-    //$tmpArray = array_unique($tmpArray);
     return $set;
   }
 
