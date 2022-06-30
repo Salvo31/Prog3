@@ -14,19 +14,21 @@
     Proprio come quelle che si utilizzano in sala attrezzi! Con la differenza che qui ti dovrai affidare al caso...
   </div> <br> <br>
 
-  <div id="pannelloWorkout"> </div> <br>
+  <div id="displayEsercizi">  </div> <br>
+  <!-- <div id="pannelloWorkout"> </div> <br> -->
+  <button id="request"> Request workout </div>
   <button id="start"> Start workout </button>
   <button id="stop"> Stop workout </button> <br>
 
   <div id="opzioniAllenamento">
-    Vuoi selezionare un focus di gruppi muscolari per l'allenamento di oggi?
+  <!--  Vuoi selezionare un focus di gruppi muscolari per l'allenamento di oggi?
     <input type="checkbox" id="checkGruppi"> <br>
 
     <div id="selezioneGruppi" class="invisibles">
       <div id="gruppi">
 
       </div>
-    </div>
+    </div> -->
     <div id="tipoEsercizi">
       Disponi di manubri/pesi?
       <input type="checkbox" id="pesiSiNo">
@@ -40,9 +42,9 @@
   <script>
 
     window.onload = bindEvents;
-    richiestaGruppiMuscolari();
-    var placeholder = document.getElementById("gruppi");
-    var gruppiScelti = new listaGruppi();
+    //richiestaGruppiMuscolari();
+    //var placeholder = document.getElementById("gruppi");
+    //var gruppiScelti = new listaGruppi();
     document.getElementById("player").style.display = "none";
     document.getElementById("stop").style.display = "none";
     DZ.init({
@@ -65,13 +67,17 @@
     }
 
     function bindEvents(){
-      document.getElementById("checkGruppi").addEventListener("change",setGruppiMuscolari);
+      document.getElementById("start").disabled = true;
+      document.getElementById("request").addEventListener("click",requestWorkout);
+      //document.getElementById("checkGruppi").addEventListener("change",setGruppiMuscolari);
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("stop").addEventListener("click",stopWorkout);
     }
 
 
     function stopWorkout(){
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      document.getElementById("request").style.display = "block";
       document.getElementById("start").style.display = "block";
       document.getElementById("stop").style.display = "none";
       document.getElementById("tipoEsercizi").style.display = "block";
@@ -82,6 +88,8 @@
     function startWorkout(){
       DZ.player.next();
       DZ.player.play();
+      document.getElementById("request").style.display = "none";
+      document.getElementById("start").disabled = true;
       document.getElementById("opzioniAllenamento").style.display = "none";
       document.getElementById("player").style.display = "block";
       document.getElementById("start").style.display = 'none';
@@ -89,9 +97,9 @@
       document.getElementById("tipoEsercizi").style.display = "none";
     }
 
-    function verificaSelezione(){
-      /*Modificare per scegliere se nell'oggetto bisogna memorizzare anche l'id
-      del db o solo questo e poi sommare/sottrarre. Dal punto di vista computazionale */
+    /*function verificaSelezione(){
+      Modificare per scegliere se nell'oggetto bisogna memorizzare anche l'id
+      del db o solo questo e poi sommare/sottrarre. Dal punto di vista computazionale
       var gruppoSelezionato = document.getElementById(event.srcElement.id);
       if(gruppoSelezionato.checked && gruppiScelti.count < 3){
         gruppiScelti.addElement(gruppoSelezionato.id);
@@ -151,6 +159,39 @@
       };
       ajax.open("GET","apiDb.php/gruppomuscolare",true);
       ajax.send(null);
+    } */
+
+    function requestWorkout(){
+      document.getElementById("start").disabled = false;
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      var ajax = new XMLHttpRequest();
+      var reqURI = "apiDb.php/SCHEDA/"+Number(document.getElementById("pesiSiNo").checked)+"/"+ Math.floor(Math.random() * (10 - 5+1) + 5);
+      ajax.onreadystatechange = function(){
+        if(ajax.readyState == 4){
+          console.log(ajax.responseText);
+          console.log(reqURI);
+          var esercizi = JSON.parse(ajax.responseText);
+          //document.getElementById("displayEsercizi").innerHTML = esercizi;
+          displayWorkout(esercizi);
+        }
+      };
+      ajax.open("GET",reqURI,true);
+      ajax.send(null);
+    }
+
+    function displayWorkout(esercizi){
+      var listaEsercizi = document.createElement("ul");
+      listaEsercizi.id = "listaEsercizi";
+      var numRep;
+      var numSerie;
+      for(var i=0;i<esercizi.length;i++){
+        var Esercizio = document.createElement("li");
+        numRep = Math.floor(Math.random() * (15 - 6+1) + 6);
+        numSerie = Math.floor(Math.random() * (6 - 2+1)+2);
+        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+ numSerie + " x " + numRep;
+        listaEsercizi.appendChild(Esercizio);
+      }
+      document.getElementById("displayEsercizi").appendChild(listaEsercizi);
     }
 
 

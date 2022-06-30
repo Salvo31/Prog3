@@ -30,6 +30,7 @@
    else if(timer.style.display == "none" && tipoAll != "SCHEDA"){
      timer.style.display = "block";
    }
+   document.getElementById("base-timer-label").innerHTML = formatTime(0);
  }
 
  function startWorkout(){
@@ -100,12 +101,23 @@
    if(tipoAll.value == "Random"){
      var sceltaAll = ["AMRAP","EMOM","SCHEDA"];
      allScelto = sceltaAll[(Math.floor(Math.random() * (3 - 1+1) + 1)) - 1];
+     tipoAll.value=allScelto;
      reqURI += generateURI(allScelto,reqURI);
-    document.getElementById("pannelloWorkout").innerHTML = allScelto + " " + formatTime(TIME_LIMIT) + " minuti";
+     if(allScelto == "SCHEDA"){
+       document.getElementById("pannelloWorkout").innerHTML = allScelto;
+     }
+     else{
+       document.getElementById("pannelloWorkout").innerHTML = allScelto + " " + formatTime(TIME_LIMIT) + " minuti";
+     }
    }
    else{
      reqURI += generateURI(tipoAll.value,reqURI);
-     document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
+     if(tipoAll.value == "SCHEDA"){
+       document.getElementById("pannelloWorkout").innerHTML = tipoAll.value;
+     }
+     else{
+       document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
+     }
      }
    //Gestione casistiche random
    document.getElementById("start").disabled = false;
@@ -126,17 +138,16 @@
 
  function calculateEmomIntervals(){ //CALCOLO QUI IL TEMPO PER L'EMOM
    var intervallo;
-   var rounds;
-   if(tipoAll.value == "Random"){
+   var tempo = document.getElementById("tempo").value;
+   if(tempo == 0){
+     var rounds;
      intervallo = Math.floor(Math.random() * (5 - 2+1) + 2);
      rounds = Math.floor(Math.random()* ((Math.ceil(60/intervallo)) - intervallo+1) + intervallo);
      TIME_LIMIT = (rounds*intervallo) * 60;
      document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
    }
    else{
-     var tempo = document.getElementById("tempo").value;
-     rounds = Math.floor(Math.random()* (10 - 2+1)+2);
-     intervallo = Math.ceil(tempo/rounds);
+     intervallo = Math.floor(Math.random()* (5 - 2+1)+2);
      TIME_LIMIT = tempo*60;
    }
    return intervallo;
@@ -158,11 +169,12 @@
      {
        timer.style.display = "block";
      }
-      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked)+ "/" + calculateEmomIntervals();
+      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked) + "/" + calculateEmomIntervals();
       break;
      case "SCHEDA":
      timer.style.display = "none";
-     //caso scheda da Vedere
+     //URI: apiDb.php/SCHEDA/pesi/n°Esercizi
+     reqURI += "/" + Number(document.getElementById("pesiSiNo").checked) + "/" + Math.floor(Math.random() * (10 - 5+1) + 5);
      break;
    }
    return reqURI;
@@ -172,13 +184,26 @@
    var listaEsercizi = document.createElement("ul");
    listaEsercizi.id = "listaEsercizi";
    var numRep;
-   for(var i=0;i<esercizi.length;i++){
-     var Esercizio = document.createElement("li");
-     //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
-     numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
-     //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
-     Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
-     listaEsercizi.appendChild(Esercizio);
+   if(tipoAll.value != "SCHEDA"){
+     for(var i=0;i<esercizi.length;i++){
+       var Esercizio = document.createElement("li");
+       //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+       numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
+       //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+       Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+       listaEsercizi.appendChild(Esercizio);
+     }
+   }
+   else{
+     for(var i=0;i<esercizi.length;i++){
+       var Esercizio = document.createElement("li");
+       //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+       numRep = Math.floor(Math.random() * (15 - 6+1) + 6);
+       numSerie = Math.floor(Math.random() * (6 - 2+1)+2);
+       //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
+       Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+ numSerie + " x " + numRep;
+       listaEsercizi.appendChild(Esercizio);
+     }
    }
    document.getElementById("displayEsercizi").appendChild(listaEsercizi);
  }

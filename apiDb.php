@@ -52,6 +52,13 @@
         $res = elaborateQuery($sql,$conn);
         $res = randomEmom($res,$sql);
         break;
+      case 'SCHEDA':
+        $numEs = array_shift($request);
+        $sql = $conn->prepare("select * from Esercizio where tipologia='$key' limit $numEs");
+        $sql->execute();
+        $res = elaborateQuery($sql,$conn);
+        $res = randomScheda($res,$sql);
+        break;
     }
     $json = json_encode($res);
     echo $json;
@@ -69,6 +76,15 @@
       //echo "Errore ".$conn->errorInfo();
       print_r($conn->errorInfo());
     }
+  }
+
+  function randomScheda($res,$sql){
+    $rowsAffected = $sql->rowCount();
+    $set = new \Ds\Set();
+    do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
+      $set->add($res[rand(0,$rowsAffected-1)]);
+    }while($set->count() < $rowsAffected);
+    return $set;
   }
 
   function randomEmom($res,$sql){

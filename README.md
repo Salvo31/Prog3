@@ -38,37 +38,48 @@ Progetto sul random workout generator
   <li> Aggiunta logica ulteriore con pulsante. Pulsante di richiesta allenamento. Se prima non viene richiesto, non si può abilitare lo start </li>
 </ul> <br>
 
-/ /2022 -> COSE FATTE: <br>
+30/06/2022 -> COSE FATTE: <br>
 <ul>
   <li> Spostato il calcolo del tempo random nella logica di richiesta workout</li>
   <li> CAMBIATI GLI URI PER DIFFERENZIARE IL FILE apiDb.php . AL POSTO DELLA TABELLA INSERISCO IL NOME DELL'ALLENAMENTO </li>
   <li> Deciso di tenere amrap ed EMOM (con la logica del tabata esclusi recupero e intervalli) </li>
   <li> Fixata logica Index.html (spawn timer caso scheda e gestione richieste in caso di allenamenti random) </li>
+  <li> Creata logica di spawn esercizi scheda in index.html </li>
+  <li> Creata logica di spawn esercizi scheda in scheda.html </li>
+  <li> Eliminata logica di scelta focus gruppi muscolari in scheda.html </li>
+  <li> Testato DZ.ready() e non sembra andare </li>
 </ul>
 
 FIX DA RIVEDERE: <br>
 <ul>
   <li> ***Migliorare l'interattività nel tabata; automatizzare il calcolo del timer in base agli esercizi <br>
     selezionati o limitarne la scelta.*** </li>
-  <li> CAPIRE SE DEEZER HA PROBLEMI DI SUO O STO SBAGLIANDO QUALCOSA IO. Guardare con attenzione gli errori lanciati <br>
+  <li> ***CAPIRE SE DEEZER HA PROBLEMI DI SUO O STO SBAGLIANDO QUALCOSA IO. Guardare con attenzione gli errori lanciati <br>
   in console. EVENTUALMENTE fixare il problema dell'autoplay iniziale: non parte in automatico la canzone all'inizio <br>
-  Devo necessariamente farla partire io col click </li>
+  Devo necessariamente farla partire io col click*** </li>
   <li> ***AGGIUNGERE tasto stop al workout*** </li>
   <li> RISCRIVERE ERRORE QUERY IN apiDb.php </li>
-  <li> CAPIRE a che pro ho il div "rounds" in TABATA.html </li>
   <li> Vagliare l'ipotesi di usare più variabili al posto delle chiamate ai div classiche </li>
   <li> Rivedere logica dei "workoutParameters" , se mantenerla o meno </li>
-  <li> Rimuovere funzione/alert della funzione che fa vedere la lista dei gruppi selezionati in scheda.html </li>
+  <li> ***Rimuovere funzione/alert della funzione che fa vedere la lista dei gruppi selezionati in scheda.html*** </li>
   <li> Gestire in try-catch chiamate ajax (?) </li>
   <li> Decidere come implementare gli aiuti per gli esercizi(se usare GIF da piazzare o usare dei link) </li>
   <li> Ideare pagina per sostituzioni esercizi </li>
-  <li> Verificare se è possibile inoltrare un URI senza il nome della tabella, nel caso in cui essa sia uguale </li>
+  <li> ***Verificare se è possibile inoltrare un URI senza il nome della tabella, nel caso in cui essa sia uguale*** </li>
   <li> Snellire dove necessario le query, evitando l'uso di * </li>
   <li> ***BUTTARE FUORI DALLE PALLE FOR TIME E TABATA (aggiungere logica spawn tempi in emom).*** </li>
   <li> Fixare logica set in richiesta EMOM (caso di meno righe degli esercizi richiesti) </li>
   <li> Occhio alla restituzione dell'intervallo random in index.html far si che il tempo minimo che esce sia maggiore del numero <br>
   massimo di esercizi che possono uscire </li>
+  <li> Fixare bug timer in index.html </li>
+  <li> Tentare l'uso della funzione Ready per poter evitare il bug dell'autoplay su chromium </li>
+  <li> DIV pannelloWorkout -> Probabilmente sostituito da displayEsercizi, VERIFICARE </li>
 </ul> <br>
+
+NOTE SU FIX RISOLTI; <br>
+<ul>
+  <li> Autoplay deezer buggato su browser con chromium - Su firefox funziona </li>
+</ul>
 
 TIPS AND TRICKS: <br>
 <ul>
