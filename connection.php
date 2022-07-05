@@ -4,12 +4,9 @@
   $password = "";
   $dbname = "randomworkoutgenerator";
 
-  try{
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname",$username,$password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-  }
-  catch(PDOException $e){
-    echo "Connessione fallita. ziopera. ". $e->getMessage()." <br>";
+  $conn = new mysqli($servername,$username,$password,$dbname);
+  if($conn->connect_errno){
+    echo "Connessione fallita. ziopera. ". $conn->connect_error." <br>";
   }
 
   if(!isset($conn)){

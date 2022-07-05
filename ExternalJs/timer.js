@@ -57,6 +57,7 @@ function onTimesUp() {
   document.getElementById("request").style.display = "block";
   document.getElementById("start").disabled = true;
   document.getElementById("displayEsercizi").innerHTML = " ";
+  document.getElementById("personal").style.display = "block";
   //Aggiunta mia - end
 
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);

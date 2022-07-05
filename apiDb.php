@@ -30,42 +30,53 @@
     }
   }*/
 
-
   if($method == 'GET'){
     $res;
     switch($table){
-      case 'gruppomuscolare':
-        $sql = $conn->prepare("select * from $table");
-        $sql->execute();
-        $res = elaborateQuery($sql,$conn);
-        break;
       case 'AMRAP':
-        $sql = $conn->prepare("select * from Esercizio where tipologia='$key'");
-        $sql->execute();
+        $sql = "select * from Esercizio where tipologia='$key'";
         $res = elaborateQuery($sql,$conn);
-        $res = randomAmrap($res,$sql,$conn);
+        $res = randomAmrap($res);
         break;
       case 'EMOM':
         $intervallo = array_shift($request);
-        $sql = $conn->prepare("select * from Esercizio where tipologia='$key' limit $intervallo");
-        $sql->execute();
+        $sql = "select * from Esercizio where tipologia='$key' limit $intervallo";
         $res = elaborateQuery($sql,$conn);
-        $res = randomEmom($res,$sql);
+        $res = randomEmom($res);
         break;
       case 'SCHEDA':
         $numEs = array_shift($request);
-        $sql = $conn->prepare("select * from Esercizio where tipologia='$key' limit $numEs");
-        $sql->execute();
+        $sql = "select * from Esercizio where tipologia='$key' limit $numEs";
         $res = elaborateQuery($sql,$conn);
-        $res = randomScheda($res,$sql);
+        $res = randomScheda($res);
         break;
     }
     $json = json_encode($res);
     echo $json;
   }
+  else if($method == 'POST'){
+    $res;
+    switch($table){
+      case 'login':
+        $sql = "select Nome,Cognome from utente where email = '$values[0]' and password = '$values[1]' ";
+        $res = elaborateQuery($sql,$conn);
+        echo returnFromLogin($res,$sql);
+        break;
+      case 'register':
+        $sql = "Insert into utente (Nome,Cognome,Password,Email) Values ('$values[0]','$values[1]','$values[2]','$values[3]')";
+        $res = $conn->query($sql);
+        if($res == true){
+          echo json_encode(["success" => true]);
+        }
+        else{
+          echo json_encode(["success" => false]);
+        }
+        break;
+    }
+  }
 
   function elaborateQuery($query,$conn){
-    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+    $result = $conn->query($query);
     if($result){
       return $result;
     }
@@ -74,34 +85,48 @@
       print_r("Errore query, poderoso urlo del sinto ".$conn->errorInfo());
       return $result = "Errore query, poderoso urlo del sinto ".$conn->errorInfo();*/
       //echo "Errore ".$conn->errorInfo();
-      print_r($conn->errorInfo());
+      print_r($conn->error);
     }
   }
 
-  function randomScheda($res,$sql){
-    $rowsAffected = $sql->rowCount();
+  function returnFromLogin($res){
+    $rows = $res->fetch_object();
+    if($rows){
+      $rows->success = true;
+    }
+    else{
+      $rows = ["success" => false];
+    }
+    return json_encode($rows);
+  }
+
+  function randomScheda($res){
+    $rowsAffected = $res->num_rows;
+    $rows = $res->fetch_All(MYSQLI_BOTH);
     $set = new \Ds\Set();
     do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
-      $set->add($res[rand(0,$rowsAffected-1)]);
+      $set->add($rows[rand(0,$rowsAffected-1)]);
     }while($set->count() < $rowsAffected);
     return $set;
   }
 
-  function randomEmom($res,$sql){
-    $rowsAffected = $sql->rowCount();
+  function randomEmom($res){
+    $rowsAffected = $res->num_rows;
+    $rows = $res->fetch_All(MYSQLI_BOTH);
     $set = new \Ds\Set();
     do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
-      $set->add($res[rand(0,$rowsAffected-1)]);
+      $set->add($rows[rand(0,$rowsAffected-1)]);
     }while($set->count() < $rowsAffected);
     return $set;
   }
 
-  function randomAmrap($res,$sql,$conn){
-    $rowsAffected = $sql->rowCount();
+  function randomAmrap($res){
+    $rowsAffected = $res->num_rows;
+    $rows = $res->fetch_All(MYSQLI_BOTH);
     $numEs = rand(3,$rowsAffected);
     $set = new \Ds\Set();
     for($i=0;$i<$numEs;$i++){
-      $set->add($res[rand(0,$rowsAffected-1)]);
+      $set->add($rows[rand(0,$rowsAffected-1)]);
     }
     return $set;
   }

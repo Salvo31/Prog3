@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="Css/cssTemporanei.css">
+  <title> Sostituzioni esercizi </title>
+</head>
+
+<body>
+  <div id="descrizione">
+    <h2> <strong> Sostituzioni </strong> </h2> <br>
+      Qui sono presenti i tutorial per le sostituzioni da effettuare su alcuni esercizi <br>
+      nel caso in cui tu sia impossibilitato/a a svolgerli nella maniera completa!
+  </div> <br> <br>
+  <div id="tutorials">
+    <iframe src="https://www.youtube.com/embed/4-h4Y4kqU4I" width="420px" height="345px" class="esercizio invisibles"></iframe>
+    <button id="0" name="Push up"> Push up </button> <br>
+    <iframe src="https://www.youtube.com/embed/bZcJbM_Mzxo" width="420px" height="345px" class="esercizio invisibles"> </iframe>
+    <button id="1" name="Pull up"> Pull up </button> <br>
+    <iframe src="https://www.youtube.com/embed/Ajna6AxQdtw" width="420px" height="345px" class="esercizio invisibles" ></iframe>
+    <button id="2" name="Pike push up"> Pike push up </button> <br>
+  </div>
+
+  <script>
+    window.onload = bindEvents;
+    const maxEsercizi = document.querySelectorAll('#tutorials button');
+
+    function bindEvents(){
+      for(var i=0; i<maxEsercizi.length;i++){
+        document.getElementById(i).addEventListener("click",displayIframe);
+      }
+    }
+
+    function displayIframe(event){
+      var buttonSrc = event.target;
+      var display = document.getElementsByClassName("esercizio")[buttonSrc.id];
+      if(display.style.display == "none"){
+        display.style.display = "block";
+        buttonSrc.innerHTML = "Premi per nascondere!";
+      }
+      else{
+        display.style.display = "none";
+        buttonSrc.innerHTML = buttonSrc.name;
+      }
+    }
+
+  </script>
+
+</body>
+
+
+</html>

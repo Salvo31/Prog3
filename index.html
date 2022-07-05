@@ -2,6 +2,7 @@
 <head>
   <title> Random Workout Generator </title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Modal Login -->
   <link rel="stylesheet" href="Css/timer.css">
   <link rel="stylesheet" href="Css/cssTemporanei.css">
 </head>
@@ -43,6 +44,7 @@
    document.getElementById("pause").style.display="block";
    DZ.player.next();
    document.getElementById("player").style.display = "block";
+   document.getElementById("personal").style.display = "none";
    DZ.player.play();
    startTimer();
  }
@@ -52,6 +54,7 @@
    stopTimer();
    document.getElementById("displayEsercizi").innerHTML = " ";
    document.getElementById("request").style.display = "block";
+   document.getElementById("personal").style.display = "block";
  }
 
  function pauseWorkout(){
@@ -128,7 +131,6 @@
        console.log(ajax.responseText);
        console.log(reqURI);
        var esercizi = JSON.parse(ajax.responseText);
-       //document.getElementById("displayEsercizi").innerHTML = esercizi;
        displayWorkout(esercizi);
      }
    };
@@ -189,7 +191,6 @@
        var Esercizio = document.createElement("li");
        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
-       //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
        listaEsercizi.appendChild(Esercizio);
      }
@@ -210,7 +211,47 @@
 
 </script>
 
-<button> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
+<div id="reservedAreaForm" class="modal">
+<!-- Modal content -->
+<div class="modal-content">
+  <div class="modal-header">
+    <span class="close">&times;</span> <!-- &times è una entità di html e serve per il simbolo della X -->
+    <h2>Aria riservata</h2>
+  </div>
+  <div class="modal-body">
+    <span id="loginButton" class="swipeBtn"> Login </span> <span id="registerButton" class="swipeBtn"> Register </span> <br>
+    <div id="loginForm">
+      <label for="email"> Email: </label> <br>
+      <input type="email" id="email" placeholder="mario.rossi@rwg.com"> <br>
+      <label for="password"> Password: </label> <br>
+      <input type="password" id="password"> <br>
+      <button id="login"> Log in </button>
+    </div>
+    <div id="signinForm" class="invisibles">
+      <p class="pwdAdvertiser"> La password deve essere lunga tra gli 8 ed i 15 caratteri. <br> Inoltre
+      deve contenere almeno 1 maiuscola,  <br> 1 minuscola, 1 numero <br> ed 1 carattere speciale </p>
+      <label for="name"> Nome: </label> <br>
+      <input type="text" id="name"> <br>
+      <label for="surname"> Cognome: </label> <br>
+      <input type="text" id="surname"> <br>
+      <label for="email"> Email: </label> <br>
+      <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com"> <br>
+      <label for="password1"> Password: </label> <br>
+      <input type="password" class="password2validate" id="password1"> <br>
+      <label for="password2"> Confirm Password: </label> <br>
+      <input type="password" class="password2validate" id="password2"> <br>
+      <button id="signup"> Sign up </button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button id="personal"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
+<div id="reservedAreaPanel">
+
+</div>
+
 <div id="DescrizionewWorkout">
   <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
     <li>
@@ -241,8 +282,10 @@
   <button id="resume" class="invisibles"> Resume workout </button>
 </div>
 
-<div id="pannelloWorkout"> <!-- sezione dove compariranno gli esercizi -->
+<div id="pannelloWorkout"> </div> <br>
 
+<div id="sostituzioni">
+  Per qualsiasi dubbio sugli esercizi da scalare ecco <a href="sostituzioniEsercizi.html"> qui </a> una guida che fa per te
 </div> <br>
 
 <div id="opzioniAllenamento"> <!-- Renderlo a scomparsa nel momento in cui inizia l'allenamento -->
@@ -303,8 +346,149 @@
 
   function playerLoaded(){
     DZ.player.playPlaylist(8424675842);
+    DZ.player.pause();
     DZ.player.setShuffle(true);
   }
+
+// Login popup - start
+var modal = document.getElementById("reservedAreaForm");
+var personalArea = document.getElementById("personal");
+var span = document.getElementsByClassName("close")[0];
+var logBtn = document.getElementById("loginButton");
+var regBtn = document.getElementById("registerButton");
+var submitLogin = document.getElementById("login");
+var submitRegister = document.getElementById("signup");
+
+personalArea.onclick = function(){
+  modal.style.display = "block";
+}
+
+span.onclick = function(){
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) { //Casistica in cui si clicca fuori dal form ed esso stesso si chiude
+  if (event.target == modal && (event.target != logBtn && event.target != regBtn)) {
+    modal.style.display = "none";
+  }
+}
+
+logBtn.addEventListener("click",swipeLogin);
+regBtn.addEventListener("click",swipeSignIn);
+
+function swipeLogin(){
+  document.getElementById("loginForm").style.display = "block";
+  document.getElementById("signinForm").style.display = "none";
+}
+
+function swipeSignIn(){
+  document.getElementById("signinForm").style.display = "block";
+  document.getElementById("loginForm").style.display = "none";
+}
+
+submitLogin.addEventListener("click",requestForLogin);
+submitRegister.addEventListener("click",requestForRegister);
+
+function requestForRegister(){ //  apiDb.php/register
+  var password = document.getElementsByClassName("password2validate")[0].value;
+  var passwordCnf = document.getElementsByClassName("password2validate")[1].value;
+  var email = document.getElementById("email2validate").value;
+  if(validateCredentials(password,email)){
+    if(password != passwordCnf){
+      alert("Le due password non coincidono!");
+      document.getElementsByClassName("password2validate")[0].value = "";
+      document.getElementsByClassName("password2validate")[1].value = "";
+    }
+    else{
+      var request = new Object();
+      request.nome = document.getElementById("name").value;
+      request.cognome = document.getElementById("surname").value;
+      request.password = password;
+      request.email = email;
+      var reqURI = "apiDb.php/register";
+      var ajax = new XMLHttpRequest();
+      try{
+        ajax.onreadystatechange = function(){
+          if(ajax.readyState == 4){
+            console.log(ajax.responseText);
+            var response = JSON.parse(ajax.responseText);
+            if(response.success == true){
+              alert("Utente registrato con successo! Ora puoi effettuare il login");
+              document.getElementById("name").value = " ";
+              document.getElementById("surname").value = " ";
+              document.getElementsByClassName("password2validate")[0].value = "";
+              document.getElementsByClassName("password2validate")[1].value = "";
+              document.getElementById("email2validate").value = "";
+              modal.style.display = "none";
+            }
+          }
+        };
+        ajax.open("POST",reqURI,true);
+        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        ajax.send(JSON.stringify(request));
+      }
+      catch(e){
+        console.log(e);
+      }
+    }
+  }
+  else{
+    alert("La password e/o la mail sono errate");
+    document.getElementsByClassName("password2validate")[0].value = "";
+    document.getElementsByClassName("password2validate")[1].value = "";
+    document.getElementById("email2validate").value = "";
+  }
+}
+
+function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
+  var request = new Object();
+  request.email = document.getElementById("email").value;
+  request.password = document.getElementById("password").value;
+  var reqURI = "apiDb.php/login";
+  var ajax = new XMLHttpRequest();
+  try{
+    ajax.onreadystatechange = function(){
+      if(ajax.readyState == 4){
+        console.log(ajax.responseText);
+        var response = JSON.parse(ajax.responseText);
+        if(response.success == true){
+          var panel = document.getElementById("reservedAreaPanel");
+          document.getElementById("personal").style.display = "none";
+          document.getElementById("email").value = "";
+          document.getElementById("password").value = "";
+          modal.style.display = "none";
+          //panel.innerHTML = response.Nome; LINK AREA riservata
+          var paginaAccount = document.createElement("a");
+          paginaAccount.href = "paginaPersonale.html";
+          paginaAccount.innerHTML = response.Nome;
+          panel.appendChild(paginaAccount);
+        }
+        else{
+          alert("Email e/o password errate");
+          document.getElementById("email").value = "";
+          document.getElementById("password").value = "";
+        }
+      }
+    };
+    ajax.open("POST",reqURI,true);
+    ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    ajax.send(JSON.stringify(request));
+  }
+  catch(e){
+    console.log(e);
+  }
+}
+
+function validateCredentials(pwd,email){
+  var paswd =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
+  if(pwd.match(paswd) && email.match(/@/)){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+// Login popup - end
 </script>
 
 </body>

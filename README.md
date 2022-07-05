@@ -50,6 +50,16 @@ Progetto sul random workout generator
   <li> Testato DZ.ready() e non sembra andare </li>
 </ul>
 
+05/07/2022 -> COSE FATTE: <br>
+<ul>
+  <li> Deciso di rimuovere la possibilità di fare allenamenti predefiniti </li>
+  <li> Aggiunta la pagina di sostituzione esercizi con iframe dei video necessari </li>
+  <li> aggiunto div con riferimento alla guida di sostituzione degli esercizi </li>
+  <li> Aggiunto "modal box" con login/reistrazione. CHIAMATA AL DB SENZA JWT </li>
+  <li> Aggiunta la pagina "paginaPersonale" da riempire con tutti i dati del caso. Decidere se mettere li il login o nelle pagine di allenamento </li>
+  <li> Aggiunto relativo css al modal e classe per avvertimento sulla password </li>
+</ul>
+
 FIX DA RIVEDERE: <br>
 <ul>
   <li> ***Migliorare l'interattività nel tabata; automatizzare il calcolo del timer in base agli esercizi <br>
@@ -73,12 +83,14 @@ FIX DA RIVEDERE: <br>
   massimo di esercizi che possono uscire </li>
   <li> Fixare bug timer in index.html </li>
   <li> Tentare l'uso della funzione Ready per poter evitare il bug dell'autoplay su chromium </li>
-  <li> DIV pannelloWorkout -> Probabilmente sostituito da displayEsercizi, VERIFICARE </li>
+  <li> ***DIV pannelloWorkout -> Probabilmente sostituito da displayEsercizi, VERIFICARE*** </li>
+  <li> Scegliere se mantenere la modalità MYSQLI_BOTH oppure fare un fetch_object e crearmi il json in apiDb.php </li>
 </ul> <br>
 
 NOTE SU FIX RISOLTI; <br>
 <ul>
   <li> Autoplay deezer buggato su browser con chromium - Su firefox funziona </li>
+  <li> Div pannelloWorkout usato per la descrizione ed info sul workout </li>
 </ul>
 
 TIPS AND TRICKS: <br>
