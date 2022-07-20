@@ -60,6 +60,17 @@ Progetto sul random workout generator
   <li> Aggiunto relativo css al modal e classe per avvertimento sulla password </li>
 </ul>
 
+20/07/2022 -> COSE FATTE: <br>
+
+<ul>
+  <li> Deciso di abbandonare deezer (dati i numerosi problemi) e di usare le API di yt con iframe </li>
+  <li> Rimosso attributo kcal bruciate da "allenamento generato" nello schema DB. Inoltre va rimossa anche "allenamento predefinito" </li>
+  <li> Ristrutturazione generale schema db </li>
+  <li> Fix visualizzazione pulsante area riservata </li>
+  <li> Sviluppo pagina riservata </li>
+  <li> Sviluppo salvataggio allenamenti in tutte le pagine
+</ul>
+
 FIX DA RIVEDERE: <br>
 <ul>
   <li> ***Migliorare l'interattività nel tabata; automatizzare il calcolo del timer in base agli esercizi <br>
@@ -73,8 +84,8 @@ FIX DA RIVEDERE: <br>
   <li> Rivedere logica dei "workoutParameters" , se mantenerla o meno </li>
   <li> ***Rimuovere funzione/alert della funzione che fa vedere la lista dei gruppi selezionati in scheda.html*** </li>
   <li> Gestire in try-catch chiamate ajax (?) </li>
-  <li> Decidere come implementare gli aiuti per gli esercizi(se usare GIF da piazzare o usare dei link) </li>
-  <li> Ideare pagina per sostituzioni esercizi </li>
+  <li> ***Decidere come implementare gli aiuti per gli esercizi(se usare GIF da piazzare o usare dei link)*** </li>
+  <li> ***Ideare pagina per sostituzioni esercizi*** </li>
   <li> ***Verificare se è possibile inoltrare un URI senza il nome della tabella, nel caso in cui essa sia uguale*** </li>
   <li> Snellire dove necessario le query, evitando l'uso di * </li>
   <li> ***BUTTARE FUORI DALLE PALLE FOR TIME E TABATA (aggiungere logica spawn tempi in emom).*** </li>
@@ -82,15 +93,18 @@ FIX DA RIVEDERE: <br>
   <li> Occhio alla restituzione dell'intervallo random in index.html far si che il tempo minimo che esce sia maggiore del numero <br>
   massimo di esercizi che possono uscire </li>
   <li> Fixare bug timer in index.html </li>
-  <li> Tentare l'uso della funzione Ready per poter evitare il bug dell'autoplay su chromium </li>
+  <li> ***Tentare l'uso della funzione Ready per poter evitare il bug dell'autoplay su chromium*** </li>
   <li> ***DIV pannelloWorkout -> Probabilmente sostituito da displayEsercizi, VERIFICARE*** </li>
   <li> Scegliere se mantenere la modalità MYSQLI_BOTH oppure fare un fetch_object e crearmi il json in apiDb.php </li>
+  <li> ***IN INDEX.HTML : Se seleziono "scheda" è possibile scegliere i minuti di workout. FIXARE*** </li>
+  <li> Decidere se mantenere i values su apidb.php con il processo di escape del prof, oppure continuare come negli inserimenti </li>
 </ul> <br>
 
 NOTE SU FIX RISOLTI; <br>
 <ul>
   <li> Autoplay deezer buggato su browser con chromium - Su firefox funziona </li>
   <li> Div pannelloWorkout usato per la descrizione ed info sul workout </li>
+  <li> l'Id del workout generato viene creato randomicamente in modo da averlo già lato php e non aggiungere query inutili </li>
 </ul>
 
 TIPS AND TRICKS: <br>

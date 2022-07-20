@@ -9,13 +9,13 @@
   $_key = array_shift($request);
   $key = $_key;
 
-  if(isset($input)){ //Se è presente l'input, ne prende i valori
+  if(isset($input) && $table != "allenamentogenerato"){ //Se è presente l'input, ne prende i valori
     $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
     $values = array_map(function ($value) use ($conn) {
     if ($value===null) return null;
     return mysqli_real_escape_string($conn,(string)$value);
   },array_values($input));
-  }
+}
 
   /*if($method == 'GET' && $table == 'gruppomuscolare'){
     $sql = $conn->prepare("select * from $table");
@@ -58,7 +58,7 @@
     $res;
     switch($table){
       case 'login':
-        $sql = "select Nome,Cognome from utente where email = '$values[0]' and password = '$values[1]' ";
+        $sql = "select Nome,Cognome,IdUtente from utente where email = '$values[0]' and password = '$values[1]' ";
         $res = elaborateQuery($sql,$conn);
         echo returnFromLogin($res,$sql);
         break;
@@ -71,6 +71,38 @@
         else{
           echo json_encode(["success" => false]);
         }
+        break;
+      case 'allenamentogenerato':
+        $response = array();
+        $IdWorkoutGen = uniqid(); //Id univoco da 13 caratteri, generato da php
+        $Data = date("Y-m-d");
+        $i = 0;
+        if($input['Tipo'] == "SCHEDA"){
+          $sql = "Insert Into $table (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',0)";
+          $response = array_merge($response,insertWorkout($table,$sql,$conn));
+        }
+        else{
+          $sql = "Insert Into $table (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',$input[Durata])";
+          $response = array_merge($response,insertWorkout($table,$sql,$conn));
+        }
+        $sql = "Insert Into svolgimento (Utente,AllenamentoGenerato) Values ($input[UserId],'$IdWorkoutGen')";
+        $response = array_merge($response,insertWorkout("svolgimento",$sql,$conn));
+        $keys = array_keys($input);
+        while(gettype($keys[$i]) != "string"){
+          $ripetizioni = $input[$i]['reps'];
+          $esercizio = $input[$i]['IdEsercizio'];
+          if($input['Tipo'] == "SCHEDA"){
+            $serie = $input[$i]['serie'];
+            $sql = "Insert Into composizionewe (NumRep,NumSets,AllenamentoGenerato,Esercizio) Values ($ripetizioni,$serie,'$IdWorkoutGen',$esercizio)";
+          }
+          else{
+            $serie = 0;
+            $sql = "Insert Into composizionewe (NumRep,NumSets,AllenamentoGenerato,Esercizio) Values ($ripetizioni,$serie,'$IdWorkoutGen',$esercizio)";
+          }
+          $response = array_merge($response,insertWorkout("composizionewe",$sql,$conn,$i));
+          $i++;
+        }
+        echo json_encode($response);
         break;
     }
   }
@@ -86,6 +118,33 @@
       return $result = "Errore query, poderoso urlo del sinto ".$conn->errorInfo();*/
       //echo "Errore ".$conn->errorInfo();
       print_r($conn->error);
+    }
+  }
+
+  function insertWorkout($tabella,$sql,$conn,$i = -1){
+    $res;
+    try{
+        $res = $conn->query($sql);
+        if($i == -1){
+          if($res == true){
+            return ["$tabella" => true];
+          }
+          else{
+            return ["$tabella" => false];
+          }
+        }
+        else{
+          if($res == true){
+            return ["Esercizio".$i+1 => true];
+          }
+          else{
+            return ["Esercizio".$i+1 => false];
+          }
+        }
+    }
+    catch (Exception $e){
+      echo $e->getMessage();
+      return 0;
     }
   }
 

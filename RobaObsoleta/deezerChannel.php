@@ -7,6 +7,6 @@ header("Pragma: public");
 header("Cache-Control: maxage=".$cache_expire);
 header('Expires: ' . gmdate('D, d M Y H:i:s', time()+$cache_expire) . ' GMT');
  ?>
-<script src="http://cdn-files.deezer.com/js/min/dz.js"></script>
+<script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script>
 </body>
 </html>

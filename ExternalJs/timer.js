@@ -57,7 +57,6 @@ function onTimesUp() {
   document.getElementById("request").style.display = "block";
   document.getElementById("start").disabled = true;
   document.getElementById("displayEsercizi").innerHTML = " ";
-  document.getElementById("personal").style.display = "block";
   //Aggiunta mia - end
 
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
@@ -81,6 +80,9 @@ function startTimer() {
       document.getElementById("start").style.display="block";
       document.getElementById("resume").style.display="none";
       setMinuteOnTimer();
+      stopWorkout();
+      var event = new Event('workoutFinito');
+      document.getElementById("fineAllenamento").dispatchEvent(event);
       // - end
     }
   }, 1000);

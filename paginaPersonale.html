@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    Pagina in costruzione urlo del sinto
+    Pagina in costruzione
     <div id="datiPersonali">
 
     </div>
@@ -15,10 +15,23 @@
 
     </div>
 
-    <div id="logout">
-
+    <div id="logoutSection">
+      <button id="logout"> Logout </button> <br>
     </div>
 
+    <script>
+      window.onload = bindEvents;
+
+      function bindEvents(){
+        document.getElementById("logout").addEventListener("click",logout);
+      }
+
+      function logout(){
+        //sessionStorage.removeItem("userLogged");
+        sessionStorage.clear(); //Svuota totalmente il sessionStorage
+        window.location.replace("http://localhost/ProgettoProg3/Index.html");
+      }
+    </script>
 </body>
 
 </html>

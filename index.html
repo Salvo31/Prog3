@@ -10,6 +10,7 @@
   <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati -->
 
 <script>
+ var player;
  window.onload = bindEvents;
  TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
@@ -22,14 +23,19 @@
    document.getElementById("selezioneMinuti").addEventListener("change",setMinuteOnTimer);
    document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
    document.getElementById("request").addEventListener("click",requestWorkout);
+   document.getElementById("fineAllenamento").addEventListener("workoutFinito",fineWorkout);
+   document.getElementById("saveWorkout").addEventListener("click",saveWorkout);
+   verifySession();
  }
 
  function timerVisibility(){
    if(tipoAll.value == "SCHEDA"){
      timer.style.display = "none";
+     document.getElementById("selezioneMinuti").style.display = "none";
    }
    else if(timer.style.display == "none" && tipoAll != "SCHEDA"){
      timer.style.display = "block";
+     document.getElementById("selezioneMinuti").style.display = "block";
    }
    document.getElementById("base-timer-label").innerHTML = formatTime(0);
  }
@@ -42,24 +48,31 @@
    document.getElementById("start").disabled = true;
    document.getElementById("stop").style.display="block";
    document.getElementById("pause").style.display="block";
-   DZ.player.next();
+   //DZ.player.next();
    document.getElementById("player").style.display = "block";
    document.getElementById("personal").style.display = "none";
-   DZ.player.play();
+   //DZ.player.play();
+   player.nextVideo();
+   player.playVideo();
    startTimer();
  }
 
  function stopWorkout(){
-   DZ.player.pause();
+   player.stopVideo();
    stopTimer();
    document.getElementById("displayEsercizi").innerHTML = " ";
    document.getElementById("request").style.display = "block";
-   document.getElementById("personal").style.display = "block";
+   //document.getElementById("personal").style.display = "block";
+   if(tipoAll.value == "SCHEDA"){
+     document.getElementById("fineAllenamento").style.display = "block";
+   }
+   verifySession();
  }
 
  function pauseWorkout(){
    var resumeButton = document.getElementById("resume");
-   DZ.player.pause();
+   //DZ.player.pause();
+   player.pauseVideo();
    clearInterval(timerInterval);
    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
    resumeButton.style.display="Block";
@@ -68,7 +81,8 @@
  }
 
  function resumeWorkout(){
-   DZ.player.play();
+   //DZ.player.play();
+   player.playVideo();
    document.getElementById("pause").style.display="block";
    document.getElementById("resume").style.display="none";
    startTimer();
@@ -88,11 +102,13 @@
  function setMinuteOnTimer(){
    TIME_LIMIT = document.getElementById("tempo").value;
    if(TIME_LIMIT != 0){
+     sessionStorage.setItem("durata",TIME_LIMIT); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
      TIME_LIMIT = TIME_LIMIT * 60;
      document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
    }
    else{
      var tempo = Math.floor(Math.random() * (60 - 10) + 10);
+     sessionStorage.setItem("durata",tempo); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
      TIME_LIMIT = tempo * 60;
      document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
    }
@@ -108,9 +124,11 @@
      reqURI += generateURI(allScelto,reqURI);
      if(allScelto == "SCHEDA"){
        document.getElementById("pannelloWorkout").innerHTML = allScelto;
+       document.getElementById("selezioneMinuti").style.display = "none";
      }
      else{
        document.getElementById("pannelloWorkout").innerHTML = allScelto + " " + formatTime(TIME_LIMIT) + " minuti";
+       document.getElementById("selezioneMinuti").style.display = "block";
      }
    }
    else{
@@ -121,7 +139,8 @@
      else{
        document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
      }
-     }
+    }
+    sessionStorage.setItem("allenamento",tipoAll.value);
    //Gestione casistiche random
    document.getElementById("start").disabled = false;
    document.getElementById("displayEsercizi").innerHTML = " ";
@@ -193,6 +212,7 @@
        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
        listaEsercizi.appendChild(Esercizio);
+       esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
      }
    }
    else{
@@ -204,9 +224,12 @@
        //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
        Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+ numSerie + " x " + numRep;
        listaEsercizi.appendChild(Esercizio);
+       esercizi[i].serie = numSerie; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
+       esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
      }
    }
    document.getElementById("displayEsercizi").appendChild(listaEsercizi);
+   sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
  }
 
 </script>
@@ -247,9 +270,9 @@
 
 </div>
 
-<button id="personal"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
+<button id="personal" class="invisibles"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
 <div id="reservedAreaPanel">
-
+  <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
 </div>
 
 <div id="DescrizionewWorkout">
@@ -321,33 +344,41 @@
       <input type="checkbox" id="pesiSiNo">
     </div>
 </div>
-<!-- API DEEZER -->
-<script src="https://e-cdn-files.dzcdn.net/js/min/dz.js"></script> <!-- File col player di DEEZER -->
-<div id="dz-root"> </div> <!-- Div richiesto dalle API di DEEZER -->
-<div id="player"> </div>
+<div id="player"> </div> <br> <br>
+
+<div id="fineAllenamento" class="invisibles">
+  Vuoi salvare l'allenamento? <br>
+  <button id="saveWorkout"> Salva </button> <span id="cancel"> <!-- class="close" --> &times;</span>
+</div>
 
 <script>
   timer = document.getElementById("timer");
   tipoAll = document.getElementById("tipoAllenamento");
   document.getElementById("player").style.display = "none";
-  DZ.init({
-    appId  : '539622',
-    //channelUrl : 'http://developers.deezer.com/examples/channel.php', //Vedere quale tenere
-    channelUrl : 'http://localhost/Prog3/RandomWorkout/deezerChannel.php',
-    player: {
-      container: 'player',
-      cover : true,
-      layout : 'dark',
-      width : 650,
-      height : 300,
-      onload : playerLoaded
-    }
-  });
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '360',
+      width: '640',
+      //videoId: 'M7lc1UVf-VE',
+      playerVars:{
+        listType: "playlist",
+        list: "PLkqz3S84Tw-T2iHDsB1NdA3RM_3bCxYsg",
+        enablejsapi: 1,
+        origin: "http://localhost:80"
+      },
+      events: {
+        'onReady': onPlayerReady
+      }
+    });
+  }
 
-  function playerLoaded(){
-    DZ.player.playPlaylist(8424675842);
-    DZ.player.pause();
-    DZ.player.setShuffle(true);
+  function onPlayerReady(event) {
+    player.setShuffle(true);
+    player.setLoop(true);
   }
 
 // Login popup - start
@@ -358,6 +389,8 @@ var logBtn = document.getElementById("loginButton");
 var regBtn = document.getElementById("registerButton");
 var submitLogin = document.getElementById("login");
 var submitRegister = document.getElementById("signup");
+var panel = document.getElementById("reservedAreaPanel");
+var profilo = document.getElementById("linkProfilo");
 
 personalArea.onclick = function(){
   modal.style.display = "block";
@@ -452,16 +485,15 @@ function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
         console.log(ajax.responseText);
         var response = JSON.parse(ajax.responseText);
         if(response.success == true){
-          var panel = document.getElementById("reservedAreaPanel");
           document.getElementById("personal").style.display = "none";
           document.getElementById("email").value = "";
           document.getElementById("password").value = "";
           modal.style.display = "none";
           //panel.innerHTML = response.Nome; LINK AREA riservata
-          var paginaAccount = document.createElement("a");
-          paginaAccount.href = "paginaPersonale.html";
-          paginaAccount.innerHTML = response.Nome;
-          panel.appendChild(paginaAccount);
+          profilo.innerHTML = response.Nome;
+          profilo.style.display = "block";
+          sessionStorage.setItem("userLogged",response.Nome);
+          sessionStorage.setItem("userId",response.IdUtente);
         }
         else{
           alert("Email e/o password errate");
@@ -489,6 +521,61 @@ function validateCredentials(pwd,email){
   }
 }
 // Login popup - end
+//Session - start
+  function verifySession(){
+    var user = sessionStorage.getItem("userLogged");
+    if(user){
+      profilo.innerHTML = user;
+      personalArea.style.display = "none";
+      profilo.style.display = "block";
+    }
+    else{
+      personalArea.style.display = "block";
+    }
+  }
+//Session - end
+
+//Fine workout - start
+function fineWorkout(){
+  if(sessionStorage.getItem("userLogged")){
+    document.getElementById("fineAllenamento").style.display = "block";
+  }
+}
+
+document.getElementById("cancel").onclick = function(){
+  document.getElementById("fineAllenamento").style.display = "none";
+}
+
+function saveWorkout(){ // - apiDb.php/allenamentogenerato
+  var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
+  request.UserId = sessionStorage.getItem("userId");
+  request.Durata = sessionStorage.getItem("durata");
+  request.Tipo = sessionStorage.getItem("allenamento");
+  var reqURI = "apiDb.php/allenamentogenerato";
+  var ajax = new XMLHttpRequest();
+  try{
+    ajax.onreadystatechange = function(){
+      if(ajax.readyState == 4){
+        console.log(ajax.responseText);
+        var response = JSON.parse(ajax.responseText);
+        document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
+        if(response.allenamentogenerato == true && response.svolgimento == true && response.Esercizio1 == true){
+          alert("Allenamento salvato con successo!");
+        }
+        else{
+          alert("Salvataggio allenamento fallito");
+        }
+      }
+    };
+    ajax.open("POST",reqURI,true);
+    ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    ajax.send(JSON.stringify(request));
+  }
+  catch(e){
+    console.log(e);
+  }
+}
+//Fine workout - end
 </script>
 
 </body>
