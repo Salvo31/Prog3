@@ -5,11 +5,11 @@
   $input = json_decode(file_get_contents('php://input'),true);
 
 
-  $table = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+  $primoParametro = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
   $_key = array_shift($request);
   $key = $_key;
 
-  if(isset($input) && $table != "allenamentogenerato"){ //Se è presente l'input, ne prende i valori
+  if(isset($input) && $primoParametro != "allenamentogenerato"){ //Se è presente l'input, ne prende i valori
     $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
     $values = array_map(function ($value) use ($conn) {
     if ($value===null) return null;
@@ -17,46 +17,48 @@
   },array_values($input));
 }
 
-  /*if($method == 'GET' && $table == 'gruppomuscolare'){
-    $sql = $conn->prepare("select * from $table");
-    $sql->execute();
-    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-    if($result){
-      $json = json_encode($result);
-      echo $json;
-    }
-    else{
-      echo "Errore query, poderoso urlo del sinto ".$conn->errorMsg();
-    }
-  }*/
-
   if($method == 'GET'){
     $res;
-    switch($table){
+    switch($primoParametro){
       case 'AMRAP':
-        $sql = "select * from Esercizio where tipologia='$key'";
+        $sql = "select MinRep,MaxRep,Nome from Esercizio where tipologia='$key'";
         $res = elaborateQuery($sql,$conn);
         $res = randomAmrap($res);
         break;
       case 'EMOM':
         $intervallo = array_shift($request);
-        $sql = "select * from Esercizio where tipologia='$key' limit $intervallo";
+        $sql = "select MinRep,MaxRep,Nome from Esercizio where tipologia='$key' limit $intervallo";
         $res = elaborateQuery($sql,$conn);
         $res = randomEmom($res);
         break;
       case 'SCHEDA':
         $numEs = array_shift($request);
-        $sql = "select * from Esercizio where tipologia='$key' limit $numEs";
+        $sql = "select Nome from Esercizio where tipologia='$key' limit $numEs";
         $res = elaborateQuery($sql,$conn);
         $res = randomScheda($res);
         break;
+      case 'allenamenti':
+        $sql = "select ag.*
+        from utente u inner join svolgimento s on u.IdUtente = s.Utente
+        inner join allenamentogenerato ag on s.AllenamentoGenerato = ag.IdWorkoutGen
+        where u.IdUtente = $key ";
+        $res = elaborateQuery($sql,$conn);
+        $res = $res->fetch_All(MYSQLI_ASSOC);
+        break;
+      case 'eserciziAllenamento':
+        $sql = "select cw.NumRep,cw.NumSets,e.Nome,e.Tipologia
+        from allenamentogenerato ag inner join composizionewe cw on ag.IdWorkoutGen = cw.AllenamentoGenerato
+        inner join esercizio e on cw.Esercizio = e.IdEsercizio
+        where ag.IdWorkoutGen = '$key'";
+        $res = elaborateQuery($sql,$conn);
+        $res = $res->fetch_All(MYSQLI_ASSOC);
     }
     $json = json_encode($res);
     echo $json;
   }
   else if($method == 'POST'){
     $res;
-    switch($table){
+    switch($primoParametro){
       case 'login':
         $sql = "select Nome,Cognome,IdUtente from utente where email = '$values[0]' and password = '$values[1]' ";
         $res = elaborateQuery($sql,$conn);
@@ -77,14 +79,8 @@
         $IdWorkoutGen = uniqid(); //Id univoco da 13 caratteri, generato da php
         $Data = date("Y-m-d");
         $i = 0;
-        if($input['Tipo'] == "SCHEDA"){
-          $sql = "Insert Into $table (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',0)";
-          $response = array_merge($response,insertWorkout($table,$sql,$conn));
-        }
-        else{
-          $sql = "Insert Into $table (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',$input[Durata])";
-          $response = array_merge($response,insertWorkout($table,$sql,$conn));
-        }
+        $sql = "Insert Into $primoParametro (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',$input[Durata])";
+        $response = array_merge($response,insertWorkout($primoParametro,$sql,$conn));
         $sql = "Insert Into svolgimento (Utente,AllenamentoGenerato) Values ($input[UserId],'$IdWorkoutGen')";
         $response = array_merge($response,insertWorkout("svolgimento",$sql,$conn));
         $keys = array_keys($input);
@@ -113,10 +109,6 @@
       return $result;
     }
     else{
-    /*  echo $request." ".$intervallo;
-      print_r("Errore query, poderoso urlo del sinto ".$conn->errorInfo());
-      return $result = "Errore query, poderoso urlo del sinto ".$conn->errorInfo();*/
-      //echo "Errore ".$conn->errorInfo();
       print_r($conn->error);
     }
   }
@@ -161,7 +153,7 @@
 
   function randomScheda($res){
     $rowsAffected = $res->num_rows;
-    $rows = $res->fetch_All(MYSQLI_BOTH);
+    $rows = $res->fetch_All(MYSQLI_ASSOC);
     $set = new \Ds\Set();
     do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
       $set->add($rows[rand(0,$rowsAffected-1)]);
@@ -171,7 +163,7 @@
 
   function randomEmom($res){
     $rowsAffected = $res->num_rows;
-    $rows = $res->fetch_All(MYSQLI_BOTH);
+    $rows = $res->fetch_All(MYSQLI_ASSOC);
     $set = new \Ds\Set();
     do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
       $set->add($rows[rand(0,$rowsAffected-1)]);
@@ -181,7 +173,7 @@
 
   function randomAmrap($res){
     $rowsAffected = $res->num_rows;
-    $rows = $res->fetch_All(MYSQLI_BOTH);
+    $rows = $res->fetch_All(MYSQLI_ASSOC);
     $numEs = rand(3,$rowsAffected);
     $set = new \Ds\Set();
     for($i=0;$i<$numEs;$i++){

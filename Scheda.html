@@ -9,6 +9,20 @@
 
 <body>
 
+  <div id="DescrizionewWorkout">
+    <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
+      <li>
+          <a href="index.html"> HOME </a>
+      </li>
+      <li>
+          <a href="EMOM.html"> AMRAP </a>
+      </li>
+      <li>
+          <a href="Scheda.html"> EMOM </a>
+      </li>
+    </ul>
+  </div> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) --> <br> <br>
+
   <div id="descrizione">
     <h2> <strong> Scheda </strong> </h2> <br>
     Con questa opzione potrai generare una classica scheda di allenamento con serie e ripetizioni ben definite <br>
@@ -81,6 +95,8 @@
 
   <script>
     var player;
+    var schedaStartTime;
+    var schedaEndTime;
     window.onload = bindEvents;
     //richiestaGruppiMuscolari();
     //var placeholder = document.getElementById("gruppi");
@@ -109,6 +125,7 @@
       player.stopVideo();
       verifySession();
       fineWorkout();
+      schedaEndTime = new Date();
     }
 
     function startWorkout(){
@@ -122,6 +139,7 @@
       document.getElementById("personal").style.display = "none";
       player.nextVideo();
       player.playVideo();
+      schedaStartTime = new Date();
     }
 
     function requestWorkout(){
@@ -130,17 +148,22 @@
       sessionStorage.setItem("allenamento","SCHEDA");
       var ajax = new XMLHttpRequest();
       var reqURI = "apiDb.php/SCHEDA/"+Number(document.getElementById("pesiSiNo").checked)+"/"+ Math.floor(Math.random() * (10 - 5+1) + 5);
-      ajax.onreadystatechange = function(){
-        if(ajax.readyState == 4){
-          console.log(ajax.responseText);
-          console.log(reqURI);
-          var esercizi = JSON.parse(ajax.responseText);
-          //document.getElementById("displayEsercizi").innerHTML = esercizi;
-          displayWorkout(esercizi);
-        }
-      };
-      ajax.open("GET",reqURI,true);
-      ajax.send(null);
+      try{
+        ajax.onreadystatechange = function(){
+          if(ajax.readyState == 4){
+            console.log(ajax.responseText);
+            console.log(reqURI);
+            var esercizi = JSON.parse(ajax.responseText);
+            //document.getElementById("displayEsercizi").innerHTML = esercizi;
+            displayWorkout(esercizi);
+          }
+        };
+        ajax.open("GET",reqURI,true);
+        ajax.send(null);
+      }
+      catch(e){
+        console.log(e);
+      }
     }
 
     function displayWorkout(esercizi){
@@ -155,7 +178,7 @@
         Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+ numSerie + " x " + numRep;
         listaEsercizi.appendChild(Esercizio);
         esercizi[i].serie = numSerie; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
-        esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+        esercizi[i].reps = numRep; //Aggiungo il numero di reps appena scelte. Serve per salvarle nel sessionStorage
       }
       document.getElementById("displayEsercizi").appendChild(listaEsercizi);
       sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
@@ -354,7 +377,7 @@
     function saveWorkout(){ // - apiDb.php/allenamentogenerato
       var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
       request.UserId = sessionStorage.getItem("userId");
-      //request.Durata = sessionStorage.getItem("durata");
+      request.Durata = diff_minutes(schedaEndTime,schedaStartTime);
       request.Tipo = sessionStorage.getItem("allenamento");
       var reqURI = "apiDb.php/allenamentogenerato";
       var ajax = new XMLHttpRequest();
@@ -380,6 +403,12 @@
         console.log(e);
       }
     }
+
+    function diff_minutes(dt2, dt1){
+      var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+      diff /= 60;
+      return Math.abs(Math.round(diff));
+     }
     //Fine workout - end
   </script>
 </body>

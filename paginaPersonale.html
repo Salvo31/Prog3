@@ -6,13 +6,17 @@
 </head>
 
 <body>
-    Pagina in costruzione
     <div id="datiPersonali">
-
+      <p> Ciao <script> document.write(sessionStorage.getItem("userLogged")); </script> ! In questa sezione puoi vedere tutti gli <br>
+      allenamenti che hai svolto.</p>
     </div>
 
     <div id="allenamentiFiniti">
 
+    </div> <br>
+
+    <div id="statisticheUtente">
+      <span id="tempoTotale"> Tempo totale:  </span> <span id="numeroAllenamenti"> Totale allenamenti:  </span>
     </div>
 
     <div id="logoutSection">
@@ -22,14 +26,98 @@
     <script>
       window.onload = bindEvents;
 
+      //Display allenamenti - start - Request: apiDb.php/allenamenti,UserId
+      var ajax = new XMLHttpRequest();
+      var reqURI = "apiDb.php/allenamenti/"+sessionStorage.getItem("userId");
+      var durataTotAllenamento = 0;
+      var numAllenamenti;
+      try{
+        ajax.onreadystatechange = function(){
+          if(ajax.readyState == 4){
+            console.log(ajax.responseText);
+            response = JSON.parse(ajax.responseText);
+            var listaWorkout = document.createElement("ul"); //Lista che contiene tutti i vari workout
+            listaWorkout.id = "listaWo";
+            for(var i=0; i<Object.keys(response).length; i++){
+              var workout = document.createElement("li");
+              var callToWorkout = document.createElement("span");
+              var workoutDetailDiv = document.createElement("div");
+              workoutDetailDiv.id = i;
+              workoutDetailDiv.style.display = "none";
+              workoutDetailDiv.innerHTML = "";
+              callToWorkout.id= response[i].IdWorkoutGen;
+              callToWorkout.innerHTML = "Info";
+              callToWorkout.addEventListener("click",requestWorkoutInformation);
+              //workout.id = i;
+              workout.innerHTML = "Id Workout: "+callToWorkout.id+" Data: "+response[i].Data+" Tipo: "+response[i].Tipo+" Durata: "+response[i].Durata+" minuti ";
+              callToWorkout.innerHTML += "<br>";
+              callToWorkout.appendChild(workoutDetailDiv);
+              workout.appendChild(callToWorkout);
+              listaWorkout.appendChild(workout);
+              durataTotAllenamento += parseInt(response[i].Durata);
+            }
+            numAllenamenti = Object.keys(response).length;
+            document.getElementById("tempoTotale").innerHTML += " "+durataTotAllenamento+" minuti";
+            document.getElementById("numeroAllenamenti").innerHTML += " "+numAllenamenti;
+            document.getElementById("allenamentiFiniti").appendChild(listaWorkout);
+          }
+        };
+        ajax.open("GET",reqURI,true);
+        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        ajax.send(null);
+      }
+      catch(e){
+        console.log(e);
+      }
+      //Display allenamenti - end
+
       function bindEvents(){
         document.getElementById("logout").addEventListener("click",logout);
       }
 
       function logout(){
-        //sessionStorage.removeItem("userLogged");
         sessionStorage.clear(); //Svuota totalmente il sessionStorage
         window.location.replace("http://localhost/ProgettoProg3/Index.html");
+      }
+
+      function requestWorkoutInformation(event){//apiDb.php/eserciziAllenamento/IdWorkoutGen
+        caller = event.target;
+        node = caller.children[1];
+        if(node.style.display == "none" && node.innerHTML == ""){
+          var ajaxCall = new XMLHttpRequest();
+          var reqURI = "apiDb.php/eserciziAllenamento/"+caller.id;
+          try{
+            ajax.onreadystatechange = function(){
+              if(ajax.readyState == 4){
+                console.log(ajax.responseText);
+                response = JSON.parse(ajax.responseText);
+                var dettaglioEsercizi = document.createElement("ol");
+                for(var j=0;j<Object.keys(response).length;j++){
+                  var esercizio = document.createElement("li");
+                  esercizio.innerHTML = response[j].Nome+" "+response[j].NumRep;
+                  if(response[j].NumSets != 0){
+                    esercizio.innerHTML += " x "+response[j].NumSets;
+                  }
+                  dettaglioEsercizi.appendChild(esercizio);
+                }
+                node.appendChild(dettaglioEsercizi);
+                node.style.display = "block";
+              }
+            };
+            ajax.open("GET",reqURI,true);
+            ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            ajax.send(null);
+          }
+          catch(e){
+            console.log(e);
+          }
+        }
+        else if(node.innerHTML != "" && node.style.display == "none"){
+          node.style.display = "block";
+        }
+        else{
+          node.style.display = "none";
+        }
       }
     </script>
 </body>

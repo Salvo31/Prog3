@@ -9,6 +9,21 @@
 </head>
 
 <body>
+
+  <div id="DescrizionewWorkout">
+    <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
+      <li>
+          <a href="index.html"> HOME </a>
+      </li>
+      <li>
+          <a href="EMOM.html"> EMOM </a>
+      </li>
+      <li>
+          <a href="Scheda.html"> Scheda </a>
+      </li>
+    </ul>
+  </div> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) --> <br> <br>
+
   <script>
     var player;
     window.onload = bindEvents;
@@ -98,16 +113,21 @@
       var ajax = new XMLHttpRequest();
       var pesi = Number(document.getElementById("pesiSiNo").checked);
       var reqURI = "apiDb.php/AMRAP/"+pesi;
-      ajax.onreadystatechange = function(){
-        if(ajax.readyState == 4){
-          console.log(ajax.responseText);
-          var esercizi = JSON.parse(ajax.responseText);
-          //document.getElementById("displayEsercizi").innerHTML = esercizi;
-          displayWorkout(esercizi);
-        }
-      };
-      ajax.open("GET",reqURI,true);
-      ajax.send(null);
+      try{
+        ajax.onreadystatechange = function(){
+          if(ajax.readyState == 4){
+            console.log(ajax.responseText);
+            var esercizi = JSON.parse(ajax.responseText);
+            //document.getElementById("displayEsercizi").innerHTML = esercizi;
+            displayWorkout(esercizi);
+          }
+        };
+        ajax.open("GET",reqURI,true);
+        ajax.send(null);
+      }
+      catch(e){
+        console.log(e);
+      }
     }
 
     function displayWorkout(esercizi){
@@ -121,7 +141,7 @@
         //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
         Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
         listaEsercizi.appendChild(Esercizio);
-        esercizi[i].reps = numRep; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
+        esercizi[i].reps = numRep; //Aggiungo il numero di reps appena scelte. Serve per salvarle nel sessionStorage
       }
       document.getElementById("displayEsercizi").appendChild(listaEsercizi);
       sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
@@ -204,7 +224,7 @@
     <div id="selezioneMinuti">
       Minuti di allenamento :
       <script>
-        var i=0;
+        var i=9;
         var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
         var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
         select.id="tempo"; //Imposto l'id del tag select

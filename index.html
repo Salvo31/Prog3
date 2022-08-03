@@ -8,9 +8,24 @@
 </head>
 <body>
   <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati -->
+  <div id="DescrizionewWorkout">
+    <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
+      <li>
+          <a href="AMRAP.html"> AMRAP </a>
+      </li>
+      <li>
+          <a href="EMOM.html"> EMOM </a>
+      </li>
+      <li>
+          <a href="Scheda.html"> Scheda </a>
+      </li>
+    </ul>
+  </div> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) --> <br> <br>
 
 <script>
  var player;
+ var schedaStartTime;
+ var schedaEndTime;
  window.onload = bindEvents;
  TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
@@ -19,7 +34,7 @@
    document.getElementById("start").addEventListener("click",startWorkout); //richiama lo start del timer nel momento in cui clicco sul bottone
    document.getElementById("stop").addEventListener("click",stopWorkout);
    document.getElementById("pause").addEventListener("click",pauseWorkout);
-   document.getElementById("tipoAllenamento").addEventListener("change",setWorkout);
+   //document.getElementById("tipoAllenamento").addEventListener("change",setWorkout);
    document.getElementById("selezioneMinuti").addEventListener("change",setMinuteOnTimer);
    document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
    document.getElementById("request").addEventListener("click",requestWorkout);
@@ -33,7 +48,7 @@
      timer.style.display = "none";
      document.getElementById("selezioneMinuti").style.display = "none";
    }
-   else if(timer.style.display == "none" && tipoAll != "SCHEDA"){
+   else if(timer.style.display == "none" && tipoAll.value != "SCHEDA"){
      timer.style.display = "block";
      document.getElementById("selezioneMinuti").style.display = "block";
    }
@@ -48,13 +63,17 @@
    document.getElementById("start").disabled = true;
    document.getElementById("stop").style.display="block";
    document.getElementById("pause").style.display="block";
-   //DZ.player.next();
    document.getElementById("player").style.display = "block";
    document.getElementById("personal").style.display = "none";
-   //DZ.player.play();
    player.nextVideo();
    player.playVideo();
-   startTimer();
+   if(tipoAll.value != "SCHEDA"){
+        startTimer();
+   }
+   else{
+        schedaStartTime = new Date();
+   }
+
  }
 
  function stopWorkout(){
@@ -65,13 +84,13 @@
    //document.getElementById("personal").style.display = "block";
    if(tipoAll.value == "SCHEDA"){
      document.getElementById("fineAllenamento").style.display = "block";
+     schedaEndTime = new Date();
    }
    verifySession();
  }
 
  function pauseWorkout(){
    var resumeButton = document.getElementById("resume");
-   //DZ.player.pause();
    player.pauseVideo();
    clearInterval(timerInterval);
    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
@@ -88,7 +107,7 @@
    startTimer();
  }
 
- function setWorkout(){
+ /*function setWorkout(){
    var workoutType = document.getElementById("tipoAllenamento").value;
    if(workoutType != "Random"){
      document.getElementById("pannelloWorkout").innerHTML = workoutType;
@@ -97,7 +116,7 @@
      document.getElementById("pannelloWorkout").innerHTML = workoutType;
    }
 
- }
+ }*/
 
  function setMinuteOnTimer(){
    TIME_LIMIT = document.getElementById("tempo").value;
@@ -137,6 +156,7 @@
        document.getElementById("pannelloWorkout").innerHTML = tipoAll.value;
      }
      else{
+       document.getElementById("selezioneMinuti").style.display = "block";
        document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
      }
     }
@@ -145,21 +165,42 @@
    document.getElementById("start").disabled = false;
    document.getElementById("displayEsercizi").innerHTML = " ";
    var ajax = new XMLHttpRequest();
-   ajax.onreadystatechange = function(){
-     if(ajax.readyState == 4){
-       console.log(ajax.responseText);
-       console.log(reqURI);
-       var esercizi = JSON.parse(ajax.responseText);
-       displayWorkout(esercizi);
-     }
-   };
-   ajax.open("GET",reqURI,true);
-   ajax.send(null);
+   try{
+     ajax.onreadystatechange = function(){
+       if(ajax.readyState == 4){
+         console.log(ajax.responseText);
+         console.log(reqURI);
+         var esercizi = JSON.parse(ajax.responseText);
+         displayWorkout(esercizi);
+       }
+     };
+     ajax.open("GET",reqURI,true);
+     ajax.send(null);
+   }
+   catch(e){
+     console.log(e);
+   }
  }
 
  function calculateEmomIntervals(){ //CALCOLO QUI IL TEMPO PER L'EMOM
-   var intervallo;
+   var numEsercizi;
+   var mux;
    var tempo = document.getElementById("tempo").value;
+   if(tempo == 0){
+     numEsercizi = Math.floor(Math.random() * (10 - 2+1) + 2);
+     mux = Math.floor(Math.random()*(6-2+1)+2);
+     TIME_LIMIT = (numEsercizi*mux)*60;
+    document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
+   }
+   else{
+     TIME_LIMIT = tempo*60;
+     do{
+       mux = Math.floor(Math.random()*(6-2+1)+2);
+     }while(tempo % mux == 0);
+     numEsercizi = Math.floor(tempo/mux);
+   }
+   return numEsercizi;
+   /*var intervallo;
    if(tempo == 0){
      var rounds;
      intervallo = Math.floor(Math.random() * (5 - 2+1) + 2);
@@ -170,8 +211,7 @@
    else{
      intervallo = Math.floor(Math.random()* (5 - 2+1)+2);
      TIME_LIMIT = tempo*60;
-   }
-   return intervallo;
+   }*/
  }
 
  function generateURI(allScelto,reqURI){
@@ -275,20 +315,6 @@
   <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
 </div>
 
-<div id="DescrizionewWorkout">
-  <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
-    <li>
-        <a href="AMRAP.html"> AMRAP </a>
-    </li>
-    <li>
-        <a href="EMOM.html"> EMOM </a>
-    </li>
-    <li>
-        <a href="Scheda.html"> Scheda </a>
-    </li>
-  </ul>
-</div> <!-- Fine Div che descrive i workout (Menù a tendina) --> <br> <br>
-
 <div id="timer">
   <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
       <script src="ExternalJs/timer.js"> </script>
@@ -322,7 +348,7 @@
     <div id="selezioneMinuti">
       Minuti di allenamento :
       <script>
-        var i=0;
+        var i=9;
         var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
         var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
         select.id="tempo"; //Imposto l'id del tag select
@@ -363,7 +389,6 @@
     player = new YT.Player('player', {
       height: '360',
       width: '640',
-      //videoId: 'M7lc1UVf-VE',
       playerVars:{
         listType: "playlist",
         list: "PLkqz3S84Tw-T2iHDsB1NdA3RM_3bCxYsg",
@@ -549,8 +574,13 @@ document.getElementById("cancel").onclick = function(){
 function saveWorkout(){ // - apiDb.php/allenamentogenerato
   var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
   request.UserId = sessionStorage.getItem("userId");
-  request.Durata = sessionStorage.getItem("durata");
   request.Tipo = sessionStorage.getItem("allenamento");
+  if(tipoAll.value != "SCHEDA"){
+    request.Durata = sessionStorage.getItem("durata");
+  }
+  else{
+    request.Durata = diff_minutes(schedaEndTime,schedaStartTime);
+  }
   var reqURI = "apiDb.php/allenamentogenerato";
   var ajax = new XMLHttpRequest();
   try{
@@ -575,6 +605,12 @@ function saveWorkout(){ // - apiDb.php/allenamentogenerato
     console.log(e);
   }
 }
+
+function diff_minutes(dt2, dt1){
+  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= 60;
+  return Math.abs(Math.round(diff));
+ }
 //Fine workout - end
 </script>
 
