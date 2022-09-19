@@ -71,14 +71,20 @@ Progetto sul random workout generator
   <li> Sviluppo salvataggio allenamenti in tutte le pagine
 </ul>
 
-//2022 -> COSE FATTE: <br>
+03/08/2022 -> COSE FATTE: <br>
 
 <ul>
   <li> Gestita la chiamata al db per visualizzare gli allenamenti fatti dal'utente </li>
   <li> Aggiunto calcolo del tempo impiegato nella scheda </li>
   <li> Aggiunte statistiche totali dell'utente  e barre di navigazione nelle pagine </li>
   <li> Fix varii </li>
-</ul>
+</ul> <br>
+
+//2022 -> COSE FATE: <br>
+
+<ul>
+  <li> Aggiunta bootstrap e CSS </li>
+</li>
 
 FIX DA RIVEDERE: <br>
 <ul>

@@ -4,7 +4,7 @@ const ALERT_THRESHOLD = 5;
 
 const COLOR_CODES = {
   info: {
-    color: "green"
+    color: "blue"
   },
   warning: {
     color: "orange",
@@ -51,10 +51,11 @@ function onTimesUp() {
   timeLeft = TIME_LIMIT;
   timePassed = 0;
   // Aggiunta mia - Commit precedenti - start
-  for(let i = 0;i< workoutParameters.length;i++){
+  /*for(let i = 0;i< workoutParameters.length;i++){
     workoutParameters[i].style.display = "block";
-  }
-  document.getElementById("request").style.display = "block";
+  }*/
+  document.getElementById("opzioniAllenamento").style.display = "block";
+  document.getElementById("request").disabled= false;
   document.getElementById("start").disabled = true;
   document.getElementById("displayEsercizi").innerHTML = " ";
   //Aggiunta mia - end
@@ -75,11 +76,11 @@ function startTimer() {
     if (timeLeft === 0) {
       onTimesUp();
       //Aggiunta mia - 17/06/2022 -start
-      document.getElementById("stop").style.display="none";
-      document.getElementById("pause").style.display="none";
-      document.getElementById("start").style.display="block";
-      document.getElementById("resume").style.display="none";
-      setMinuteOnTimer();
+      document.getElementById("stop").disabled= true;
+      document.getElementById("pause").disabled= true;
+      //document.getElementById("start").disabled= false;
+      document.getElementById("resume").disabled= true;
+      //setMinuteOnTimer();
       stopWorkout();
       var event = new Event('workoutFinito');
       document.getElementById("fineAllenamento").dispatchEvent(event);
@@ -126,16 +127,18 @@ function stopTimer(){
   timePassed = 0;*/
   onStopWorkout();
   //document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
-  document.getElementById("pannelloWorkout").innerHTML = " ";
-  document.getElementById("stop").style.display="none";
-  document.getElementById("pause").style.display="none";
-  document.getElementById("start").style.display="block";
-  document.getElementById("resume").style.display="none";
-  for(let i = 0; i<workoutParameters.length; i++){
+  //document.getElementById("nomeWorkout").innerHTML = " ";
+  document.getElementById("stop").disabled= true;
+  document.getElementById("pause").disabled= true;
+  document.getElementById("start").disabled= true;
+  document.getElementById("resume").disabled= true;
+  /*for(let i = 0; i<workoutParameters.length; i++){
     workoutParameters[i].style.display = "block";
-  }
-  setMinuteOnTimer();
-  setRemainingPathColor(timeLeft);
+  }*/
+  document.getElementById("opzioniAllenamento").style.display = "block";
+  //setMinuteOnTimer();
+  setRemainingPathColor(60);
+  //setRemainingPathColor(timeLeft);
   setCircleDasharray();
 }
 
@@ -145,7 +148,8 @@ function onStopWorkout() {
   timerInterval = null;
   timeLeft = TIME_LIMIT;
   timePassed = 0;
-
+  document.getElementById("tempo").value = 0;
+  document.getElementById("base-timer-label").innerHTML = formatTime(0) ;
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.warning.color);
   document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);

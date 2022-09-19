@@ -21,19 +21,19 @@
     $res;
     switch($primoParametro){
       case 'AMRAP':
-        $sql = "select MinRep,MaxRep,Nome from Esercizio where tipologia='$key'";
+        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key'";
         $res = elaborateQuery($sql,$conn);
         $res = randomAmrap($res);
         break;
       case 'EMOM':
         $intervallo = array_shift($request);
-        $sql = "select MinRep,MaxRep,Nome from Esercizio where tipologia='$key' limit $intervallo";
+        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key' limit $intervallo";
         $res = elaborateQuery($sql,$conn);
         $res = randomEmom($res);
         break;
       case 'SCHEDA':
         $numEs = array_shift($request);
-        $sql = "select Nome from Esercizio where tipologia='$key' limit $numEs";
+        $sql = "select IdEsercizio,Nome from Esercizio where tipologia='$key' limit $numEs";
         $res = elaborateQuery($sql,$conn);
         $res = randomScheda($res);
         break;
@@ -62,7 +62,7 @@
       case 'login':
         $sql = "select Nome,Cognome,IdUtente from utente where email = '$values[0]' and password = '$values[1]' ";
         $res = elaborateQuery($sql,$conn);
-        echo returnFromLogin($res,$sql);
+        echo returnFromLogin($res);
         break;
       case 'register':
         $sql = "Insert into utente (Nome,Cognome,Password,Email) Values ('$values[0]','$values[1]','$values[2]','$values[3]')";
@@ -79,7 +79,7 @@
         $IdWorkoutGen = uniqid(); //Id univoco da 13 caratteri, generato da php
         $Data = date("Y-m-d");
         $i = 0;
-        $sql = "Insert Into $primoParametro (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',$input[Durata])";
+        $sql = "Insert Into allenamentogenerato (IdWorkoutGen,Data,Tipo,Durata) Values ('$IdWorkoutGen','$Data','$input[Tipo]',$input[Durata])";
         $response = array_merge($response,insertWorkout($primoParametro,$sql,$conn));
         $sql = "Insert Into svolgimento (Utente,AllenamentoGenerato) Values ($input[UserId],'$IdWorkoutGen')";
         $response = array_merge($response,insertWorkout("svolgimento",$sql,$conn));
@@ -100,6 +100,37 @@
         }
         echo json_encode($response);
         break;
+    }
+  }
+  else if($method == "DELETE"){
+    $res;
+    if($primoParametro == "eliminaWorkout"){
+      $response = array();
+      $sqlMainTable = "delete from allenamentogenerato where IdWorkoutGen = '$key' ";
+      $sqlRelateTable = "delete from composizionewe where AllenamentoGenerato = '$key' ";
+      $res = elaborateQuery($sqlRelateTable,$conn);
+      if($res){
+          $response = array_merge($response,["composizionewe" => true]);
+      }
+      else{
+        $response = array_merge($response,["composizionewe" => false]);
+      }
+      $sqlRelateTable = "delete from svolgimento where AllenamentoGenerato = '$key' ";
+      $res = elaborateQuery($sqlRelateTable,$conn);
+      if($res){
+          $response = array_merge($response,["svolgimento" => true]);
+      }
+      else{
+        $response = array_merge($response,["svolgimento" => false]);
+      }
+      $res = elaborateQuery($sqlMainTable,$conn);
+      if($res){
+          $response = array_merge($response,["allenamentogenerato" => true]);
+      }
+      else{
+        $response = array_merge($response,["allenamentogenerato" => false]);
+      }
+      echo json_encode($response);
     }
   }
 
@@ -135,7 +166,7 @@
         }
     }
     catch (Exception $e){
-      echo $e->getMessage();
+      print_r($e->getMessage());
       return 0;
     }
   }
@@ -143,10 +174,10 @@
   function returnFromLogin($res){
     $rows = $res->fetch_object();
     if($rows){
-      $rows->success = true;
+      $rows->success = true; //Qui aggiungo la proprietà success ai dati già estrapolati
     }
     else{
-      $rows = ["success" => false];
+      $rows = ["success" => false]; //Invece qui svuoto il risultato ritornando solo un array con success = false
     }
     return json_encode($rows);
   }

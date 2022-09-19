@@ -3,26 +3,88 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="Css/timer.css">
-<link rel="stylesheet" href="Css/cssTemporanei.css">
-<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Modal Login -->
+<link rel="stylesheet" href="Css/customCSS.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <title> AMRAP </title>
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <br>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <button id="personal" class="invisibles reservedAreaButton rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a href="paginaPersonale.html" class="invisibles myNav-link" id="linkProfilo"> </a>
+        </li>
+      </ul>
+      <br>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">HOME</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="EMOM.html">EMOM</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="Scheda.html">Scheda</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="sostituzioniEsercizi.html"> Sostituzioni </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span data-bs-toggle="modal" data-bs-target="#tutorialModal">
+              Tutorial
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div id="tutorialModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header loginModal-header">
+        <h4 class="modal-title">Tutorial</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p> Benvenuto! <br>
+          Se sei nuovo, ecco a te alcune indicazioni per poter incominciare ad usare al meglio
+          questo generatore di workout! <br>
+          Spero che gli allenamenti siano divertenti e che ti soddisfino! <br>
+          <ul class="customListItem">
+            <li class="customListItem"> Prima di poter iniziare qualsiasi workout è
+            necessario generarlo mediante il pulsante "request workout" </li>
+            <li class="customListItem"> Una volta che il workout è partito e successivamente messo in stop, non sarà più
+            possibile riprenderlo </li>
+            <li class="customListItem"> Per poter salvare i dati relativi al workout, è necessario
+            essere prima loggati all'area riservata </li>
+            <li class="customListItem"> Il link "Sostituzioni" porta alle propedeutiche possibili per alcuni esercizi </li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <div id="DescrizionewWorkout">
-    <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
-      <li>
-          <a href="index.html"> HOME </a>
-      </li>
-      <li>
-          <a href="EMOM.html"> EMOM </a>
-      </li>
-      <li>
-          <a href="Scheda.html"> Scheda </a>
-      </li>
-    </ul>
-  </div> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) --> <br> <br>
+<div id="alertSection">
+
+</div>
 
   <script>
     var player;
@@ -30,7 +92,6 @@
     TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
     function bindEvents(){
-      document.getElementById("start").disabled = true;
       document.getElementById("start").addEventListener("click",startWorkout);
       document.getElementById("tempo").addEventListener("change",setMinuteOnTimer);
       document.getElementById("stop").addEventListener("click",stopWorkout);
@@ -42,13 +103,11 @@
     }
 
     function startWorkout(){
-      for(let i = 0; i<workoutParameters.length; i++){
-        workoutParameters[i].style.display = "none";
-      }
-      document.getElementById("request").style.display = "none";
+      document.getElementById("opzioniAllenamento").style.display = "none";
+      document.getElementById("request").disabled= true;
       document.getElementById("start").disabled = true;
-      document.getElementById("stop").style.display="block";
-      document.getElementById("pause").style.display="block";
+      document.getElementById("stop").disabled= false;
+      document.getElementById("pause").disabled= false;
       document.getElementById("player").style.display = "block";
       document.getElementById("personal").style.display = "none";
       player.nextVideo();
@@ -56,29 +115,29 @@
       startTimer();
     }
 
-    function stopWorkout(){
+    /*function stopWorkout(){
       player.stopVideo();
       stopTimer();
       document.getElementById("displayEsercizi").innerHTML = " ";
-      document.getElementById("request").style.display = "block";
-      document.getElementById("personal").style.display = "block";
+      //document.getElementById("request").style.display = "block";
+      //document.getElementById("personal").style.display = "block";
       verifySession();
-    }
+    }*/
 
     function pauseWorkout(){
       var resumeButton = document.getElementById("resume");
       player.pauseVideo();
       clearInterval(timerInterval);
       document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
-      resumeButton.style.display="Block";
+      resumeButton.disabled= false;
       resumeButton.addEventListener("click",resumeWorkout);
-      document.getElementById("pause").style.display="none";
+      document.getElementById("pause").disabled= true;
     }
 
     function resumeWorkout(){
       player.playVideo();
-      document.getElementById("pause").style.display="block";
-      document.getElementById("resume").style.display="none";
+      document.getElementById("pause").disabled= false;
+      document.getElementById("resume").disabled= true;
       startTimer();
     }
 
@@ -88,7 +147,7 @@
         sessionStorage.setItem("durata",TIME_LIMIT); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
         TIME_LIMIT = TIME_LIMIT * 60;
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
-        document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
+        //document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
       }
       /* COMMENTATO Perchè voglio che resti "random" sulla scelta. Così faccio anche meno chiamate al DB.
       Se il timer è random, gestisce tutto PHP e la funzione startWorkout
@@ -96,16 +155,20 @@
         //Inserire codice per minutaggio random/richiesta al server di calcolare con ajax
         alert("Allenamento con minuti random");
       }*/
+      document.getElementById("start").disabled = true;
     }
 
     function requestWorkout(){
+      var divNomeWorkout = document.getElementById("nomeWorkout");
+      divNomeWorkout.classList.add("workoutName");
+      divNomeWorkout.innerHTML = "AMRAP";
       if(document.getElementById("tempo").value == 0)
       {
         TIME_LIMIT = Math.floor(Math.random() * (60 - 10) + 10);
         sessionStorage.setItem("durata",TIME_LIMIT); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
         TIME_LIMIT = TIME_LIMIT * 60;
         document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-        document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
+        //document.getElementById("pannelloWorkout").innerHTML = "AMRAP " + formatTime(TIME_LIMIT) + " minuti";
       }
       sessionStorage.setItem("allenamento","AMRAP");
       document.getElementById("start").disabled = false;
@@ -131,7 +194,9 @@
     }
 
     function displayWorkout(esercizi){
-      var listaEsercizi = document.createElement("ul");
+      var spazioEsercizi = document.getElementById("displayEsercizi");
+      spazioEsercizi.style.display = "block";
+      /*var listaEsercizi = document.createElement("ul");
       listaEsercizi.id = "listaEsercizi";
       var numRep;
       for(var i=0;i<esercizi.length;i++){
@@ -143,13 +208,32 @@
         listaEsercizi.appendChild(Esercizio);
         esercizi[i].reps = numRep; //Aggiungo il numero di reps appena scelte. Serve per salvarle nel sessionStorage
       }
-      document.getElementById("displayEsercizi").appendChild(listaEsercizi);
+      document.getElementById("displayEsercizi").appendChild(listaEsercizi);*/
+      for(var i=0;i<esercizi.length;i++){
+        var listaEsercizi = document.createElement("div");
+        var Esercizio = document.createElement("div");
+        var repsEsercizio = document.createElement("div");
+        listaEsercizi.id = "listaEsercizi";
+        listaEsercizi.classList.add("flex-container");
+        //listaEsercizi.classList.add("justify-content-around");
+        //listaEsercizi.classList.add("p-2");
+        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
+        Esercizio.innerHTML = esercizi[i].Nome;
+        Esercizio.classList.add("item");
+        repsEsercizio.innerHTML = numRep;
+        repsEsercizio.classList.add("item");
+        esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+        listaEsercizi.appendChild(Esercizio);
+        listaEsercizi.appendChild(repsEsercizio);
+        spazioEsercizi.appendChild(listaEsercizi);
+      }
       sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
     }
 
   </script>
 
-  <div id="descrizione">
+  <div id="descrizione" class="container-md">
     <h2> <strong> AMRAP </strong> </h2> <br>
     Letteralmente "As Many Rounds As Possible", è un allenamento a circuito <br>
     che metterà alla prova non solo il tuo corpo ma anche la tua mente! <br>
@@ -157,48 +241,83 @@
     nel tempo prestabilito.
   </div> <br>
 
-  <div id="reservedAreaForm" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="close">&times;</span> <!-- &times è una entità di html e serve per il simbolo della X -->
-      <h2>Aria riservata</h2>
-    </div>
-    <div class="modal-body">
-      <span id="loginButton" class="swipeBtn"> Login </span> <span id="registerButton" class="swipeBtn"> Register </span> <br>
-      <div id="loginForm">
-        <label for="email"> Email: </label> <br>
-        <input type="email" id="email" placeholder="mario.rossi@rwg.com"> <br>
-        <label for="password"> Password: </label> <br>
-        <input type="password" id="password"> <br>
-        <button id="login"> Log in </button>
-      </div>
-      <div id="signinForm" class="invisibles">
-        <p class="pwdAdvertiser"> La password deve essere lunga tra gli 8 ed i 15 caratteri. <br> Inoltre
-        deve contenere almeno 1 maiuscola,  <br> 1 minuscola, 1 numero <br> ed 1 carattere speciale </p>
-        <label for="name"> Nome: </label> <br>
-        <input type="text" id="name"> <br>
-        <label for="surname"> Cognome: </label> <br>
-        <input type="text" id="surname"> <br>
-        <label for="email"> Email: </label> <br>
-        <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com"> <br>
-        <label for="password1"> Password: </label> <br>
-        <input type="password" class="password2validate" id="password1"> <br>
-        <label for="password2"> Confirm Password: </label> <br>
-        <input type="password" class="password2validate" id="password2"> <br>
-        <button id="signup"> Sign up </button>
-      </div>
-    </div>
+  <div class="modal fade" id="loginModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header loginModal-header">
+          <h4 class="modal-title">Area riservata</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div id="pillsTab">
+            <!-- Nav pills -->
+           <ul class="nav nav-pills" role="tablist">
+             <li class="nav-item">
+               <a class="nav-link active" data-bs-toggle="pill" href="#loginPill">Login</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" data-bs-toggle="pill" href="#registerPill">Register</a>
+             </li>
+           </ul>
+          </div>
+        </div>
+        <div class="tab-content">
+          <div id="loginPill" class="container tab-pane active"><br>
+            <div id="loginForm">
+              <label for="email" class="form-label"> Email: </label> <br>
+              <input type="email" id="email" placeholder="mario.rossi@rwg.com" class="form-control"> <br>
+              <label for="password" class="form-label"> Password: </label> <br>
+              <input type="password" id="password" class="form-control"> <br>
+              <button id="login" class="btn btn-primary mb-3"> Log in </button>
+            </div>
+          </div>
+          <div id="registerPill" class="container tab-pane fade"><br>
+            <div class="row">
+              <div class="col-md was-validated">
+                <label for="name" class="form-label"> Nome: </label> <br>
+                <input type="text" id="name" class="form-control" required> <br>
+                <label for="surname" class="form-label"> Cognome: </label> <br>
+                <input type="text" id="surname" class="form-control" required> <br>
+                <label for="email" class="form-label"> Email: </label> <br>
+                <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com" class="form-control" required> <br>
+                <label for="password1" class="form-label"> Password:
+                  <button type="button" class="btn" data-bs-toggle="popover" data-bs-content="La password deve essere lunga tra gli 8 ed i 15 caratteri. Inoltre
+                  deve contenere almeno 1 maiuscola, 1 minuscola, 1 numero ed 1 carattere speciale">
+                    <img src="images/info_icon.png" width="20px" height="20px">
+                  </button>
+                </label> <br>
+                <input type="password" class="password2validate form-control" id="password1" required> <br>
+                <label for="password2" class="form-label"> Confirm Password: </label> <br>
+                <input type="password" class="password2validate form-control" id="password2" required> <br>
+                <button id="signup" class="btn btn-primary mb-3"> Sign up </button>
+              </div>
+            </div>
+          </div>
+        </div>
   </div>
+
+      </div>
+    </div>
 
   </div>
 
-  <button id="personal" class="invisibles"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
+<!--<button id="personal" class="invisibles"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra
+  <div id="reservedAreaPanel">
+    <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
+  </div> -->
   <div id="reservedAreaPanel">
     <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
   </div>
+  <div id="pannelloWorkout" class="flex-container container-md mx-auto">
+    <div id="nomeWorkout" class="text-center"> </div>
+  </div>
+  </div>
 
-  <div id="timer">
+<!--  <div id="timer">
     <div id="app">
       <script src="ExternalJs/timer.js"> </script>
     </div>
@@ -250,10 +369,127 @@
   <div id="player"> </div>
   <div id="fineAllenamento" class="invisibles">
     Vuoi salvare l'allenamento? <br>
-    <button id="saveWorkout"> Salva </button> <span id="cancel"> <!-- class="close" --> &times;</span>
-  </div>
+    <button id="saveWorkout"> Salva </button> <span id="cancel"> <!-- class="close" &times;</span>
+  </div> -->
+  <div class="container"> <br>
+    <div id="core" class="row">
+      <div class="col-md-4 mt-3">
+        <div id="pulsanti">
+          <div class="row">
+            <button id="request" class="rounded-pill controlWorkout mt-5 ms-1 col"> Request workout </button>
+            <button id="start" class="rounded-pill controlWorkout mt-5 ms-1 col" disabled> Start workout </button>
+          </div>
+          <div class="row">
+            <button id="stop" class="rounded-pill controlWorkout mt-3 ms-1 col" disabled> Stop workout </button>
+            <button id="pause" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Pause workout </button>
+          </div>
+          <div class="row">
+            <button id="resume" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Resume workout </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div id="timer">
+          <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
+              <script src="ExternalJs/timer.js"> </script>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <!--<div class="row">
+          <div id="sostituzioni" class="col me-3">
+            Per qualsiasi dubbio sugli esercizi da scalare ecco <a href="sostituzioniEsercizi.html"> qui </a> una guida che fa per te
+          </div>
+      </div>-->
+      <br>
+        <div id="opzioniAllenamento" class="row"> <!-- Renderlo a scomparsa nel momento in cui inizia l'allenamento -->
+          <!--<div class="col me-3">
+            Tipo di allenamento
+            <div class="select">
+              <select id="tipoAllenamento">
+                <option value="Random"> Random </option>
+                <option value="AMRAP"> AMRAP </option>
+                <option value="EMOM"> EMOM </option>
+                <option value="SCHEDA"> Scheda </option>
+              </select>
+            </div>
+        </div>
+         <br>-->
+          <div class="col me-3">
+            <label for="selezioneMinuti">Minuti di allenamento</label>
+            <div id="selezioneMinuti">
+              <div id="tendinaMinuti" class="select">
+                <script>
+                  var i=9;
+                  var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+                  var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                  select.id="tempo"; //Imposto l'id del tag select
+                  optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+                  optionDef.text = "Random";
+                  select.appendChild(optionDef);
+                  for(i;i<60;i++){
+                    var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                    option.value = i+1; //imposto l'attributo value
+                    option.text = option.value; //imposto il testo che va dentro l'elemento option
+                    select.appendChild(option);
+                  }
+                  document.getElementById("tendinaMinuti").appendChild(select);
+                  //workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
+                </script>
+              </div>
+            </div>
+        </div> <br>
+          <div class="col me-3">
+              <div id="tipoEsercizi" class="form-check form-switch">
+                <input type="checkbox" id="pesiSiNo" class="form-check-input">
+                <label class="form-check-label float-left" for="pesiSiNo">Allenamento con pesistica?</label>
+              </div>
+          </div> <br>
+        </div>
+      </div>
+    </div> <br>
 
+    <div id="displayEsercizi" class="exercisePanel align-middle container invisibles">
+    </div> <br>
+
+    <div id="player" class="ratio ratio-21x9 youtubeItem"> </div> <br> <br>
+
+    <!--<div id="fineAllenamento" class="invisibles">
+      Vuoi salvare l'allenamento? <br>
+      <button id="saveWorkout"> Salva </button> <span id="cancel">  &times;</span>
+    </div> -->
+    <div id="fineAllenamento" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header loginModal-header">
+            <h4 class="modal-title">Salvataggio</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <h3>Vuoi salvare l'allenamento?</h3>
+          </div>
+          <div class="modal-footer flex-container">
+            <button id="saveWorkout" class="rounded-pill saveButton mx-2"> Salva </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer id="footer" class="bg-dark container-fluid text-light myFooter col-12">
+    <p> DISCLAIMER: Questo sito non garantisce allenamenti miracolosi e/o combinazioni di esercizi perfette.
+    È nato per puro divertimento e per colmare carenze di "fantasia" per gli allenamenti di tutti i giorni.
+    In breve, allenatevi forte, spingete tanto e divertitevi. In bocca al lupo &#128521;&#128170; </p>
+  </footer>
   <script>
+    /* Script per inizializzare gli elementi popover - start */
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+     return new bootstrap.Popover(popoverTriggerEl)
+    })
+    /* Script per inizializzare gli elementi popover - end */
+    loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Recupero il modal
+    saveModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
+    alerts = document.getElementById("alertSection");
     document.getElementById("player").style.display = "none";
 
     var tag = document.createElement('script');
@@ -282,7 +518,7 @@
       player.setLoop(true);
     }
 
-    var modal = document.getElementById("reservedAreaForm");
+//    var modal = document.getElementById("reservedAreaForm");
     var personalArea = document.getElementById("personal");
     var span = document.getElementsByClassName("close")[0];
     var logBtn = document.getElementById("loginButton");
@@ -292,7 +528,7 @@
     var panel = document.getElementById("reservedAreaPanel");
     var profilo = document.getElementById("linkProfilo");
 
-    personalArea.onclick = function(){
+  /*  personalArea.onclick = function(){
       modal.style.display = "block";
     }
 
@@ -317,7 +553,7 @@
     function swipeSignIn(){
       document.getElementById("signinForm").style.display = "block";
       document.getElementById("loginForm").style.display = "none";
-    }
+    } */
 
     submitLogin.addEventListener("click",requestForLogin);
     submitRegister.addEventListener("click",requestForRegister);
@@ -328,7 +564,11 @@
       var email = document.getElementById("email2validate").value;
       if(validateCredentials(password,email)){
         if(password != passwordCnf){
-          alert("Le due password non coincidono!");
+          alerts.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Attenzione!</strong> Le due password non coincidono.
+          </div> `;
           document.getElementsByClassName("password2validate")[0].value = "";
           document.getElementsByClassName("password2validate")[1].value = "";
         }
@@ -346,13 +586,17 @@
                 console.log(ajax.responseText);
                 var response = JSON.parse(ajax.responseText);
                 if(response.success == true){
-                  alert("Utente registrato con successo! Ora puoi effettuare il login");
+                  alerts.innerHTML = `
+                  <div class="alert alert-success alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    Utente registrato con successo! Ora puoi effettuare il login
+                  </div> `;
                   document.getElementById("name").value = " ";
                   document.getElementById("surname").value = " ";
                   document.getElementsByClassName("password2validate")[0].value = "";
                   document.getElementsByClassName("password2validate")[1].value = "";
                   document.getElementById("email2validate").value = "";
-                  modal.style.display = "none";
+                  //modal.style.display = "none";
                 }
               }
             };
@@ -365,12 +609,31 @@
           }
         }
       }
+      else if (document.getElementById("name").value == ""){
+        alerts.innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong> Attenzione! </strong> Nome mancante
+        </div> `;
+      }
+      else if (document.getElementById("surname").value == ""){
+        alerts.innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong> Attenzione! </strong> Cognome mancante
+        </div> `;
+      }
       else{
-        alert("La password e/o la mail sono errate");
+        alerts.innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong> Attenzione! </strong> La password e/o la mail sono errate
+        </div> `;
         document.getElementsByClassName("password2validate")[0].value = "";
         document.getElementsByClassName("password2validate")[1].value = "";
         document.getElementById("email2validate").value = "";
       }
+      loginModal.hide();
     }
 
     function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
@@ -388,15 +651,20 @@
               document.getElementById("personal").style.display = "none";
               document.getElementById("email").value = "";
               document.getElementById("password").value = "";
-              modal.style.display = "none";
+              //modal.style.display = "none";
               //panel.innerHTML = response.Nome; LINK AREA riservata
+              loginModal.hide();
               profilo.innerHTML = response.Nome;
               profilo.style.display = "block";
               sessionStorage.setItem("userLogged",response.Nome);
               sessionStorage.setItem("userId",response.IdUtente);
             }
             else{
-              alert("Email e/o password errate");
+              alerts.innerHTML = `
+              <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong> Attenzione! </strong> La password e/o la mail sono errate
+              </div> `;
               document.getElementById("email").value = "";
               document.getElementById("password").value = "";
             }
@@ -409,6 +677,7 @@
       catch(e){
         console.log(e);
       }
+      loginModal.hide();
     }
 
     function validateCredentials(pwd,email){
@@ -428,23 +697,27 @@
           personalArea.style.display = "none";
           profilo.innerHTML = user;
           profilo.style.display = "block";
+          return true;
         }
         else{
           personalArea.style.display = "block";
+          return false;
         }
       }
     //Session - end
 
     //Fine workout - start
     function fineWorkout(){
+      player.stopVideo();
       if(sessionStorage.getItem("userLogged")){
-        document.getElementById("fineAllenamento").style.display = "block";
+        //document.getElementById("fineAllenamento").style.display = "block";
+        saveModal.show();
       }
     }
 
-    document.getElementById("cancel").onclick = function(){
+    /*document.getElementById("cancel").onclick = function(){
       document.getElementById("fineAllenamento").style.display = "none";
-    }
+    }*/
 
     function saveWorkout(){ // - apiDb.php/allenamentogenerato
       var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
@@ -458,12 +731,21 @@
           if(ajax.readyState == 4){
             console.log(ajax.responseText);
             var response = JSON.parse(ajax.responseText);
-            document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
+            //document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
+            saveModal.hide();
             if(response.allenamentogenerato == true && response.svolgimento == true && response.Esercizio1 == true){
-              alert("Allenamento salvato con successo!");
+              alerts.innerHTML = `
+              <div class="alert alert-success alert-dismissible fade show">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                Allenamento salvato con successo!
+              </div> `;
             }
             else{
-              alert("Salvataggio allenamento fallito");
+              alerts.innerHTML = `
+              <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong> Attenzione! </strong> Salvataggio allenamento fallito
+              </div> `;
             }
           }
         };
@@ -476,6 +758,20 @@
       }
     }
     //Fine workout - end
+    function stopWorkout(){
+      player.stopVideo();
+      stopTimer();
+      document.getElementById("displayEsercizi").innerHTML = " ";
+      document.getElementById("displayEsercizi").style.display = "none";
+      document.getElementById("request").disabled= false;
+      //document.getElementById("personal").style.display = "block";
+      if(verifySession()){
+        //document.getElementById("fineAllenamento").style.display = "block";
+        //var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
+        saveModal.show();
+      }
+      //verifySession();
+    }
   </script>
 
 </body>

@@ -1,125 +1,286 @@
-<!DOCTYPE html>
 <html>
 <head>
   <title> Area personale </title>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="Css/customCSS.css">
+  <!-- Aggiunta di bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!--<style>
+    #wallpaper{
+      /* Immagine usata */
+     background-image: url("images/wallPaperPersonal.jpg");
+
+     /* Blur */
+     filter: blur(2px);
+     -webkit-filter: blur(2px);
+
+     height: 100%;
+
+     /* Centro e scala dell'immagine */
+     background-position: center;
+     background-repeat: no-repeat;
+     background-size: cover;
+    }
+  </style> -->
 </head>
 
-<body>
-    <div id="datiPersonali">
-      <p> Ciao <script> document.write(sessionStorage.getItem("userLogged")); </script> ! In questa sezione puoi vedere tutti gli <br>
-      allenamenti che hai svolto.</p>
+<body class="container personalArea">
+  <div class="container-fluid overflow-auto">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">HOME</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="AMRAP.html">AMRAP</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="EMOM.html">EMOM</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Scheda.html">Scheda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sostituzioniEsercizi.html"> Sostituzioni </a>
+          </li>
+        </ul>
+        <button id="logout" class="rounded-pill reservedAreaButton"> Logout </button> <br>
+      </div>
     </div>
+  </nav>
+</div> <br>
+<div class="modal" id="welcomeModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header loginModal-header">
+        <h4 class="modal-title">Benvenuto <script> document.write(sessionStorage.getItem("userLogged")); </script> !</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        In questa sezione puoi vedere tutti gli
+        allenamenti che hai svolto
+      </div>
+    </div>
+  </div>
+</div>
+<div id="alertSection" class="mt-3">
+
+</div>
 
     <div id="allenamentiFiniti">
-
-    </div> <br>
-
-    <div id="statisticheUtente">
-      <span id="tempoTotale"> Tempo totale:  </span> <span id="numeroAllenamenti"> Totale allenamenti:  </span>
+      <center>
+        <div id="accordion" class="container-md scroll-section mt-5 mb-2"> </div>
+      </center>
+    </div>
+    <div id="statisticheUtente" class="container-md mx-auto mt-2">
+      <span id="tempoTotale" class="spanItem"> Tempo totale:  </span>
+      <span id="numeroAllenamenti" class="spanItem"> Totale allenamenti:  </span>
     </div>
 
-    <div id="logoutSection">
-      <button id="logout"> Logout </button> <br>
+    <div class="modal" id="confirmModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header loginModal-header">
+            <h4 class="modal-title">Conferma <script> document.write(sessionStorage.getItem("userLogged")); </script> !</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            Sei sicuro di voler eliminare questo allenamento?
+            <div class="row">
+              <div class="col-md-3"> </div>
+              <div class="col-md-3">
+                <button id="confirmDelete" class="deleteButton confirm"> Si </button>
+              </div>
+              <div class="col-md-3">
+                <button id="regretDelete" class="controlWorkout sub"> No </button>
+              </div>
+              <div class="col-md-3"> </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script>
-      window.onload = bindEvents;
+      <script>
+        window.onload = bindEvents;
 
-      //Display allenamenti - start - Request: apiDb.php/allenamenti,UserId
-      var ajax = new XMLHttpRequest();
-      var reqURI = "apiDb.php/allenamenti/"+sessionStorage.getItem("userId");
-      var durataTotAllenamento = 0;
-      var numAllenamenti;
-      try{
-        ajax.onreadystatechange = function(){
-          if(ajax.readyState == 4){
-            console.log(ajax.responseText);
-            response = JSON.parse(ajax.responseText);
-            var listaWorkout = document.createElement("ul"); //Lista che contiene tutti i vari workout
-            listaWorkout.id = "listaWo";
-            for(var i=0; i<Object.keys(response).length; i++){
-              var workout = document.createElement("li");
-              var callToWorkout = document.createElement("span");
-              var workoutDetailDiv = document.createElement("div");
-              workoutDetailDiv.id = i;
-              workoutDetailDiv.style.display = "none";
-              workoutDetailDiv.innerHTML = "";
-              callToWorkout.id= response[i].IdWorkoutGen;
-              callToWorkout.innerHTML = "Info";
-              callToWorkout.addEventListener("click",requestWorkoutInformation);
-              //workout.id = i;
-              workout.innerHTML = "Id Workout: "+callToWorkout.id+" Data: "+response[i].Data+" Tipo: "+response[i].Tipo+" Durata: "+response[i].Durata+" minuti ";
-              callToWorkout.innerHTML += "<br>";
-              callToWorkout.appendChild(workoutDetailDiv);
-              workout.appendChild(callToWorkout);
-              listaWorkout.appendChild(workout);
-              durataTotAllenamento += parseInt(response[i].Durata);
+        //Display allenamenti - start - Request: apiDb.php/allenamenti,UserId
+        var ajax = new XMLHttpRequest();
+        var reqURI = "apiDb.php/allenamenti/"+sessionStorage.getItem("userId");
+        var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('welcomeModal'));
+        var confirmModal = bootstrap.Modal.getOrCreateInstance(document.getElementById("confirmModal"));
+        var idDelete = "";
+        var alerts = document.getElementById("alertSection");
+        modal.show();
+        var durataTotAllenamento = 0;
+        var numAllenamenti;
+        try{
+          ajax.onreadystatechange = function(){
+            if(ajax.readyState == 4){
+              console.log(ajax.responseText);
+              response = JSON.parse(ajax.responseText);
+              for(var i=0; i<Object.keys(response).length; i++){
+                var card = document.createElement("div");
+                var cardHeader = document.createElement("div");
+                var cardBody = document.createElement("div");
+                var collapse = document.createElement("div");
+                var link = document.createElement("a");
+                var accordion = document.getElementById("accordion");
+                card.id = "card"+response[i].IdWorkoutGen;
+                card.classList.add("card");
+                card.classList.add("mx-3");
+                cardHeader.classList.add("card-header");
+                link.classList.add("collapsed");
+                link.classList.add("btn");
+                link.classList.add("btn-primary");
+                link.id = response[i].IdWorkoutGen;
+                link.addEventListener("click",requestWorkoutInformation);
+                link.setAttribute("data-bs-toggle","collapse");
+                link.href = "#collapse"+response[i].IdWorkoutGen;
+                sessionStorage.setItem("durata"+link.id,response[i].Durata);
+                link.innerHTML = "Data: "+response[i].Data+" Tipo: "+response[i].Tipo+" Durata: "+response[i].Durata+" minuti";
+                cardHeader.appendChild(link);
+                collapse.id = "collapse"+response[i].IdWorkoutGen;
+                collapse.classList.add("collapse");
+                collapse.setAttribute("data-bs-parent","#accordion");
+                cardBody.classList.add("card-body");
+                cardBody.classList.add("text-dark");
+                cardBody.id = "body"+link.id;
+                cardBody.classList.add("exerciseDetail");
+                collapse.appendChild(cardBody);
+                card.appendChild(cardHeader);
+                card.appendChild(collapse);
+                accordion.appendChild(card);
+                durataTotAllenamento += parseInt(response[i].Durata);
+              }
+              numAllenamenti = Object.keys(response).length;
+              document.getElementById("tempoTotale").innerHTML += " "+durataTotAllenamento+" minuti";
+              //document.getElementById("tempoTotale").title = durataTotAllenamento;
+              document.getElementById("numeroAllenamenti").innerHTML += " "+numAllenamenti;
+              //document.getElementById("numeroAllenamenti").title = numAllenamenti;
             }
-            numAllenamenti = Object.keys(response).length;
-            document.getElementById("tempoTotale").innerHTML += " "+durataTotAllenamento+" minuti";
-            document.getElementById("numeroAllenamenti").innerHTML += " "+numAllenamenti;
-            document.getElementById("allenamentiFiniti").appendChild(listaWorkout);
-          }
-        };
-        ajax.open("GET",reqURI,true);
-        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        ajax.send(null);
-      }
-      catch(e){
-        console.log(e);
-      }
-      //Display allenamenti - end
+          };
+          ajax.open("GET",reqURI,true);
+          ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          ajax.send(null);
+        }
+        catch(e){
+          console.log(e);
+        }
+        //Display allenamenti - end
 
-      function bindEvents(){
-        document.getElementById("logout").addEventListener("click",logout);
-      }
+        function bindEvents(){
+          document.getElementById("logout").addEventListener("click",logout);
+          document.getElementById("regretDelete").addEventListener("click",dontDelete);
+          document.getElementById("confirmDelete").addEventListener("click",deleteWorkout);
+        }
 
-      function logout(){
-        sessionStorage.clear(); //Svuota totalmente il sessionStorage
-        window.location.replace("http://localhost/ProgettoProg3/Index.html");
-      }
+        function logout(){
+          sessionStorage.clear(); //Svuota totalmente il sessionStorage
+          window.location.replace("http://localhost/ProgettoProg3/Index.html");
+        }
 
-      function requestWorkoutInformation(event){//apiDb.php/eserciziAllenamento/IdWorkoutGen
-        caller = event.target;
-        node = caller.children[1];
-        if(node.style.display == "none" && node.innerHTML == ""){
+        function requestWorkoutInformation(){//apiDb.php/eserciziAllenamento/IdWorkoutGen
+          var target = event.target;
+          var cardBodyTarget = document.getElementById("body"+target.id);
+          var aCapo = document.createElement("br");
           var ajaxCall = new XMLHttpRequest();
-          var reqURI = "apiDb.php/eserciziAllenamento/"+caller.id;
+          var deleteButton = document.createElement("button");
+          var reqURI = "apiDb.php/eserciziAllenamento/"+target.id;
+          if(!cardBodyTarget.hasChildNodes()){
+            try{
+              ajax.onreadystatechange = function(){
+                if(ajax.readyState == 4){
+                  console.log(ajax.responseText);
+                  response = JSON.parse(ajax.responseText);
+                  for(var j=0;j<Object.keys(response).length;j++){
+                    var esercizio = document.createElement("div");
+                    //esercizio.classList.add("exerciseDetail");
+                    esercizio.innerHTML = response[j].Nome+" "+response[j].NumRep;
+                    if(response[j].NumSets != 0){
+                      esercizio.innerHTML += " x "+response[j].NumSets;
+                    }
+                    cardBodyTarget.appendChild(esercizio);
+                  }
+                  deleteButton.id = "delete"+target.id;
+                  deleteButton.innerHTML = "Elimina workout";
+                  deleteButton.classList.add("deleteButton");
+                  deleteButton.addEventListener("click",confirmDeletion);
+                  cardBodyTarget.appendChild(deleteButton);
+                }
+              };
+              ajax.open("GET",reqURI,true);
+              ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              ajax.send(null);
+            }
+            catch(e){
+              console.log(e);
+            }
+          }
+        }
+
+        function confirmDeletion(){
+          confirmModal.show();
+          idDelete = event.target.id.replace("delete","");
+        }
+
+        function dontDelete(){
+          idDelete = "";
+          confirmModal.hide();
+        }
+
+        function deleteWorkout(){
+          var ajax = new XMLHttpRequest();
+          var reqURI = "apiDb.php/eliminaWorkout/"+idDelete; //apiDb.php/eliminaWorkout/idAllenamento
+          var durata;
+          var durataTot = document.getElementById("tempoTotale");
+          var allenamentiTot = document.getElementById("numeroAllenamenti");
           try{
             ajax.onreadystatechange = function(){
               if(ajax.readyState == 4){
                 console.log(ajax.responseText);
-                response = JSON.parse(ajax.responseText);
-                var dettaglioEsercizi = document.createElement("ol");
-                for(var j=0;j<Object.keys(response).length;j++){
-                  var esercizio = document.createElement("li");
-                  esercizio.innerHTML = response[j].Nome+" "+response[j].NumRep;
-                  if(response[j].NumSets != 0){
-                    esercizio.innerHTML += " x "+response[j].NumSets;
-                  }
-                  dettaglioEsercizi.appendChild(esercizio);
+                //Alert di funzionamento o meno;
+                var risultato = JSON.parse(ajax.responseText);
+                if(risultato["allenamentogenerato"] == true && risultato["composizionewe"] == true && risultato["svolgimento"] == true){
+                  document.getElementById("card"+idDelete).remove();
+                  alerts.innerHTML = `
+                  <div class="alert alert-success alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <strong>Grandioso!</strong> L'allenamento é stato eliminato con successo.
+                  </div> `;
+                  durata = sessionStorage.getItem("durata"+idDelete);
+                  durataTot.innerHTML = "Tempo totale: "+(durataTotAllenamento-durata)+" minuti";
+                  allenamentiTot.innerHTML = "Totale allenamenti "+(numAllenamenti-1);
                 }
-                node.appendChild(dettaglioEsercizi);
-                node.style.display = "block";
+                else{
+                  alerts.innerHTML = `
+                  <div class="alert alert-danger alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <strong>Attenzione!</strong> Qualcosa è andato storto :(
+                  </div> `;
+                }
+                idDelete = "";
+                confirmModal.hide();
               }
             };
-            ajax.open("GET",reqURI,true);
-            ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            ajax.open("DELETE",reqURI,true);
             ajax.send(null);
           }
           catch(e){
             console.log(e);
           }
         }
-        else if(node.innerHTML != "" && node.style.display == "none"){
-          node.style.display = "block";
-        }
-        else{
-          node.style.display = "none";
-        }
-      }
-    </script>
+      </script>
 </body>
-
 </html>

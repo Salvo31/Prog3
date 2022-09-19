@@ -1,0 +1,405 @@
+#checkPause { /* PER PAUSE EMOM */
+  display : none;
+}
+
+.invisibles { /* SOSTITUIRE TUTTE LE REGOLE SOPRA CON QUESTA CLASSE */
+  display : none
+}
+
+/* Login popup - start */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0%;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.loginModal-header {
+  padding: 2px 16px;
+  /*background-color: #5cb85c;*/
+  background: rgb(34,193,195);
+  background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+/*.modal-footer {
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+} */
+
+/* Login popup - end */
+
+.pwdAdvertiser{
+  color : #000099;
+}
+
+.customNavBar{
+  background-color: #4d4dff;
+}
+
+.exerciseDetail{ /* Classe per i dettagli degli allenamenti */
+  background-color: #ffffb3;
+}
+
+#personal{
+  margin-left:-10px;
+}
+
+#linkProfilo{
+  margin-left:-20;
+}
+
+.myNav-link{
+  padding:.5rem 1rem;
+  color : #9b9d99;
+  text-decoration:none;
+  transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.myNav-link:hover{
+  color:rgba(255,255,255,.75);
+}
+/*.wpImage{
+
+ background-image: url("../images/wallPaperPersonal.jpg");
+
+ filter: blur(5px);
+ -webkit-filter: blur(2px);
+
+ height: 100%;
+
+ background-position: center;
+ background-repeat: no-repeat;
+ background-size: cover;
+} */
+
+.bg-text {
+  /*background-color: rgb(0,0,0);  Fallback color */
+  /*background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+  color: black;
+  font-weight: bold;
+  /*border: 3px solid #f1f1f1;*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /*z-index: 2;*/
+  /*width: 80%; */
+  padding: 20px;
+  text-align: center;
+}
+
+body,html{
+  background: rgb(34,193,195);
+  background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  overflow:auto;
+  font: 130% Arial, sans-serif;
+}
+
+.reservedAreaButton{
+  background-color: #000099;
+  color : #9b9d99;
+}
+
+.reservedAreaButton:hover{
+  color:rgba(255,255,255,.75);
+}
+
+.controlWorkout{
+  background-color: #0d6efd;
+  color: #ffffff;
+  margin-top: 20%;
+}
+
+.controlWorkout.sub{
+  margin-top: 10px;
+  border: 5px solid #000099;
+  border-radius: 5px;
+  width: 80px;
+}
+
+.saveButton{
+  background-color: #0d6efd;
+  color: #ffffff;
+  flex: 1 1 0;
+}
+
+.saveButton:hover{
+  background-color: #ffffb3;
+  color: #000000;
+}
+
+.exercisePanel{
+  border-color: #000099;
+  border-radius: 10px;
+  outline-style: solid;
+  outline-color: #000099;
+  background: rgb(238,174,202);
+  background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);
+  -webkit-animation-name: popup;
+  -webkit-animation-duration: 2s;
+  animation-name: popup;
+  animation-duration: 2s;
+  /*-webkit-animation-name: popdown;
+  -webkit-animation-duration: 0.8s;
+  animation-name: popdown;
+  animation-duration: 0.8s VERIFICARE PERCHE' NON VA */
+}
+
+@-webkit-keyframes popup {
+  from {display: none; opacity:0}
+  to {display: block; opacity:1}
+}
+
+@keyframes popup {
+  from {display: none; opacity:0}
+  to {display: block; opacity:1}
+}
+
+/*@-webkit-keyframes popdown {
+  from {display: block; opacity:0}
+  to {display: none; opacity:1}
+}
+
+@keyframes popdown {
+  from {display: block; opacity:0}
+  to {display: none; opacity:1}
+} */
+
+.flex-container {
+  display: flex;
+  align-items: center;
+}
+
+.item {
+  margin: 15px;
+  padding: 5px;
+  border: 1px solid blue;
+	flex: 1 1 0;
+  text-align: center;
+  border-radius: 25px;
+}
+
+.workoutName{
+  margin: 10px;
+  padding: 2px;
+  border: 3px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: #000099;
+  font-size: 4em;
+  flex: 1 1 0;
+  -webkit-animation-name: popup;
+  -webkit-animation-duration: 2s;
+  animation-name: popup;
+  animation-duration: 2s;
+}
+
+.youtubeItem {
+  background-color: #ffffff;
+  padding: 5px;
+  border: 5px solid #000099;
+  text-align: center;
+  border-radius: 25px;
+  -webkit-animation-name: popup;
+  -webkit-animation-duration: 2s;
+  animation-name: popup;
+  animation-duration: 2s;
+}
+
+ul.customListItem{
+  list-style:none; /* Rimuovo gli stili di default dalla lista */
+}
+
+ul.customListItem li::before{
+  content: url('../images/dumb_icon.png');
+  padding-top: 8px;
+}
+
+ul.customListItem > li {
+    /*align-items: center;*/
+    display: flex;
+}
+
+li.customListItem{
+  margin-bottom: 10px;
+}
+
+.scroll-section {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 5px;
+}
+
+.scroll-section::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-section::-webkit-scrollbar-track {
+  background: #000099;
+  border-radius: 5px;
+}
+
+.scroll-section::-webkit-scrollbar-thumb {
+  background: #ffffb3;
+  border-radius: 5px;
+}
+/* Select da wrappare in un div con questa classe */
+select {
+  /* Reset Select */
+  appearance: none;
+  outline: 0;
+  border: 0;
+  box-shadow: none;
+  /* Personalize */
+  flex: 1;
+  padding: 0 1em;
+  color: #fff;
+  background-color: #000099;
+  background-image: none;
+  cursor: pointer;
+}
+/* Remove IE arrow */
+select::-ms-expand {
+  display: none;
+}
+/* Custom Select wrapper */
+.select {
+  position: relative;
+  display: flex;
+  width: 10em;
+  height: 2.5em;
+  margin-left: 10px;
+  border-radius: .25em;
+  overflow: hidden;
+}
+/* Arrow */
+.select::after {
+  content: '\25BC'; /* Freccia del select. è una entità di css */
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1em;
+  background-color: #34495e;
+  transition: .25s all ease;
+  pointer-events: none;
+}
+/* Transition */
+.select:hover::after {
+  color: #f39c12;
+}
+
+.personalArea{
+  background-image: url("../images/wallPaperPersonal.png");
+  /* Centro e scala dell'immagine */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.spanItem{
+  display: table;
+  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: #ffffb3;
+  border: 5px solid #000099;
+  margin-top: 5px;
+}
+
+.substitutionItem{
+  border-left: 5px solid #000099;
+  border-right: 5px solid #000099;
+  border-radius: 5px;
+  color: #ffffff
+}
+
+.substitutionItem:nth-child(odd){
+  background-color: #e4afcd;
+}
+
+.substitutionItem:nth-child(even){
+  background-color: #9cbae6;
+}
+
+.myFooter{
+  padding:.5rem 1rem;
+  bottom : sticky;
+}
+
+p:only-child{
+  color : #9b9d99;
+  text-decoration:none;
+  transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+  font-size: 20px;
+}
+
+.deleteButton{
+  color: #ffffff;
+  background-color: #a62219;
+  border: 5px solid #8c1c14;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.deleteButton.confirm{
+  width: 80px;
+}
+
+.deleteButton:hover{
+  color: #9b9d99;
+}

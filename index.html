@@ -2,14 +2,91 @@
 <head>
   <title> Random Workout Generator </title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Modal Login -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="Css/timer.css">
-  <link rel="stylesheet" href="Css/cssTemporanei.css">
+  <link rel="stylesheet" href="Css/customCSS.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-  <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati -->
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <br>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <button id="personal" class="invisibles reservedAreaButton rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a href="paginaPersonale.html" class="invisibles myNav-link" id="linkProfilo"> </a>
+        </li>
+      </ul>
+      <br>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="AMRAP.html">AMRAP</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="EMOM.html">EMOM</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="Scheda.html">Scheda</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="sostituzioniEsercizi.html"> Sostituzioni </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <span data-bs-toggle="modal" data-bs-target="#tutorialModal">
+              Tutorial
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div id="tutorialModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header loginModal-header">
+        <h4 class="modal-title">Tutorial</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p> Benvenuto! <br>
+          Se sei nuovo, ecco a te alcune indicazioni per poter incominciare ad usare al meglio
+          questo generatore di workout! <br>
+          Spero che gli allenamenti siano divertenti e che ti soddisfino! <br>
+          <ul class="customListItem">
+            <li class="customListItem"> Prima di poter iniziare qualsiasi workout è
+            necessario generarlo mediante il pulsante "request workout" </li>
+            <li class="customListItem"> Una volta che il workout è partito e successivamente messo in stop, non sarà più
+            possibile riprenderlo </li>
+            <li class="customListItem"> Per poter salvare i dati relativi al workout, è necessario
+            essere prima loggati all'area riservata </li>
+            <li class="customListItem"> Il link "Sostituzioni" porta alle propedeutiche possibili per alcuni esercizi </li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="alertSection">
+
+</div>
+
+  <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati
   <div id="DescrizionewWorkout">
-    <ul id="ListaAllenamenti"> <!-- Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout -->
+    <ul id="ListaAllenamenti"> Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout
       <li>
           <a href="AMRAP.html"> AMRAP </a>
       </li>
@@ -20,7 +97,7 @@
           <a href="Scheda.html"> Scheda </a>
       </li>
     </ul>
-  </div> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) --> <br> <br>
+  </div> <br> <br> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) -->
 
 <script>
  var player;
@@ -30,12 +107,12 @@
  TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
 
  function bindEvents(){
-   document.getElementById("start").disabled = true;
+   //document.getElementById("start").disabled = true;
    document.getElementById("start").addEventListener("click",startWorkout); //richiama lo start del timer nel momento in cui clicco sul bottone
    document.getElementById("stop").addEventListener("click",stopWorkout);
    document.getElementById("pause").addEventListener("click",pauseWorkout);
    //document.getElementById("tipoAllenamento").addEventListener("change",setWorkout);
-   document.getElementById("selezioneMinuti").addEventListener("change",setMinuteOnTimer);
+   document.getElementById("tendinaMinuti").addEventListener("change",setMinuteOnTimer);
    document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
    document.getElementById("request").addEventListener("click",requestWorkout);
    document.getElementById("fineAllenamento").addEventListener("workoutFinito",fineWorkout);
@@ -53,16 +130,17 @@
      document.getElementById("selezioneMinuti").style.display = "block";
    }
    document.getElementById("base-timer-label").innerHTML = formatTime(0);
+   document.getElementById("start").disabled = true;
+   onStopWorkout();
+   setCircleDasharray();
  }
 
  function startWorkout(){
-   for(let i = 0; i<workoutParameters.length; i++){
-     workoutParameters[i].style.display = "none";
-   }
-   document.getElementById("request").style.display = "none";
+   document.getElementById("opzioniAllenamento").style.display = "none";
+   document.getElementById("request").disabled= true;
    document.getElementById("start").disabled = true;
-   document.getElementById("stop").style.display="block";
-   document.getElementById("pause").style.display="block";
+   document.getElementById("stop").disabled= false;
+   document.getElementById("pause").disabled= false;
    document.getElementById("player").style.display = "block";
    document.getElementById("personal").style.display = "none";
    player.nextVideo();
@@ -76,34 +154,21 @@
 
  }
 
- function stopWorkout(){
-   player.stopVideo();
-   stopTimer();
-   document.getElementById("displayEsercizi").innerHTML = " ";
-   document.getElementById("request").style.display = "block";
-   //document.getElementById("personal").style.display = "block";
-   if(tipoAll.value == "SCHEDA"){
-     document.getElementById("fineAllenamento").style.display = "block";
-     schedaEndTime = new Date();
-   }
-   verifySession();
- }
-
  function pauseWorkout(){
    var resumeButton = document.getElementById("resume");
    player.pauseVideo();
    clearInterval(timerInterval);
    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
-   resumeButton.style.display="Block";
+   resumeButton.disabled= false;
    resumeButton.addEventListener("click",resumeWorkout);
-   document.getElementById("pause").style.display="none";
+   document.getElementById("pause").disabled= true;
  }
 
  function resumeWorkout(){
    //DZ.player.play();
    player.playVideo();
-   document.getElementById("pause").style.display="block";
-   document.getElementById("resume").style.display="none";
+   document.getElementById("pause").disabled= false;
+   document.getElementById("resume").disabled= true;
    startTimer();
  }
 
@@ -131,33 +196,36 @@
      TIME_LIMIT = tempo * 60;
      document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
    }
+   document.getElementById("start").disabled = true;
  }
 
  function requestWorkout(){
    var allScelto;
    var reqURI = "apiDb.php/";
+   var divNomeWorkout = document.getElementById("nomeWorkout");
+   divNomeWorkout.classList.add("workoutName");
    if(tipoAll.value == "Random"){
      var sceltaAll = ["AMRAP","EMOM","SCHEDA"];
      allScelto = sceltaAll[(Math.floor(Math.random() * (3 - 1+1) + 1)) - 1];
      tipoAll.value=allScelto;
      reqURI += generateURI(allScelto,reqURI);
      if(allScelto == "SCHEDA"){
-       document.getElementById("pannelloWorkout").innerHTML = allScelto;
+       divNomeWorkout.innerHTML = allScelto;
        document.getElementById("selezioneMinuti").style.display = "none";
      }
      else{
-       document.getElementById("pannelloWorkout").innerHTML = allScelto + " " + formatTime(TIME_LIMIT) + " minuti";
+       divNomeWorkout.innerHTML = allScelto;
        document.getElementById("selezioneMinuti").style.display = "block";
      }
    }
    else{
      reqURI += generateURI(tipoAll.value,reqURI);
      if(tipoAll.value == "SCHEDA"){
-       document.getElementById("pannelloWorkout").innerHTML = tipoAll.value;
+       divNomeWorkout.innerHTML = tipoAll.value;
      }
      else{
        document.getElementById("selezioneMinuti").style.display = "block";
-       document.getElementById("pannelloWorkout").innerHTML = tipoAll.value + " " + formatTime(TIME_LIMIT) + " minuti";
+       divNomeWorkout.innerHTML = tipoAll.value;
      }
     }
     sessionStorage.setItem("allenamento",tipoAll.value);
@@ -242,44 +310,66 @@
  }
 
  function displayWorkout(esercizi){
-   var listaEsercizi = document.createElement("ul");
-   listaEsercizi.id = "listaEsercizi";
+   var spazioEsercizi = document.getElementById("displayEsercizi");
+   spazioEsercizi.style.display = "block";
    var numRep;
    if(tipoAll.value != "SCHEDA"){
      for(var i=0;i<esercizi.length;i++){
-       var Esercizio = document.createElement("li");
+       var listaEsercizi = document.createElement("div");
+       var Esercizio = document.createElement("div");
+       var repsEsercizio = document.createElement("div");
+       listaEsercizi.id = "listaEsercizi";
+       listaEsercizi.classList.add("flex-container");
+       //listaEsercizi.classList.add("justify-content-around");
+       //listaEsercizi.classList.add("p-2");
        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
        numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
-       Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
-       listaEsercizi.appendChild(Esercizio);
+       Esercizio.innerHTML = esercizi[i].Nome;
+       Esercizio.classList.add("item");
+       repsEsercizio.innerHTML = numRep;
+       repsEsercizio.classList.add("item");
        esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+       listaEsercizi.appendChild(Esercizio);
+       listaEsercizi.appendChild(repsEsercizio);
+       spazioEsercizi.appendChild(listaEsercizi);
      }
    }
    else{
      for(var i=0;i<esercizi.length;i++){
-       var Esercizio = document.createElement("li");
+       var listaEsercizi = document.createElement("div");
+       var Esercizio = document.createElement("div");
+       var repsEsercizio = document.createElement("div");
+       listaEsercizi.id = "listaEsercizi";
+       listaEsercizi.classList.add("flex-container");
+       //listaEsercizi.classList.add("justify-content-around");
+       //listaEsercizi.classList.add("p-2");
        //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
        numRep = Math.floor(Math.random() * (15 - 6+1) + 6);
        numSerie = Math.floor(Math.random() * (6 - 2+1)+2);
-       //placeholder.value += "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+numRep;
-       Esercizio.innerHTML = "<b> <i> "+esercizi[i].Nome+" </i> </b> : "+ numSerie + " x " + numRep;
+       Esercizio.innerHTML = esercizi[i].Nome;
+       Esercizio.classList.add("item");
+       repsEsercizio.innerHTML = numSerie+" x "+numRep;
+       repsEsercizio.classList.add("item");
        listaEsercizi.appendChild(Esercizio);
+       listaEsercizi.appendChild(repsEsercizio);
        esercizi[i].serie = numSerie; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
        esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+       spazioEsercizi.appendChild(listaEsercizi);
+       //spazioEsercizi.appendChild(document.createElement("br"));
      }
    }
-   document.getElementById("displayEsercizi").appendChild(listaEsercizi);
+   //document.getElementById("displayEsercizi").appendChild(listaEsercizi);
    sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
  }
 
 </script>
 
-<div id="reservedAreaForm" class="modal">
-<!-- Modal content -->
+<!-- <div id="reservedAreaForm" class="modal">
+ Modal content
 <div class="modal-content">
   <div class="modal-header">
-    <span class="close">&times;</span> <!-- &times è una entità di html e serve per il simbolo della X -->
-    <h2>Aria riservata</h2>
+    <span class="close">&times;</span>  &times è una entità di html e serve per il simbolo della X
+    <h2>Area riservata</h2>
   </div>
   <div class="modal-body">
     <span id="loginButton" class="swipeBtn"> Login </span> <span id="registerButton" class="swipeBtn"> Register </span> <br>
@@ -306,78 +396,201 @@
       <button id="signup"> Sign up </button>
     </div>
   </div>
+</div> -->
+<!-- The Modal -->
+<div class="modal fade" id="loginModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header loginModal-header">
+        <h4 class="modal-title">Area riservata</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div id="pillsTab">
+          <!-- Nav pills -->
+         <ul class="nav nav-pills" role="tablist">
+           <li class="nav-item">
+             <a class="nav-link active" data-bs-toggle="pill" href="#loginPill">Login</a>
+           </li>
+           <li class="nav-item">
+             <a class="nav-link" data-bs-toggle="pill" href="#registerPill">Register</a>
+           </li>
+         </ul>
+        </div>
+      </div>
+      <div class="tab-content">
+        <div id="loginPill" class="container tab-pane active"><br>
+          <div id="loginForm">
+            <label for="email" class="form-label"> Email: </label> <br>
+            <input type="email" id="email" placeholder="mario.rossi@rwg.com" class="form-control"> <br>
+            <label for="password" class="form-label"> Password: </label> <br>
+            <input type="password" id="password" class="form-control"> <br>
+            <button id="login" class="btn btn-primary mb-3"> Log in </button>
+          </div>
+        </div>
+        <div id="registerPill" class="container tab-pane fade"><br>
+          <div class="row">
+            <div class="col-md was-validated">
+              <label for="name" class="form-label"> Nome: </label> <br>
+              <input type="text" id="name" class="form-control" required> <br>
+              <label for="surname" class="form-label"> Cognome: </label> <br>
+              <input type="text" id="surname" class="form-control" required> <br>
+              <label for="email" class="form-label"> Email: </label> <br>
+              <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com" class="form-control" required> <br>
+              <label for="password1" class="form-label"> Password:
+                <button type="button" class="btn" data-bs-toggle="popover" data-bs-content="La password deve essere lunga tra gli 8 ed i 15 caratteri. Inoltre
+                deve contenere almeno 1 maiuscola, 1 minuscola, 1 numero ed 1 carattere speciale">
+                  <img src="images/info_icon.png" width="20px" height="20px">
+                </button>
+              </label> <br>
+              <input type="password" class="password2validate form-control" id="password1" required> <br>
+              <label for="password2" class="form-label"> Confirm Password: </label> <br>
+              <input type="password" class="password2validate form-control" id="password2" required> <br>
+              <button id="signup" class="btn btn-primary mb-3"> Sign up </button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+
+    </div>
+  </div>
 </div>
 
 </div>
 
-<button id="personal" class="invisibles"> Area riservata </button> <br> <br> <!-- Da mettere in alto a destra  -->
+<!--<button id="personal" class="invisibles" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button> <br> <br> Da mettere in alto a destra  -->
 <div id="reservedAreaPanel">
   <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
 </div>
-
-<div id="timer">
-  <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
-      <script src="ExternalJs/timer.js"> </script>
-  </div> <br> <br>
+<div id="pannelloWorkout" class="flex-container container-md mx-auto">
+  <div id="nomeWorkout" class="text-center"> </div>
+</div>
 </div>
 
-<div id="displayEsercizi"> </div>
-
-<div id="pulsanti">
-  <button id="request"> Request workout </button>
-  <button id="start"> Start workout </button>
-  <button id="stop" class="invisibles"> Stop workout </button>
-  <button id="pause" class="invisibles"> Pause workout </button>
-  <button id="resume" class="invisibles"> Resume workout </button>
-</div>
-
-<div id="pannelloWorkout"> </div> <br>
-
-<div id="sostituzioni">
-  Per qualsiasi dubbio sugli esercizi da scalare ecco <a href="sostituzioniEsercizi.html"> qui </a> una guida che fa per te
-</div> <br>
-
-<div id="opzioniAllenamento"> <!-- Renderlo a scomparsa nel momento in cui inizia l'allenamento -->
-  <select id="tipoAllenamento">
-    <option value="Random"> Allenamento random </option>
-    <option value="AMRAP"> AMRAP </option>
-    <option value="EMOM"> EMOM </option>
-    <option value="SCHEDA"> Scheda </option>
-  </select>
-  <br> <br>
-    <div id="selezioneMinuti">
-      Minuti di allenamento :
-      <script>
-        var i=9;
-        var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
-        var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-        select.id="tempo"; //Imposto l'id del tag select
-        optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
-        optionDef.text = "Random";
-        select.appendChild(optionDef);
-        for(i;i<60;i++){
-          var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-          option.value = i+1; //imposto l'attributo value
-          option.text = option.value; //imposto il testo che va dentro l'elemento option
-          select.appendChild(option);
-        }
-        document.getElementById("selezioneMinuti").appendChild(select);
-        workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
-      </script>
+<div class="container"> <br>
+  <div id="core" class="row">
+    <div class="col-md-4 mt-3">
+      <div id="pulsanti">
+        <div class="row">
+          <button id="request" class="rounded-pill controlWorkout mt-5 ms-1 col"> Request workout </button>
+          <button id="start" class="rounded-pill controlWorkout mt-5 ms-1 col" disabled> Start workout </button>
+        </div>
+        <div class="row">
+          <button id="stop" class="rounded-pill controlWorkout mt-3 ms-1 col" disabled> Stop workout </button>
+          <button id="pause" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Pause workout </button>
+        </div>
+        <div class="row">
+          <button id="resume" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Resume workout </button>
+        </div>
+      </div>
     </div>
-    <div id="tipoEsercizi">
-      Allenamento solo pesistica?
-      <input type="checkbox" id="pesiSiNo">
+    <div class="col-md-4 mt-3">
+      <div id="timer">
+        <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
+            <script src="ExternalJs/timer.js"> </script>
+        </div>
+      </div>
     </div>
-</div>
-<div id="player"> </div> <br> <br>
+    <div class="col-md-4 mt-3">
+      <!--<div class="row">
+        <div id="sostituzioni" class="col me-3">
+          Per qualsiasi dubbio sugli esercizi da scalare ecco <a href="sostituzioniEsercizi.html"> qui </a> una guida che fa per te
+        </div>
+    </div>-->
+    <br>
+      <div id="opzioniAllenamento" class="row"> <!-- Renderlo a scomparsa nel momento in cui inizia l'allenamento -->
+        <div class="col me-3">
+          Tipo di allenamento
+          <div class="select">
+            <select id="tipoAllenamento">
+              <option value="Random"> Random </option>
+              <option value="AMRAP"> AMRAP </option>
+              <option value="EMOM"> EMOM </option>
+              <option value="SCHEDA"> Scheda </option>
+            </select>
+          </div>
+      </div>
+       <br>
+        <div class="col me-3">
+          Minuti di allenamento
+          <div id="selezioneMinuti">
+            <div id="tendinaMinuti" class="select">
+              <script>
+                var i=9;
+                var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+                var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                select.id="tempo"; //Imposto l'id del tag select
+                optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+                optionDef.text = "Random";
+                select.appendChild(optionDef);
+                for(i;i<60;i++){
+                  var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                  option.value = i+1; //imposto l'attributo value
+                  option.text = option.value; //imposto il testo che va dentro l'elemento option
+                  select.appendChild(option);
+                }
+                document.getElementById("tendinaMinuti").appendChild(select);
+                //workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
+              </script>
+            </div>
+          </div>
+      </div> <br>
+        <div class="col me-3">
+            <div id="tipoEsercizi" class="form-check form-switch">
+              <input type="checkbox" id="pesiSiNo" class="form-check-input">
+              <label class="form-check-label float-left" for="pesiSiNo">Allenamento con pesistica?</label>
+            </div>
+        </div> <br>
+      </div>
+    </div>
+  </div> <br>
 
-<div id="fineAllenamento" class="invisibles">
-  Vuoi salvare l'allenamento? <br>
-  <button id="saveWorkout"> Salva </button> <span id="cancel"> <!-- class="close" --> &times;</span>
-</div>
+  <div id="displayEsercizi" class="exercisePanel align-middle container invisibles">
+  </div> <br>
 
+  <div id="player" class="ratio ratio-21x9 youtubeItem"> </div> <br> <br>
+
+  <!--<div id="fineAllenamento" class="invisibles">
+    Vuoi salvare l'allenamento? <br>
+    <button id="saveWorkout"> Salva </button> <span id="cancel">  &times;</span>
+  </div> -->
+  <div id="fineAllenamento" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header loginModal-header">
+          <h4 class="modal-title">Salvataggio</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <h3>Vuoi salvare l'allenamento?</h3>
+        </div>
+        <div class="modal-footer flex-container">
+          <button id="saveWorkout" class="rounded-pill saveButton mx-2"> Salva </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer id="footer" class="bg-dark container-fluid text-light myFooter col-12">
+  <p> DISCLAIMER: Questo sito non garantisce allenamenti miracolosi e/o combinazioni di esercizi perfette.
+  È nato per puro divertimento e per colmare carenze di "fantasia" per gli allenamenti di tutti i giorni.
+  In breve, allenatevi forte, spingete tanto e divertitevi. In bocca al lupo &#128521;&#128170; </p>
+</footer>
 <script>
+  /* Script per inizializzare gli elementi popover - start */
+  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+   return new bootstrap.Popover(popoverTriggerEl)
+  })
+  /* Script per inizializzare gli elementi popover - end */
+  loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Recupero il modal
+  saveModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
+  alerts = document.getElementById("alertSection");
   timer = document.getElementById("timer");
   tipoAll = document.getElementById("tipoAllenamento");
   document.getElementById("player").style.display = "none";
@@ -407,7 +620,7 @@
   }
 
 // Login popup - start
-var modal = document.getElementById("reservedAreaForm");
+//var modal = document.getElementById("reservedAreaForm");
 var personalArea = document.getElementById("personal");
 var span = document.getElementsByClassName("close")[0];
 var logBtn = document.getElementById("loginButton");
@@ -417,7 +630,7 @@ var submitRegister = document.getElementById("signup");
 var panel = document.getElementById("reservedAreaPanel");
 var profilo = document.getElementById("linkProfilo");
 
-personalArea.onclick = function(){
+/*personalArea.onclick = function(){
   modal.style.display = "block";
 }
 
@@ -442,7 +655,7 @@ function swipeLogin(){
 function swipeSignIn(){
   document.getElementById("signinForm").style.display = "block";
   document.getElementById("loginForm").style.display = "none";
-}
+} */
 
 submitLogin.addEventListener("click",requestForLogin);
 submitRegister.addEventListener("click",requestForRegister);
@@ -453,7 +666,11 @@ function requestForRegister(){ //  apiDb.php/register
   var email = document.getElementById("email2validate").value;
   if(validateCredentials(password,email)){
     if(password != passwordCnf){
-      alert("Le due password non coincidono!");
+      alerts.innerHTML = `
+      <div class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>Attenzione!</strong> Le due password non coincidono.
+      </div> `;
       document.getElementsByClassName("password2validate")[0].value = "";
       document.getElementsByClassName("password2validate")[1].value = "";
     }
@@ -471,13 +688,17 @@ function requestForRegister(){ //  apiDb.php/register
             console.log(ajax.responseText);
             var response = JSON.parse(ajax.responseText);
             if(response.success == true){
-              alert("Utente registrato con successo! Ora puoi effettuare il login");
+              alerts.innerHTML = `
+              <div class="alert alert-success alert-dismissible fade show">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                Utente registrato con successo! Ora puoi effettuare il login
+              </div> `;
               document.getElementById("name").value = " ";
               document.getElementById("surname").value = " ";
               document.getElementsByClassName("password2validate")[0].value = "";
               document.getElementsByClassName("password2validate")[1].value = "";
               document.getElementById("email2validate").value = "";
-              modal.style.display = "none";
+              //modal.style.display = "none";
             }
           }
         };
@@ -490,12 +711,31 @@ function requestForRegister(){ //  apiDb.php/register
       }
     }
   }
+  else if (document.getElementById("name").value == ""){
+    alerts.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show">
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <strong> Attenzione! </strong> Nome mancante
+    </div> `;
+  }
+  else if (document.getElementById("surname").value == ""){
+    alerts.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show">
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <strong> Attenzione! </strong> Cognome mancante
+    </div> `;
+  }
   else{
-    alert("La password e/o la mail sono errate");
+    alerts.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show">
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <strong> Attenzione! </strong> La password e/o la mail sono errate
+    </div> `;
     document.getElementsByClassName("password2validate")[0].value = "";
     document.getElementsByClassName("password2validate")[1].value = "";
     document.getElementById("email2validate").value = "";
   }
+  loginModal.hide();
 }
 
 function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
@@ -513,15 +753,21 @@ function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
           document.getElementById("personal").style.display = "none";
           document.getElementById("email").value = "";
           document.getElementById("password").value = "";
-          modal.style.display = "none";
+          //modal.style.display = "none";
           //panel.innerHTML = response.Nome; LINK AREA riservata
+          //var modal = bootstrap.Modal.getInstance(document.getElementById('loginModal')); // Recupero il modal
+          loginModal.hide();
           profilo.innerHTML = response.Nome;
           profilo.style.display = "block";
           sessionStorage.setItem("userLogged",response.Nome);
           sessionStorage.setItem("userId",response.IdUtente);
         }
         else{
-          alert("Email e/o password errate");
+          alerts.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong> Attenzione! </strong> La password e/o la mail sono errate
+          </div> `;
           document.getElementById("email").value = "";
           document.getElementById("password").value = "";
         }
@@ -534,6 +780,7 @@ function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
   catch(e){
     console.log(e);
   }
+  loginModal.hide();
 }
 
 function validateCredentials(pwd,email){
@@ -553,23 +800,27 @@ function validateCredentials(pwd,email){
       profilo.innerHTML = user;
       personalArea.style.display = "none";
       profilo.style.display = "block";
+      return true;
     }
     else{
       personalArea.style.display = "block";
+      return false;
     }
   }
 //Session - end
 
 //Fine workout - start
 function fineWorkout(){
+  player.stopVideo();
   if(sessionStorage.getItem("userLogged")){
-    document.getElementById("fineAllenamento").style.display = "block";
+    //document.getElementById("fineAllenamento").style.display = "block";
+    saveModal.show();
   }
 }
 
-document.getElementById("cancel").onclick = function(){
+/*document.getElementById("cancel").onclick = function(){
   document.getElementById("fineAllenamento").style.display = "none";
-}
+};*/
 
 function saveWorkout(){ // - apiDb.php/allenamentogenerato
   var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
@@ -581,6 +832,7 @@ function saveWorkout(){ // - apiDb.php/allenamentogenerato
   else{
     request.Durata = diff_minutes(schedaEndTime,schedaStartTime);
   }
+  console.log(request);
   var reqURI = "apiDb.php/allenamentogenerato";
   var ajax = new XMLHttpRequest();
   try{
@@ -588,12 +840,22 @@ function saveWorkout(){ // - apiDb.php/allenamentogenerato
       if(ajax.readyState == 4){
         console.log(ajax.responseText);
         var response = JSON.parse(ajax.responseText);
-        document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
+        //document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
+        //var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
+        saveModal.hide();
         if(response.allenamentogenerato == true && response.svolgimento == true && response.Esercizio1 == true){
-          alert("Allenamento salvato con successo!");
+          alerts.innerHTML = `
+          <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            Allenamento salvato con successo!
+          </div> `;
         }
         else{
-          alert("Salvataggio allenamento fallito");
+          alerts.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong> Attenzione! </strong> Salvataggio allenamento fallito
+          </div> `;
         }
       }
     };
@@ -612,6 +874,24 @@ function diff_minutes(dt2, dt1){
   return Math.abs(Math.round(diff));
  }
 //Fine workout - end
+
+function stopWorkout(){
+  player.stopVideo();
+  stopTimer();
+  document.getElementById("displayEsercizi").innerHTML = " ";
+  document.getElementById("displayEsercizi").style.display = "none";
+  document.getElementById("request").disabled= false;
+  //document.getElementById("personal").style.display = "block";
+  if(verifySession()){
+    //document.getElementById("fineAllenamento").style.display = "block";
+    //var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
+    saveModal.show();
+    if(tipoAll.value == "SCHEDA"){
+     schedaEndTime = new Date();
+   }
+  }
+  //verifySession();
+}
 </script>
 
 </body>
