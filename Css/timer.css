@@ -1,31 +1,31 @@
-#app {
+#app { /* Gestisco il div dedicato al timer */
   font-family: sans-serif;
   display: grid;
   height: 50vh;
   place-items: center;
 }
 
-.base-timer {
+.base-timer { /* Definisce la posizione del container del timer */
   position: relative;
   width: 300px;
   height: 300px;
 }
 
-.base-timer__svg {
+.base-timer__svg { /* Per il tag SVG , ridimensiona l'oggetto rispetto all'asse x */
   transform: scaleX(-1);
 }
 
-.base-timer__circle {
+.base-timer__circle { /* Resetta le proprietà del cerchio e del suo contorno */
   fill: none;
   stroke: none;
 }
 
-.base-timer__path-elapsed {
+.base-timer__path-elapsed { /* Creo lo sfondo grigio del cerchio */
   stroke-width: 7px;
   stroke: grey;
 }
 
-.base-timer__path-remaining {
+.base-timer__path-remaining { /* Questa classe invece gestisce la linea che fa scorrere il tempo */
   stroke-width: 7px;
   stroke-linecap: round;
   transform: rotate(90deg);
@@ -35,8 +35,8 @@
   stroke: currentColor;
 }
 
+/* Le sottoclassi ne determinano il colore al variare dello script in base al tempo rimanente */
 .base-timer__path-remaining.blue {
-  /*color: rgb(65, 184, 131);*/
   color : #000099;
 }
 
@@ -48,7 +48,7 @@
   color: red;
 }
 
-.base-timer__label {
+.base-timer__label{  /* Classe relativa al display del tempo */
   position: absolute;
   width: 300px;
   height: 300px;

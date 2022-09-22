@@ -130,3 +130,8 @@ TIPS AND TRICKS: <br>
   facendo il console.log di ajax.responseText </li>
   <li> Per refreshare i sorgenti quando non leggono le nuove modifiche: Ctrl+fn+f5 </li>
 </ul>
+
+PROPEDEUTICHE DA AGGIUNGERE:
+- Dip x
+- TTB x
+- Burpees(?) x

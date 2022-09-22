@@ -1,898 +1,786 @@
 <html>
-<head>
-  <title> Random Workout Generator </title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="Css/timer.css">
-  <link rel="stylesheet" href="Css/customCSS.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body>
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <br>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <button id="personal" class="invisibles reservedAreaButton rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button>
-        </li>
-      </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a href="paginaPersonale.html" class="invisibles myNav-link" id="linkProfilo"> </a>
-        </li>
-      </ul>
-      <br>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="AMRAP.html">AMRAP</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="EMOM.html">EMOM</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="Scheda.html">Scheda</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="sostituzioniEsercizi.html"> Sostituzioni </a>
-        </li>
-      </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <span data-bs-toggle="modal" data-bs-target="#tutorialModal">
-              Tutorial
-            </span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<div id="tutorialModal" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header loginModal-header">
-        <h4 class="modal-title">Tutorial</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p> Benvenuto! <br>
-          Se sei nuovo, ecco a te alcune indicazioni per poter incominciare ad usare al meglio
-          questo generatore di workout! <br>
-          Spero che gli allenamenti siano divertenti e che ti soddisfino! <br>
-          <ul class="customListItem">
-            <li class="customListItem"> Prima di poter iniziare qualsiasi workout è
-            necessario generarlo mediante il pulsante "request workout" </li>
-            <li class="customListItem"> Una volta che il workout è partito e successivamente messo in stop, non sarà più
-            possibile riprenderlo </li>
-            <li class="customListItem"> Per poter salvare i dati relativi al workout, è necessario
-            essere prima loggati all'area riservata </li>
-            <li class="customListItem"> Il link "Sostituzioni" porta alle propedeutiche possibili per alcuni esercizi </li>
-          </ul>
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="alertSection">
-
-</div>
-
-  <!-- L'accesso all'area riservata permette di poter vedere gli allenamenti salvati
-  <div id="DescrizionewWorkout">
-    <ul id="ListaAllenamenti"> Probabilmente sarà a comparsa, inquanto in questa stessa pagina ci sarà il workout
-      <li>
-          <a href="AMRAP.html"> AMRAP </a>
-      </li>
-      <li>
-          <a href="EMOM.html"> EMOM </a>
-      </li>
-      <li>
-          <a href="Scheda.html"> Scheda </a>
-      </li>
-    </ul>
-  </div> <br> <br> <!-- Fine Div che descrive i workout (Barra di navigazione fissa) -->
-
-<script>
- var player;
- var schedaStartTime;
- var schedaEndTime;
- window.onload = bindEvents;
- TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
-
- function bindEvents(){
-   //document.getElementById("start").disabled = true;
-   document.getElementById("start").addEventListener("click",startWorkout); //richiama lo start del timer nel momento in cui clicco sul bottone
-   document.getElementById("stop").addEventListener("click",stopWorkout);
-   document.getElementById("pause").addEventListener("click",pauseWorkout);
-   //document.getElementById("tipoAllenamento").addEventListener("change",setWorkout);
-   document.getElementById("tendinaMinuti").addEventListener("change",setMinuteOnTimer);
-   document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
-   document.getElementById("request").addEventListener("click",requestWorkout);
-   document.getElementById("fineAllenamento").addEventListener("workoutFinito",fineWorkout);
-   document.getElementById("saveWorkout").addEventListener("click",saveWorkout);
-   verifySession();
- }
-
- function timerVisibility(){
-   if(tipoAll.value == "SCHEDA"){
-     timer.style.display = "none";
-     document.getElementById("selezioneMinuti").style.display = "none";
-   }
-   else if(timer.style.display == "none" && tipoAll.value != "SCHEDA"){
-     timer.style.display = "block";
-     document.getElementById("selezioneMinuti").style.display = "block";
-   }
-   document.getElementById("base-timer-label").innerHTML = formatTime(0);
-   document.getElementById("start").disabled = true;
-   onStopWorkout();
-   setCircleDasharray();
- }
-
- function startWorkout(){
-   document.getElementById("opzioniAllenamento").style.display = "none";
-   document.getElementById("request").disabled= true;
-   document.getElementById("start").disabled = true;
-   document.getElementById("stop").disabled= false;
-   document.getElementById("pause").disabled= false;
-   document.getElementById("player").style.display = "block";
-   document.getElementById("personal").style.display = "none";
-   player.nextVideo();
-   player.playVideo();
-   if(tipoAll.value != "SCHEDA"){
-        startTimer();
-   }
-   else{
-        schedaStartTime = new Date();
-   }
-
- }
-
- function pauseWorkout(){
-   var resumeButton = document.getElementById("resume");
-   player.pauseVideo();
-   clearInterval(timerInterval);
-   document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
-   resumeButton.disabled= false;
-   resumeButton.addEventListener("click",resumeWorkout);
-   document.getElementById("pause").disabled= true;
- }
-
- function resumeWorkout(){
-   //DZ.player.play();
-   player.playVideo();
-   document.getElementById("pause").disabled= false;
-   document.getElementById("resume").disabled= true;
-   startTimer();
- }
-
- /*function setWorkout(){
-   var workoutType = document.getElementById("tipoAllenamento").value;
-   if(workoutType != "Random"){
-     document.getElementById("pannelloWorkout").innerHTML = workoutType;
-   }
-   else{
-     document.getElementById("pannelloWorkout").innerHTML = workoutType;
-   }
-
- }*/
-
- function setMinuteOnTimer(){
-   TIME_LIMIT = document.getElementById("tempo").value;
-   if(TIME_LIMIT != 0){
-     sessionStorage.setItem("durata",TIME_LIMIT); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
-     TIME_LIMIT = TIME_LIMIT * 60;
-     document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-   }
-   else{
-     var tempo = Math.floor(Math.random() * (60 - 10) + 10);
-     sessionStorage.setItem("durata",tempo); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
-     TIME_LIMIT = tempo * 60;
-     document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT) ;
-   }
-   document.getElementById("start").disabled = true;
- }
-
- function requestWorkout(){
-   var allScelto;
-   var reqURI = "apiDb.php/";
-   var divNomeWorkout = document.getElementById("nomeWorkout");
-   divNomeWorkout.classList.add("workoutName");
-   if(tipoAll.value == "Random"){
-     var sceltaAll = ["AMRAP","EMOM","SCHEDA"];
-     allScelto = sceltaAll[(Math.floor(Math.random() * (3 - 1+1) + 1)) - 1];
-     tipoAll.value=allScelto;
-     reqURI += generateURI(allScelto,reqURI);
-     if(allScelto == "SCHEDA"){
-       divNomeWorkout.innerHTML = allScelto;
-       document.getElementById("selezioneMinuti").style.display = "none";
-     }
-     else{
-       divNomeWorkout.innerHTML = allScelto;
-       document.getElementById("selezioneMinuti").style.display = "block";
-     }
-   }
-   else{
-     reqURI += generateURI(tipoAll.value,reqURI);
-     if(tipoAll.value == "SCHEDA"){
-       divNomeWorkout.innerHTML = tipoAll.value;
-     }
-     else{
-       document.getElementById("selezioneMinuti").style.display = "block";
-       divNomeWorkout.innerHTML = tipoAll.value;
-     }
-    }
-    sessionStorage.setItem("allenamento",tipoAll.value);
-   //Gestione casistiche random
-   document.getElementById("start").disabled = false;
-   document.getElementById("displayEsercizi").innerHTML = " ";
-   var ajax = new XMLHttpRequest();
-   try{
-     ajax.onreadystatechange = function(){
-       if(ajax.readyState == 4){
-         console.log(ajax.responseText);
-         console.log(reqURI);
-         var esercizi = JSON.parse(ajax.responseText);
-         displayWorkout(esercizi);
-       }
-     };
-     ajax.open("GET",reqURI,true);
-     ajax.send(null);
-   }
-   catch(e){
-     console.log(e);
-   }
- }
-
- function calculateEmomIntervals(){ //CALCOLO QUI IL TEMPO PER L'EMOM
-   var numEsercizi;
-   var mux;
-   var tempo = document.getElementById("tempo").value;
-   if(tempo == 0){
-     numEsercizi = Math.floor(Math.random() * (10 - 2+1) + 2);
-     mux = Math.floor(Math.random()*(6-2+1)+2);
-     TIME_LIMIT = (numEsercizi*mux)*60;
-    document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
-   }
-   else{
-     TIME_LIMIT = tempo*60;
-     do{
-       mux = Math.floor(Math.random()*(6-2+1)+2);
-     }while(tempo % mux == 0);
-     numEsercizi = Math.floor(tempo/mux);
-   }
-   return numEsercizi;
-   /*var intervallo;
-   if(tempo == 0){
-     var rounds;
-     intervallo = Math.floor(Math.random() * (5 - 2+1) + 2);
-     rounds = Math.floor(Math.random()* ((Math.ceil(60/intervallo)) - intervallo+1) + intervallo);
-     TIME_LIMIT = (rounds*intervallo) * 60;
-     document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
-   }
-   else{
-     intervallo = Math.floor(Math.random()* (5 - 2+1)+2);
-     TIME_LIMIT = tempo*60;
-   }*/
- }
-
- function generateURI(allScelto,reqURI){
-   reqURI = allScelto;
-   switch(allScelto){
-     case "AMRAP":
-     if(timer.style.display == "none")
-     {
-       timer.style.display = "block"
-     }
-     setMinuteOnTimer();
-      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked);
-      break;
-     case "EMOM":
-     if(timer.style.display == "none")
-     {
-       timer.style.display = "block";
-     }
-      reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked) + "/" + calculateEmomIntervals();
-      break;
-     case "SCHEDA":
-     timer.style.display = "none";
-     //URI: apiDb.php/SCHEDA/pesi/n°Esercizi
-     reqURI += "/" + Number(document.getElementById("pesiSiNo").checked) + "/" + Math.floor(Math.random() * (10 - 5+1) + 5);
-     break;
-   }
-   return reqURI;
- }
-
- function displayWorkout(esercizi){
-   var spazioEsercizi = document.getElementById("displayEsercizi");
-   spazioEsercizi.style.display = "block";
-   var numRep;
-   if(tipoAll.value != "SCHEDA"){
-     for(var i=0;i<esercizi.length;i++){
-       var listaEsercizi = document.createElement("div");
-       var Esercizio = document.createElement("div");
-       var repsEsercizio = document.createElement("div");
-       listaEsercizi.id = "listaEsercizi";
-       listaEsercizi.classList.add("flex-container");
-       //listaEsercizi.classList.add("justify-content-around");
-       //listaEsercizi.classList.add("p-2");
-       //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
-       numRep = Math.floor(Math.random() * (esercizi[i].MaxRep - esercizi[i].MinRep + 1) + esercizi[i].MinRep);
-       Esercizio.innerHTML = esercizi[i].Nome;
-       Esercizio.classList.add("item");
-       repsEsercizio.innerHTML = numRep;
-       repsEsercizio.classList.add("item");
-       esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
-       listaEsercizi.appendChild(Esercizio);
-       listaEsercizi.appendChild(repsEsercizio);
-       spazioEsercizi.appendChild(listaEsercizi);
-     }
-   }
-   else{
-     for(var i=0;i<esercizi.length;i++){
-       var listaEsercizi = document.createElement("div");
-       var Esercizio = document.createElement("div");
-       var repsEsercizio = document.createElement("div");
-       listaEsercizi.id = "listaEsercizi";
-       listaEsercizi.classList.add("flex-container");
-       //listaEsercizi.classList.add("justify-content-around");
-       //listaEsercizi.classList.add("p-2");
-       //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
-       numRep = Math.floor(Math.random() * (15 - 6+1) + 6);
-       numSerie = Math.floor(Math.random() * (6 - 2+1)+2);
-       Esercizio.innerHTML = esercizi[i].Nome;
-       Esercizio.classList.add("item");
-       repsEsercizio.innerHTML = numSerie+" x "+numRep;
-       repsEsercizio.classList.add("item");
-       listaEsercizi.appendChild(Esercizio);
-       listaEsercizi.appendChild(repsEsercizio);
-       esercizi[i].serie = numSerie; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
-       esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
-       spazioEsercizi.appendChild(listaEsercizi);
-       //spazioEsercizi.appendChild(document.createElement("br"));
-     }
-   }
-   //document.getElementById("displayEsercizi").appendChild(listaEsercizi);
-   sessionStorage.setItem("esercizi",JSON.stringify(esercizi));
- }
-
-</script>
-
-<!-- <div id="reservedAreaForm" class="modal">
- Modal content
-<div class="modal-content">
-  <div class="modal-header">
-    <span class="close">&times;</span>  &times è una entità di html e serve per il simbolo della X
-    <h2>Area riservata</h2>
-  </div>
-  <div class="modal-body">
-    <span id="loginButton" class="swipeBtn"> Login </span> <span id="registerButton" class="swipeBtn"> Register </span> <br>
-    <div id="loginForm">
-      <label for="email"> Email: </label> <br>
-      <input type="email" id="email" placeholder="mario.rossi@rwg.com"> <br>
-      <label for="password"> Password: </label> <br>
-      <input type="password" id="password"> <br>
-      <button id="login"> Log in </button>
-    </div>
-    <div id="signinForm" class="invisibles">
-      <p class="pwdAdvertiser"> La password deve essere lunga tra gli 8 ed i 15 caratteri. <br> Inoltre
-      deve contenere almeno 1 maiuscola,  <br> 1 minuscola, 1 numero <br> ed 1 carattere speciale </p>
-      <label for="name"> Nome: </label> <br>
-      <input type="text" id="name"> <br>
-      <label for="surname"> Cognome: </label> <br>
-      <input type="text" id="surname"> <br>
-      <label for="email"> Email: </label> <br>
-      <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com"> <br>
-      <label for="password1"> Password: </label> <br>
-      <input type="password" class="password2validate" id="password1"> <br>
-      <label for="password2"> Confirm Password: </label> <br>
-      <input type="password" class="password2validate" id="password2"> <br>
-      <button id="signup"> Sign up </button>
-    </div>
-  </div>
-</div> -->
-<!-- The Modal -->
-<div class="modal fade" id="loginModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header loginModal-header">
-        <h4 class="modal-title">Area riservata</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div id="pillsTab">
-          <!-- Nav pills -->
-         <ul class="nav nav-pills" role="tablist">
-           <li class="nav-item">
-             <a class="nav-link active" data-bs-toggle="pill" href="#loginPill">Login</a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link" data-bs-toggle="pill" href="#registerPill">Register</a>
-           </li>
-         </ul>
-        </div>
-      </div>
-      <div class="tab-content">
-        <div id="loginPill" class="container tab-pane active"><br>
-          <div id="loginForm">
-            <label for="email" class="form-label"> Email: </label> <br>
-            <input type="email" id="email" placeholder="mario.rossi@rwg.com" class="form-control"> <br>
-            <label for="password" class="form-label"> Password: </label> <br>
-            <input type="password" id="password" class="form-control"> <br>
-            <button id="login" class="btn btn-primary mb-3"> Log in </button>
-          </div>
-        </div>
-        <div id="registerPill" class="container tab-pane fade"><br>
-          <div class="row">
-            <div class="col-md was-validated">
-              <label for="name" class="form-label"> Nome: </label> <br>
-              <input type="text" id="name" class="form-control" required> <br>
-              <label for="surname" class="form-label"> Cognome: </label> <br>
-              <input type="text" id="surname" class="form-control" required> <br>
-              <label for="email" class="form-label"> Email: </label> <br>
-              <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com" class="form-control" required> <br>
-              <label for="password1" class="form-label"> Password:
-                <button type="button" class="btn" data-bs-toggle="popover" data-bs-content="La password deve essere lunga tra gli 8 ed i 15 caratteri. Inoltre
-                deve contenere almeno 1 maiuscola, 1 minuscola, 1 numero ed 1 carattere speciale">
-                  <img src="images/info_icon.png" width="20px" height="20px">
-                </button>
-              </label> <br>
-              <input type="password" class="password2validate form-control" id="password1" required> <br>
-              <label for="password2" class="form-label"> Confirm Password: </label> <br>
-              <input type="password" class="password2validate form-control" id="password2" required> <br>
-              <button id="signup" class="btn btn-primary mb-3"> Sign up </button>
+   <head>
+      <title> Random Workout Generator </title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- Imposto la viewport in base al dispositivo su cui sono -->
+      <link rel="stylesheet" href="Css/timer.css">
+      <link rel="stylesheet" href="Css/customCSS.css">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   </head>
+   <body>
+      <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+         <!-- Barra di navigazione a scomparsa - start -->
+         <div class="container-fluid">
+            <!-- Pulsante che appare quando le dimensioni si riducono. Rende la navbar come un menù dropdown -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+               <br>
+               <ul class="navbar-nav">
+                  <li class="nav-item">
+                     <button id="personal" class="invisibles reservedAreaButton rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button>
+                  </li>
+               </ul>
+               <ul class="navbar-nav">
+                  <li class="nav-item">
+                     <a href="paginaPersonale.html" class="invisibles myNav-link" id="linkProfilo"> </a>
+                  </li>
+               </ul>
+               <br>
+               <ul class="navbar-nav">
+                  <li class="nav-item">
+                     <a class="nav-link" href="AMRAP.html">AMRAP</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="EMOM.html">EMOM</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="Scheda.html">Scheda</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" href="sostituzioniEsercizi.html"> Sostituzioni </a>
+                  </li>
+               </ul>
+               <ul class="navbar-nav">
+                  <li class="nav-item">
+                     <a class="nav-link" href="#">
+                        <!-- Questo elemento riconduce ad un modal che fa apparire una serie di indicazioni d'uso per il sito -->
+                        <span data-bs-toggle="modal" data-bs-target="#tutorialModal">
+                        Tutorial
+                        </span>
+                     </a>
+                  </li>
+               </ul>
             </div>
-          </div>
-        </div>
-      </div>
-</div>
-
-    </div>
-  </div>
-</div>
-
-</div>
-
-<!--<button id="personal" class="invisibles" data-bs-toggle="modal" data-bs-target="#loginModal"> Area riservata </button> <br> <br> Da mettere in alto a destra  -->
-<div id="reservedAreaPanel">
-  <a href="paginaPersonale.html" class="invisibles" id="linkProfilo"> </a>
-</div>
-<div id="pannelloWorkout" class="flex-container container-md mx-auto">
-  <div id="nomeWorkout" class="text-center"> </div>
-</div>
-</div>
-
-<div class="container"> <br>
-  <div id="core" class="row">
-    <div class="col-md-4 mt-3">
-      <div id="pulsanti">
-        <div class="row">
-          <button id="request" class="rounded-pill controlWorkout mt-5 ms-1 col"> Request workout </button>
-          <button id="start" class="rounded-pill controlWorkout mt-5 ms-1 col" disabled> Start workout </button>
-        </div>
-        <div class="row">
-          <button id="stop" class="rounded-pill controlWorkout mt-3 ms-1 col" disabled> Stop workout </button>
-          <button id="pause" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Pause workout </button>
-        </div>
-        <div class="row">
-          <button id="resume" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Resume workout </button>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mt-3">
-      <div id="timer">
-        <div id="app"> <!-- spazio riservato al codice del timer || tenere in considerazione di spostare qui -->
-            <script src="ExternalJs/timer.js"> </script>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mt-3">
-      <!--<div class="row">
-        <div id="sostituzioni" class="col me-3">
-          Per qualsiasi dubbio sugli esercizi da scalare ecco <a href="sostituzioniEsercizi.html"> qui </a> una guida che fa per te
-        </div>
-    </div>-->
-    <br>
-      <div id="opzioniAllenamento" class="row"> <!-- Renderlo a scomparsa nel momento in cui inizia l'allenamento -->
-        <div class="col me-3">
-          Tipo di allenamento
-          <div class="select">
-            <select id="tipoAllenamento">
-              <option value="Random"> Random </option>
-              <option value="AMRAP"> AMRAP </option>
-              <option value="EMOM"> EMOM </option>
-              <option value="SCHEDA"> Scheda </option>
-            </select>
-          </div>
-      </div>
-       <br>
-        <div class="col me-3">
-          Minuti di allenamento
-          <div id="selezioneMinuti">
-            <div id="tendinaMinuti" class="select">
-              <script>
-                var i=9;
-                var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
-                var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-                select.id="tempo"; //Imposto l'id del tag select
-                optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
-                optionDef.text = "Random";
-                select.appendChild(optionDef);
-                for(i;i<60;i++){
-                  var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
-                  option.value = i+1; //imposto l'attributo value
-                  option.text = option.value; //imposto il testo che va dentro l'elemento option
-                  select.appendChild(option);
-                }
-                document.getElementById("tendinaMinuti").appendChild(select);
-                //workoutParameters = [document.getElementById("opzioniAllenamento"),document.getElementById("start")];
-              </script>
+         </div>
+      </nav>
+      <!-- Barra di navigazione a scomparsa - end -->
+      <div id="tutorialModal" class="modal fade">
+         <!-- Indicazioni d'uso - start -->
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header loginModal-header">
+                  <h4 class="modal-title">Tutorial</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button> <!-- Bottone di chiusura del modal -->
+               </div>
+               <div class="modal-body">
+                  <p> Benvenuto! <br>
+                     Se sei nuovo, ecco a te alcune indicazioni per poter incominciare ad usare al meglio
+                     questo generatore di workout! <br>
+                     Spero che gli allenamenti siano divertenti e che ti soddisfino! <br>
+                  <ul class="customListItem">
+                     <li class="customListItem"> Prima di poter iniziare qualsiasi workout è
+                        necessario generarlo mediante il pulsante "request workout"
+                     </li>
+                     <li class="customListItem"> Una volta che il workout è partito e successivamente messo in stop, non sarà più
+                        possibile riprenderlo
+                     </li>
+                     <li class="customListItem"> Per poter salvare i dati relativi al workout, è necessario
+                        essere prima loggati all'area riservata
+                     </li>
+                     <li class="customListItem"> Il link "Sostituzioni" porta alle propedeutiche possibili per alcuni esercizi </li>
+                  </ul>
+                  </p>
+               </div>
             </div>
-          </div>
-      </div> <br>
-        <div class="col me-3">
-            <div id="tipoEsercizi" class="form-check form-switch">
-              <input type="checkbox" id="pesiSiNo" class="form-check-input">
-              <label class="form-check-label float-left" for="pesiSiNo">Allenamento con pesistica?</label>
+         </div>
+      </div>
+      <!-- Indicazioni d'uso - end -->
+      <div id="alertSection">
+         <!-- Blocco riempito dinamicamente con i vari alert e messaggi di stato del sito -->
+      </div>
+      <script>
+         var player; //Variabile relativa al player di youtube
+         //Variabili utilizzate per memorizzare il tempo di allenamento della scheda
+         var schedaStartTime;
+         var schedaEndTime;
+         window.onload = bindEvents;
+         TIME_LIMIT = 0; //dichiarazione iniziale e globale della variabile
+
+         function bindEvents(){//Funzione che accoppia gli eventi scatenabili con le funzioni che fanno da handler
+           document.getElementById("start").addEventListener("click",startWorkout);
+           document.getElementById("stop").addEventListener("click",stopWorkout);
+           document.getElementById("pause").addEventListener("click",pauseWorkout);
+           document.getElementById("tendinaMinuti").addEventListener("change",setMinuteOnTimer);
+           document.getElementById("tipoAllenamento").addEventListener("change",timerVisibility);
+           document.getElementById("request").addEventListener("click",requestWorkout);
+           document.getElementById("fineAllenamento").addEventListener("workoutFinito",fineWorkout);
+           document.getElementById("saveWorkout").addEventListener("click",saveWorkout);
+           verifySession();//Verifico se l'utente è loggato o meno
+         }
+
+         function timerVisibility(){//Funzione che gestisce l'apparizione o meno del timer, in base al tipo di allenamento usato
+           if(tipoAll.value == "SCHEDA"){//Se l'allenamento è SCHEDA faccio scomparire il timer
+             timer.style.display = "none";
+             document.getElementById("selezioneMinuti").style.display = "none";
+           }
+           else if(timer.style.display == "none" && tipoAll.value != "SCHEDA"){
+             timer.style.display = "block";
+             document.getElementById("selezioneMinuti").style.display = "block";
+           }
+           //Successivamente reimposto il timer
+           document.getElementById("base-timer-label").innerHTML = formatTime(0);
+           document.getElementById("start").disabled = true;
+           onStopWorkout();
+           setCircleDasharray();
+         }
+
+         function startWorkout(){//Gestisco il click del bottone che da inizio all'allenamento
+           document.getElementById("opzioniAllenamento").style.display = "none"; //Faccio scomparire i comandi di impostazione per l'allenamento
+           document.getElementById("request").disabled= true;
+           document.getElementById("start").disabled = true;
+           document.getElementById("stop").disabled= false;
+           document.getElementById("pause").disabled= false;
+           document.getElementById("player").style.display = "block"; //Appare il player di youtube
+           document.getElementById("personal").style.display = "none";
+           player.nextVideo();
+           player.playVideo();
+           if(tipoAll.value != "SCHEDA"){//Se è un allenamento che ha bisogno del timer , lo faccio partire
+                startTimer();
+           }
+           else{
+                schedaStartTime = new Date();
+           }
+
+         }
+
+         function pauseWorkout(){//Gestisco il bottone che manda in pausa l'allenamento
+           var resumeButton = document.getElementById("resume");
+           player.pauseVideo();
+           clearInterval(timerInterval);//Stoppo ed imposto il timer per ripartire
+           document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+           resumeButton.disabled= false;//Attivo momentaneamente il bottone di ripresa del workout e assegno l'evento relativo
+           resumeButton.addEventListener("click",resumeWorkout);
+           document.getElementById("pause").disabled= true;//Disabilito il bottone di pausa
+         }
+
+         function resumeWorkout(){//Gestisco l'evento di ripresa dell'allenamento
+           player.playVideo();
+           document.getElementById("pause").disabled= false;
+           document.getElementById("resume").disabled= true;
+           startTimer();//Faccio ripartire il timer
+         }
+
+         function setMinuteOnTimer(){//Funzione di impostazione del tempo del timer
+           TIME_LIMIT = document.getElementById("tempo").value;
+           if(TIME_LIMIT != 0){//Se non è stato selezionato un tempo random, imposto il timer con i minuti selezionati
+             sessionStorage.setItem("durata",TIME_LIMIT); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
+             TIME_LIMIT = TIME_LIMIT * 60;
+             document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
+           }
+           else{
+             var tempo = Math.floor(Math.random() * (60 - 10) + 10);
+             sessionStorage.setItem("durata",tempo); //MEMORIZZO LA DURATA DELL'ALLENAMENTO
+             TIME_LIMIT = tempo * 60;
+             document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);//Imposto i minuti di tempo sul timer
+           }
+           document.getElementById("start").disabled = true;
+         }
+
+         function requestWorkout(){//Funzione di richiesta del workout random al DB
+           var allScelto;
+           var reqURI = "apiDb.php/";
+           var divNomeWorkout = document.getElementById("nomeWorkout");//Acquisisco il div in cui inserire il nome del workout e lo formatto
+           divNomeWorkout.classList.add("workoutName");
+           //Compongo dinamicamente la richiesta
+           if(tipoAll.value == "Random"){ //Casistica di scelta random
+             //Creo un array con gli allenamenti possibili e successivamente genero un intero random per scegliere l'allenamento
+             var sceltaAll = ["AMRAP","EMOM","SCHEDA"];
+             allScelto = sceltaAll[(Math.floor(Math.random() * (3 - 1+1) + 1)) - 1];
+             tipoAll.value=allScelto; //Imposto il valore anche sull'elemento HTML
+             reqURI += generateURI(allScelto,reqURI); //Creo l'URI per la richiesta
+             if(allScelto == "SCHEDA"){
+               divNomeWorkout.innerHTML = allScelto;
+               document.getElementById("selezioneMinuti").style.display = "none";
+             }
+             else{
+               divNomeWorkout.innerHTML = allScelto;
+               document.getElementById("selezioneMinuti").style.display = "block";
+             }
+           }
+           else{//Casistica di scelta dall'elemento HTML
+             reqURI += generateURI(tipoAll.value,reqURI); //Creo l'URI per la richiesta
+             if(tipoAll.value == "SCHEDA"){
+               divNomeWorkout.innerHTML = tipoAll.value;
+             }
+             else{
+               document.getElementById("selezioneMinuti").style.display = "block";
+               divNomeWorkout.innerHTML = tipoAll.value;
+             }
+            }
+            sessionStorage.setItem("allenamento",tipoAll.value);
+           document.getElementById("start").disabled = false;
+           document.getElementById("displayEsercizi").innerHTML = " ";
+           var ajax = new XMLHttpRequest();
+           try{
+             ajax.onreadystatechange = function(){
+               if(ajax.readyState == 4){//Se la chiamata è stata eseguita con successo ed il codice HTTP è 200, formatto il JSON di risposta per far apparire gli allenamenti
+                 console.log(ajax.responseText);
+                 console.log(reqURI);
+                 var esercizi = JSON.parse(ajax.responseText);
+                 displayWorkout(esercizi);
+               }
+             };
+             ajax.open("GET",reqURI,true);
+             ajax.send(null);
+           }
+           catch(e){
+             console.log(e);
+           }
+         }
+
+         function calculateEmomIntervals(){ //Funzione usata per il caso EMOM per generare un numero di esercizi consono ai minuti
+           var numEsercizi;
+           var mux;
+           var tempo = document.getElementById("tempo").value;
+           if(tempo == 0){//Se il tempo scelto è random
+             numEsercizi = Math.floor(Math.random() * (10 - 2+1) + 2); //Scelta random del numero di esercizi da 10 a 2
+             mux = Math.floor(Math.random()*(6-2+1)+2);//Scelta random del numero di volte che verrà ripetuto il circuito
+             TIME_LIMIT = (numEsercizi*mux)*60;
+            document.getElementById("base-timer-label").innerHTML = formatTime(TIME_LIMIT);
+           }
+           else{
+             TIME_LIMIT = tempo*60;
+             do{
+               mux = Math.floor(Math.random()*(6-2+1)+2);
+             }while(tempo % mux == 0);
+             numEsercizi = Math.floor(tempo/mux);
+           }
+           return numEsercizi;
+         }
+
+         function generateURI(allScelto,reqURI){//Funzione di generazione dell'URI
+           reqURI = allScelto;
+           switch(allScelto){
+             case "AMRAP": //In questo caso aggiungo solo la richiesta di pesistica o meno
+             if(timer.style.display == "none")
+             {
+               timer.style.display = "block"
+             }
+             setMinuteOnTimer();
+              reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked);
+              break;
+             case "EMOM"://In questo caso calcolo anche il numero di volre per cui ripetere il circuito
+             if(timer.style.display == "none")
+             {
+               timer.style.display = "block";
+             }
+              reqURI += "/"+ Number(document.getElementById("pesiSiNo").checked) + "/" + calculateEmomIntervals();
+              break;
+             case "SCHEDA"://In questo caso invece scelgo il numero di esercizi
+             timer.style.display = "none";
+             reqURI += "/" + Number(document.getElementById("pesiSiNo").checked) + "/" + Math.floor(Math.random() * (10 - 5+1) + 5);
+             break;
+           }
+           return reqURI;
+         }
+
+         function displayWorkout(esercizi){//Gestione del JSON di risposta alla richiesta degli esercizi per l'allenamento
+           var spazioEsercizi = document.getElementById("displayEsercizi");//Recupero il div dove appariranno gli esercizi
+           spazioEsercizi.style.display = "block";
+           var numRep;
+           if(tipoAll.value != "SCHEDA"){//Casistica in cui non tratto una scheda
+             for(var i=0;i<esercizi.length;i++){//Scorro il JSON
+               var listaEsercizi = document.createElement("div");//Creo un container dove da un lato apparirà il nome dell'esercizio e dall'altro le ripetizioni
+               var Esercizio = document.createElement("div");
+               var repsEsercizio = document.createElement("div");
+               listaEsercizi.id = "listaEsercizi";
+               listaEsercizi.classList.add("flex-container");
+               //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+               numRep = Math.floor(Math.random() * (parseInt(esercizi[i].MaxRep) - parseInt(esercizi[i].MinRep) + 1) + parseInt(esercizi[i].MinRep));
+               Esercizio.innerHTML = esercizi[i].Nome;
+               Esercizio.classList.add("item");
+               repsEsercizio.innerHTML = numRep;
+               repsEsercizio.classList.add("item");
+               esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+               //Aggiungo gli elementi appena creati dinamicamente al documento
+               listaEsercizi.appendChild(Esercizio);
+               listaEsercizi.appendChild(repsEsercizio);
+               spazioEsercizi.appendChild(listaEsercizi);
+             }
+           }
+           else{//Nel caso della scheda, devo generare anche il numero delle serie da eseguire
+             for(var i=0;i<esercizi.length;i++){//Scorro il JSON
+               var listaEsercizi = document.createElement("div");
+               var Esercizio = document.createElement("div");
+               var repsEsercizio = document.createElement("div");
+               listaEsercizi.id = "listaEsercizi";
+               listaEsercizi.classList.add("flex-container");
+               //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
+               numRep = Math.floor(Math.random() * (15 - 6+1) + 6);
+               numSerie = Math.floor(Math.random() * (6 - 2+1)+2);
+               Esercizio.innerHTML = esercizi[i].Nome;
+               Esercizio.classList.add("item");
+               repsEsercizio.innerHTML = numSerie+" x "+numRep;
+               repsEsercizio.classList.add("item");
+               listaEsercizi.appendChild(Esercizio);
+               listaEsercizi.appendChild(repsEsercizio);
+               esercizi[i].serie = numSerie; //Aggiungo il numero di serie appena scelte. Serve per salvarle nel sessionStorage
+               esercizi[i].reps = numRep; //Aggiungo il numero di rep appena scelte. Serve per salvarle nel sessionStorage
+               spazioEsercizi.appendChild(listaEsercizi);
+             }
+           }
+           sessionStorage.setItem("esercizi",JSON.stringify(esercizi));//Salvo nel session storage gli esercizi del workout corrente
+         }
+
+      </script>
+      <!-- The Modal -->
+      <div class="modal fade" id="loginModal">
+         <!-- Modal che gestisce login e registrazione - start -->
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <!-- Modal Header -->
+               <div class="modal-header loginModal-header">
+                  <h4 class="modal-title">Area riservata</h4>
+                  <!-- Bottone che richiama il modal di registrazione -->
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+               </div>
+               <!-- Modal body -->
+               <div class="modal-body">
+                  <div id="pillsTab">
+                     <!-- Nav pills -->
+                     <ul class="nav nav-pills" role="tablist">
+                        <li class="nav-item">
+                           <a class="nav-link active" data-bs-toggle="pill" href="#loginPill">Login</a> <!-- Tab relativo al login -->
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link" data-bs-toggle="pill" href="#registerPill">Register</a> <!-- Tab relativo alla registrazione -->
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="tab-content">
+                  <div id="loginPill" class="container tab-pane active">
+                     <br>
+                     <div id="loginForm">
+                        <label for="email" class="form-label"> Email: </label> <br>
+                        <input type="email" id="email" placeholder="mario.rossi@rwg.com" class="form-control"> <br>
+                        <label for="password" class="form-label"> Password: </label> <br>
+                        <input type="password" id="password" class="form-control"> <br>
+                        <button id="login" class="btn btn-primary mb-3"> Log in </button>
+                     </div>
+                  </div>
+                  <div id="registerPill" class="container tab-pane fade">
+                     <br>
+                     <div class="row">
+                        <div class="col-md was-validated">
+                           <label for="name" class="form-label"> Nome: </label> <br>
+                           <input type="text" id="name" class="form-control" required> <br>
+                           <label for="surname" class="form-label"> Cognome: </label> <br>
+                           <input type="text" id="surname" class="form-control" required> <br>
+                           <label for="email" class="form-label"> Email: </label> <br>
+                           <input type="email" id="email2validate" placeholder="mario.rossi@rwg.com" class="form-control" required> <br>
+                           <label for="password1" class="form-label">
+                              Password:
+                              <!-- Aggiunta di una icona cliccabile che ricorda i requisiti della password -->
+                              <button type="button" class="btn" data-bs-toggle="popover" data-bs-content="La password deve essere lunga tra gli 8 ed i 15 caratteri. Inoltre
+                                 deve contenere almeno 1 maiuscola, 1 minuscola, 1 numero ed 1 carattere speciale">
+                              <img src="images/info_icon.png" width="20px" height="20px">
+                              </button>
+                           </label>
+                           <br>
+                           <input type="password" class="password2validate form-control" id="password1" required> <br>
+                           <label for="password2" class="form-label"> Confirm Password: </label> <br>
+                           <input type="password" class="password2validate form-control" id="password2" required> <br>
+                           <button id="signup" class="btn btn-primary mb-3"> Sign up </button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-        </div> <br>
+         </div>
       </div>
-    </div>
-  </div> <br>
-
-  <div id="displayEsercizi" class="exercisePanel align-middle container invisibles">
-  </div> <br>
-
-  <div id="player" class="ratio ratio-21x9 youtubeItem"> </div> <br> <br>
-
-  <!--<div id="fineAllenamento" class="invisibles">
-    Vuoi salvare l'allenamento? <br>
-    <button id="saveWorkout"> Salva </button> <span id="cancel">  &times;</span>
-  </div> -->
-  <div id="fineAllenamento" class="modal fade">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header loginModal-header">
-          <h4 class="modal-title">Salvataggio</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <h3>Vuoi salvare l'allenamento?</h3>
-        </div>
-        <div class="modal-footer flex-container">
-          <button id="saveWorkout" class="rounded-pill saveButton mx-2"> Salva </button>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
-<footer id="footer" class="bg-dark container-fluid text-light myFooter col-12">
-  <p> DISCLAIMER: Questo sito non garantisce allenamenti miracolosi e/o combinazioni di esercizi perfette.
-  È nato per puro divertimento e per colmare carenze di "fantasia" per gli allenamenti di tutti i giorni.
-  In breve, allenatevi forte, spingete tanto e divertitevi. In bocca al lupo &#128521;&#128170; </p>
-</footer>
-<script>
-  /* Script per inizializzare gli elementi popover - start */
-  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-   return new bootstrap.Popover(popoverTriggerEl)
-  })
-  /* Script per inizializzare gli elementi popover - end */
-  loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Recupero il modal
-  saveModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
-  alerts = document.getElementById("alertSection");
-  timer = document.getElementById("timer");
-  tipoAll = document.getElementById("tipoAllenamento");
-  document.getElementById("player").style.display = "none";
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      height: '360',
-      width: '640',
-      playerVars:{
-        listType: "playlist",
-        list: "PLkqz3S84Tw-T2iHDsB1NdA3RM_3bCxYsg",
-        enablejsapi: 1,
-        origin: "http://localhost:80"
-      },
-      events: {
-        'onReady': onPlayerReady
-      }
-    });
-  }
+      </div>
+      <div id="pannelloWorkout" class="flex-container container-md mx-auto">
+         <div id="nomeWorkout" class="text-center"> </div>
+      </div>
+      </div>
+      <div class="container">
+         <br> <!-- Container pricipale con i comandi del workout, il timer, il player youtube e gli esercizi -->
+         <div id="core" class="row">
+            <!-- Sfrutto un'organizzazione degli elementi con il grid system di bootstrap -->
+            <div class="col-md-4 mt-3">
+               <div id="pulsanti">
+                  <!-- Div relativo ai pulsanti -->
+                  <div class="row">
+                     <button id="request" class="rounded-pill controlWorkout mt-5 ms-1 col"> Request workout </button>
+                     <button id="start" class="rounded-pill controlWorkout mt-5 ms-1 col" disabled> Start workout </button>
+                  </div>
+                  <div class="row">
+                     <button id="stop" class="rounded-pill controlWorkout mt-3 ms-1 col" disabled> Stop workout </button>
+                     <button id="pause" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Pause workout </button>
+                  </div>
+                  <div class="row">
+                     <button id="resume" class=" rounded-pill controlWorkout mt-3 ms-1 col" disabled> Resume workout </button>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-4 mt-3">
+               <div id="timer">
+                  <!-- Div relativo al timer -->
+                  <div id="app">
+                     <script src="ExternalJs/timer.js"> </script> <!-- Importo il codice del timer -->
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-4 mt-3">
+               <br>
+               <div id="opzioniAllenamento" class="row">
+                  <!-- Div relativo ad i parametri dell'allenamento -->
+                  <div class="col me-3">
+                     Tipo di allenamento
+                     <div class="select">
+                        <!-- Div relativo alla selezione del tipo di allenamento -->
+                        <select id="tipoAllenamento">
+                           <option value="Random"> Random </option>
+                           <option value="AMRAP"> AMRAP </option>
+                           <option value="EMOM"> EMOM </option>
+                           <option value="SCHEDA"> Scheda </option>
+                        </select>
+                     </div>
+                  </div>
+                  <br>
+                  <div class="col me-3">
+                     <div id="selezioneMinuti">
+                        Minuti di allenamento
+                        <div id="tendinaMinuti" class="select">
+                           <script>
+                              //Script che genera in maniera dinamica un elemento select per selezionare i minuti di allenamento
+                              var i=9;
+                              var select = document.createElement("select"); //creo un elemento select e lo salvo in una variabile
+                              var optionDef = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                              select.id="tempo"; //Imposto l'id del tag select
+                              optionDef.value = 0; //Imposto l'opzione di default a random e so che vale 0
+                              optionDef.text = "Random";
+                              select.appendChild(optionDef);
+                              for(i;i<60;i++){
+                                var option = document.createElement("option"); //creo un elemento option e lo salvo in una variabile
+                                option.value = i+1; //imposto l'attributo value
+                                option.text = option.value; //imposto il testo che va dentro l'elemento option
+                                select.appendChild(option);
+                              }
+                              document.getElementById("tendinaMinuti").appendChild(select);//Aggiungo l'elemento select appena creato al documento
+                           </script>
+                        </div>
+                     </div>
+                  </div>
+                  <br>
+                  <div class="col me-3">
+                     <div id="tipoEsercizi" class="form-check form-switch">
+                        <!-- Switch per selezionare l'allenamento con pesi o meno -->
+                        <input type="checkbox" id="pesiSiNo" class="form-check-input">
+                        <label class="form-check-label float-left" for="pesiSiNo">Allenamento con pesistica?</label>
+                     </div>
+                  </div>
+                  <br>
+               </div>
+            </div>
+         </div>
+         <br>
+         <div id="displayEsercizi" class="exercisePanel align-middle container invisibles">
+            <!-- Div dove verranno visualizzati gli allenamenti -->
+         </div>
+         <br>
+         <div id="player" class="invisibles ratio ratio-21x9 youtubeItem"> </div>
+         <br> <br> <!-- Div con il player di youtube -->
+         <div id="fineAllenamento" class="modal fade">
+            <!-- Modal di salvataggio dell'allenamento - start -->
+            <div class="modal-dialog">
+               <div class="modal-content">
+                  <div class="modal-header loginModal-header">
+                     <h4 class="modal-title">Salvataggio</h4>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button> <!-- Bottone di chiusura del modal -->
+                  </div>
+                  <div class="modal-body">
+                     <h3>Vuoi salvare l'allenamento?</h3>
+                  </div>
+                  <div class="modal-footer flex-container">
+                     <button id="saveWorkout" class="rounded-pill saveButton mx-2"> Salva </button> <!-- Bottone di salvataggio -->
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- Modal di salvataggio dell'allenamento - end -->
+      </div>
+      <footer id="footer" class="bg-dark container-fluid text-light myFooter col-12">
+         <p> DISCLAIMER: Questo sito non garantisce allenamenti miracolosi e/o combinazioni di esercizi perfette.
+            È nato per puro divertimento e per colmare carenze di "fantasia" per gli allenamenti di tutti i giorni.
+            In breve, allenatevi forte, spingete tanto e divertitevi. In bocca al lupo &#128521;&#128170;
+         </p>
+      </footer>
+      <script>
+         /* Script per inizializzare gli elementi popover - start */
+         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl)
+         })
+         /* Script per inizializzare gli elementi popover - end */
+         loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Recupero il modal del login
+         saveModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal del salvataggio
+         alerts = document.getElementById("alertSection"); //Variabile con il div degli alert
+         timer = document.getElementById("timer");
+         tipoAll = document.getElementById("tipoAllenamento");
+         // Codice di inizializzazione del player di youtube con iFrame API - start
+         //Creo un tag di script dove inserisco gli script dell'api di google ed inserisco quest'ultimo nel documento
+         var tag = document.createElement('script');
+         tag.src = "https://www.youtube.com/iframe_api";
+         var firstScriptTag = document.getElementsByTagName('script')[0];
+         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+         function onYouTubeIframeAPIReady() {
+           player = new YT.Player('player', {//Inizializzazione oggetto player
+             height: '360',
+             width: '640',
+             playerVars:{
+               listType: "playlist",
+               list: "PLkqz3S84Tw-T2iHDsB1NdA3RM_3bCxYsg",
+               enablejsapi: 1,
+               origin: "http://localhost:80"
+             },
+             events: {
+               'onReady': onPlayerReady
+             }
+           });
+         }
+          // Codice di inizializzazione del player di youtube con iFrame API - end
 
-  function onPlayerReady(event) {
-    player.setShuffle(true);
-    player.setLoop(true);
-  }
+         function onPlayerReady(event){//Parametri iniziali del player di youtube
+           player.setShuffle(true);
+           player.setLoop(true);
+         }
 
-// Login popup - start
-//var modal = document.getElementById("reservedAreaForm");
-var personalArea = document.getElementById("personal");
-var span = document.getElementsByClassName("close")[0];
-var logBtn = document.getElementById("loginButton");
-var regBtn = document.getElementById("registerButton");
-var submitLogin = document.getElementById("login");
-var submitRegister = document.getElementById("signup");
-var panel = document.getElementById("reservedAreaPanel");
-var profilo = document.getElementById("linkProfilo");
+         // Login popup - start
+         var personalArea = document.getElementById("personal");
+         var submitLogin = document.getElementById("login");
+         var submitRegister = document.getElementById("signup");
+         var profilo = document.getElementById("linkProfilo");
 
-/*personalArea.onclick = function(){
-  modal.style.display = "block";
-}
+         submitLogin.addEventListener("click",requestForLogin);
+         submitRegister.addEventListener("click",requestForRegister);
 
-span.onclick = function(){
-  modal.style.display = "none";
-}
+         function requestForRegister(){//Gestione dell'evento di registrazione dell'utente
+         //Recupero le varie informazioni necessarie per la registrazione
+         var password = document.getElementsByClassName("password2validate")[0].value;
+         var passwordCnf = document.getElementsByClassName("password2validate")[1].value;
+         var email = document.getElementById("email2validate").value;
+         if(validateCredentials(password,email) && document.getElementById("name").value != "" && document.getElementById("surname").value != ""){//Verifico la validità di email,password e controllo gli altri campi del form
+           if(password != passwordCnf){//Caso password diverse
+             alerts.innerHTML = `
+             <div class="alert alert-danger alert-dismissible fade show">
+               <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+               <strong>Attenzione!</strong> Le due password non coincidono.
+             </div> `;
+             //Svuoto i campi delle password
+             document.getElementsByClassName("password2validate")[0].value = "";
+             document.getElementsByClassName("password2validate")[1].value = "";
+           }
+           else{//Se le password coincidono, registro l'utente sul db
+             var request = new Object();//Oggetto che conterrà i dati dell'utente, verrà inviato nel corpo della richiesta
+             request.nome = document.getElementById("name").value;
+             request.cognome = document.getElementById("surname").value;
+             request.password = password;
+             request.email = email;
+             var reqURI = "apiDb.php/register";
+             var ajax = new XMLHttpRequest();
+             try{
+               ajax.onreadystatechange = function(){
+                 if(ajax.readyState == 4){//Se la chiamata è andata a buon fine ed ha restituito un codice HTTP 200
+                   console.log(ajax.responseText);
+                   var response = JSON.parse(ajax.responseText);
+                   if(response.success == true){//Verifico se il db ha inserito correttamente l'utente
+                     alerts.innerHTML = `
+                     <div class="alert alert-success alert-dismissible fade show">
+                       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                       Utente registrato con successo! Ora puoi effettuare il login
+                     </div> `;
+                     //Svuoto i vari campi del form
+                     document.getElementById("name").value = " ";
+                     document.getElementById("surname").value = " ";
+                     document.getElementsByClassName("password2validate")[0].value = "";
+                     document.getElementsByClassName("password2validate")[1].value = "";
+                     document.getElementById("email2validate").value = "";
+                     //modal.style.display = "none";
+                   }
+                 }
+               };
+               ajax.open("POST",reqURI,true);//Invio la richiesta
+               ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+               ajax.send(JSON.stringify(request));
+             }
+             catch(e){
+               console.log(e);
+             }
+           }
+         }
+         else if (document.getElementById("name").value == ""){//Casistica nome mancante
+           alerts.innerHTML = `
+           <div class="alert alert-danger alert-dismissible fade show">
+             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+             <strong> Attenzione! </strong> Nome mancante
+           </div> `;
+         }
+         else if (document.getElementById("surname").value == ""){//Casistica cognome mancante
+           alerts.innerHTML = `
+           <div class="alert alert-danger alert-dismissible fade show">
+             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+             <strong> Attenzione! </strong> Cognome mancante
+           </div> `;
+         }
+         else{//Ultima casistica, errore relativo a email o password mancanti
+           alerts.innerHTML = `
+           <div class="alert alert-danger alert-dismissible fade show">
+             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+             <strong> Attenzione! </strong> La password e/o la mail sono errate
+           </div> `;
+           document.getElementsByClassName("password2validate")[0].value = "";
+           document.getElementsByClassName("password2validate")[1].value = "";
+           document.getElementById("email2validate").value = "";
+         }
+         loginModal.hide();//Nascondo il modal apparso dopo un qualsiasi esito
+         }
 
-window.onclick = function(event) { //Casistica in cui si clicca fuori dal form ed esso stesso si chiude
-  if (event.target == modal && (event.target != logBtn && event.target != regBtn)) {
-    modal.style.display = "none";
-  }
-}
+         function requestForLogin(){ //Gestione dell'evento di login
+         var request = new Object();//Oggetto utilizzato per inviare nel corpo della richiesta le credenziali
+         request.email = document.getElementById("email").value;
+         request.password = document.getElementById("password").value;
+         var reqURI = "apiDb.php/login";
+         var ajax = new XMLHttpRequest();
+         try{
+           ajax.onreadystatechange = function(){
+             if(ajax.readyState == 4){//Se la chiamata è andata a buon fine ed ha restituito un codice HTTP 200
+               console.log(ajax.responseText);
+               var response = JSON.parse(ajax.responseText);
+               if(response.success == true){//Se il login è avvenuto con successo
+                 //Svuoto il form e sostituisco il tasto area riservata con quello di collegamento all'area personale
+                 document.getElementById("personal").style.display = "none";
+                 document.getElementById("email").value = "";
+                 document.getElementById("password").value = "";
+                 profilo.innerHTML = response.Nome;
+                 profilo.style.display = "block";
+                 sessionStorage.setItem("userLogged",response.Nome);//Memorizzo nel session storage delle informazioni relative all'utente, per mantenere la sessione
+                 sessionStorage.setItem("userId",response.IdUtente);
+               }
+               else{
+                 alerts.innerHTML = `
+                 <div class="alert alert-danger alert-dismissible fade show">
+                   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                   <strong> Attenzione! </strong> La password e/o la mail sono errate
+                 </div> `;
+                 document.getElementById("email").value = "";
+                 document.getElementById("password").value = "";
+               }
+             }
+           };
+           ajax.open("POST",reqURI,true);
+           ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+           ajax.send(JSON.stringify(request));
+         }
+         catch(e){
+           console.log(e);
+         }
+         loginModal.hide();//Nascondo il modal apparso dopo un qualsiasi esito
+         }
 
-logBtn.addEventListener("click",swipeLogin);
-regBtn.addEventListener("click",swipeSignIn);
+         function validateCredentials(pwd,email){
+         var paswd =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;//Espressione regolare che verifica i requisiti della password
+         if(pwd.match(paswd) && email.match(/@/)){//Verifico che la password inviata rispetti l'espressione regolare, e che la mail contenga la @
+           return true;
+         }
+         else{
+           return false;
+         }
+         }
+         // Login popup - end
+         //Session - start
+         function verifySession(){//Verifico che ci sia una sessione o meno
+           var user = sessionStorage.getItem("userLogged");
+           if(user){//Se è presente questa variabile, allora l'utente è loggato e faccio apparire il collegamento alla sua area personale
+             profilo.innerHTML = user;
+             personalArea.style.display = "none";
+             profilo.style.display = "block";
+             return true;
+           }
+           else{
+             personalArea.style.display = "block";
+             return false;
+           }
+         }
+         //Session - end
 
-function swipeLogin(){
-  document.getElementById("loginForm").style.display = "block";
-  document.getElementById("signinForm").style.display = "none";
-}
+         //Fine workout - start
+         function fineWorkout(){//Funzione lanciata dallo script del timer alla fine del workout
+           player.stopVideo();
+           if(sessionStorage.getItem("userLogged")){//Se l'utente è loggato, faccio apparire il modal di salvataggio
+             saveModal.show();//Faccio apparire il modal di salvataggio
+           }
+         }
 
-function swipeSignIn(){
-  document.getElementById("signinForm").style.display = "block";
-  document.getElementById("loginForm").style.display = "none";
-} */
+         function saveWorkout(){//Funzione di salvataggio del workout
+         var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));//Salvo come oggetto il JSON con gli esercizi richiesti, e aggiungo modifiche all'oggetto
+         request.UserId = sessionStorage.getItem("userId");
+         request.Tipo = sessionStorage.getItem("allenamento");//Recupero il tipo dell'allenamento dal session storage
+         if(tipoAll.value != "SCHEDA"){//Se non si tratta di una scheda, recupero la durata dal session storage
+           request.Durata = sessionStorage.getItem("durata");
+         }
+         else{
+           request.Durata = diff_minutes(schedaEndTime,schedaStartTime); //Altrimenti la calcolo
+         }
+         var reqURI = "apiDb.php/allenamentogenerato";
+         var ajax = new XMLHttpRequest();
+         try{
+           ajax.onreadystatechange = function(){
+             if(ajax.readyState == 4){//Se la chiamata è andata a buon fine ed ha restituito un codice HTTP 200
+               console.log(ajax.responseText);
+               var response = JSON.parse(ajax.responseText);
+               saveModal.hide();//Nascondo il modal di salvataggio
+               if(response.allenamentogenerato == true && response.svolgimento == true && response.Esercizio1 == true){ //Se gli inserimenti sono andati tutti a buon fine
+                 alerts.innerHTML = `
+                 <div class="alert alert-success alert-dismissible fade show">
+                   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                   Allenamento salvato con successo!
+                 </div> `;
+               }
+               else{
+                 alerts.innerHTML = `
+                 <div class="alert alert-danger alert-dismissible fade show">
+                   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                   <strong> Attenzione! </strong> Salvataggio allenamento fallito
+                 </div> `;
+               }
+             }
+           };
+           ajax.open("POST",reqURI,true);
+           ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+           ajax.send(JSON.stringify(request));
+         }
+         catch(e){
+           console.log(e);
+         }
+         }
 
-submitLogin.addEventListener("click",requestForLogin);
-submitRegister.addEventListener("click",requestForRegister);
+         function diff_minutes(dt2, dt1){//Questa funzione calcola i minuti trascorsi dall'inizio dell'allenamento SCHEDA alla sua fine
+         var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+         diff /= 60;
+         return Math.abs(Math.round(diff));
+         }
+         //Fine workout - end
 
-function requestForRegister(){ //  apiDb.php/register
-  var password = document.getElementsByClassName("password2validate")[0].value;
-  var passwordCnf = document.getElementsByClassName("password2validate")[1].value;
-  var email = document.getElementById("email2validate").value;
-  if(validateCredentials(password,email)){
-    if(password != passwordCnf){
-      alerts.innerHTML = `
-      <div class="alert alert-danger alert-dismissible fade show">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>Attenzione!</strong> Le due password non coincidono.
-      </div> `;
-      document.getElementsByClassName("password2validate")[0].value = "";
-      document.getElementsByClassName("password2validate")[1].value = "";
-    }
-    else{
-      var request = new Object();
-      request.nome = document.getElementById("name").value;
-      request.cognome = document.getElementById("surname").value;
-      request.password = password;
-      request.email = email;
-      var reqURI = "apiDb.php/register";
-      var ajax = new XMLHttpRequest();
-      try{
-        ajax.onreadystatechange = function(){
-          if(ajax.readyState == 4){
-            console.log(ajax.responseText);
-            var response = JSON.parse(ajax.responseText);
-            if(response.success == true){
-              alerts.innerHTML = `
-              <div class="alert alert-success alert-dismissible fade show">
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                Utente registrato con successo! Ora puoi effettuare il login
-              </div> `;
-              document.getElementById("name").value = " ";
-              document.getElementById("surname").value = " ";
-              document.getElementsByClassName("password2validate")[0].value = "";
-              document.getElementsByClassName("password2validate")[1].value = "";
-              document.getElementById("email2validate").value = "";
-              //modal.style.display = "none";
+         function stopWorkout(){//Funzione richiamata quando viene cliccato il tasto stop
+         player.stopVideo();
+         stopTimer();
+         document.getElementById("displayEsercizi").innerHTML = " ";//Svuoto e nascondo il div con gli esercizi
+         document.getElementById("displayEsercizi").style.display = "none";
+         document.getElementById("request").disabled= false;
+         if(verifySession()){//Se l'utente è loggato faccio apparire il modal di salvataggio
+           saveModal.show();
+           if(tipoAll.value == "SCHEDA"){
+            schedaEndTime = new Date();
             }
           }
-        };
-        ajax.open("POST",reqURI,true);
-        ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        ajax.send(JSON.stringify(request));
-      }
-      catch(e){
-        console.log(e);
-      }
-    }
-  }
-  else if (document.getElementById("name").value == ""){
-    alerts.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      <strong> Attenzione! </strong> Nome mancante
-    </div> `;
-  }
-  else if (document.getElementById("surname").value == ""){
-    alerts.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      <strong> Attenzione! </strong> Cognome mancante
-    </div> `;
-  }
-  else{
-    alerts.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show">
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      <strong> Attenzione! </strong> La password e/o la mail sono errate
-    </div> `;
-    document.getElementsByClassName("password2validate")[0].value = "";
-    document.getElementsByClassName("password2validate")[1].value = "";
-    document.getElementById("email2validate").value = "";
-  }
-  loginModal.hide();
-}
-
-function requestForLogin(){ // CHIAMATA REST LOGIN: apiDb.php/login
-  var request = new Object();
-  request.email = document.getElementById("email").value;
-  request.password = document.getElementById("password").value;
-  var reqURI = "apiDb.php/login";
-  var ajax = new XMLHttpRequest();
-  try{
-    ajax.onreadystatechange = function(){
-      if(ajax.readyState == 4){
-        console.log(ajax.responseText);
-        var response = JSON.parse(ajax.responseText);
-        if(response.success == true){
-          document.getElementById("personal").style.display = "none";
-          document.getElementById("email").value = "";
-          document.getElementById("password").value = "";
-          //modal.style.display = "none";
-          //panel.innerHTML = response.Nome; LINK AREA riservata
-          //var modal = bootstrap.Modal.getInstance(document.getElementById('loginModal')); // Recupero il modal
-          loginModal.hide();
-          profilo.innerHTML = response.Nome;
-          profilo.style.display = "block";
-          sessionStorage.setItem("userLogged",response.Nome);
-          sessionStorage.setItem("userId",response.IdUtente);
-        }
-        else{
-          alerts.innerHTML = `
-          <div class="alert alert-danger alert-dismissible fade show">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <strong> Attenzione! </strong> La password e/o la mail sono errate
-          </div> `;
-          document.getElementById("email").value = "";
-          document.getElementById("password").value = "";
-        }
-      }
-    };
-    ajax.open("POST",reqURI,true);
-    ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    ajax.send(JSON.stringify(request));
-  }
-  catch(e){
-    console.log(e);
-  }
-  loginModal.hide();
-}
-
-function validateCredentials(pwd,email){
-  var paswd =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/;
-  if(pwd.match(paswd) && email.match(/@/)){
-    return true;
-  }
-  else{
-    return false;
-  }
-}
-// Login popup - end
-//Session - start
-  function verifySession(){
-    var user = sessionStorage.getItem("userLogged");
-    if(user){
-      profilo.innerHTML = user;
-      personalArea.style.display = "none";
-      profilo.style.display = "block";
-      return true;
-    }
-    else{
-      personalArea.style.display = "block";
-      return false;
-    }
-  }
-//Session - end
-
-//Fine workout - start
-function fineWorkout(){
-  player.stopVideo();
-  if(sessionStorage.getItem("userLogged")){
-    //document.getElementById("fineAllenamento").style.display = "block";
-    saveModal.show();
-  }
-}
-
-/*document.getElementById("cancel").onclick = function(){
-  document.getElementById("fineAllenamento").style.display = "none";
-};*/
-
-function saveWorkout(){ // - apiDb.php/allenamentogenerato
-  var request = Object.assign({},JSON.parse(sessionStorage.getItem("esercizi")));
-  request.UserId = sessionStorage.getItem("userId");
-  request.Tipo = sessionStorage.getItem("allenamento");
-  if(tipoAll.value != "SCHEDA"){
-    request.Durata = sessionStorage.getItem("durata");
-  }
-  else{
-    request.Durata = diff_minutes(schedaEndTime,schedaStartTime);
-  }
-  console.log(request);
-  var reqURI = "apiDb.php/allenamentogenerato";
-  var ajax = new XMLHttpRequest();
-  try{
-    ajax.onreadystatechange = function(){
-      if(ajax.readyState == 4){
-        console.log(ajax.responseText);
-        var response = JSON.parse(ajax.responseText);
-        //document.getElementById("fineAllenamento").style.display = "none"; //ELimina il "modal" contenente il pulsante che salva il workout
-        //var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
-        saveModal.hide();
-        if(response.allenamentogenerato == true && response.svolgimento == true && response.Esercizio1 == true){
-          alerts.innerHTML = `
-          <div class="alert alert-success alert-dismissible fade show">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            Allenamento salvato con successo!
-          </div> `;
-        }
-        else{
-          alerts.innerHTML = `
-          <div class="alert alert-danger alert-dismissible fade show">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <strong> Attenzione! </strong> Salvataggio allenamento fallito
-          </div> `;
-        }
-      }
-    };
-    ajax.open("POST",reqURI,true);
-    ajax.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    ajax.send(JSON.stringify(request));
-  }
-  catch(e){
-    console.log(e);
-  }
-}
-
-function diff_minutes(dt2, dt1){
-  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= 60;
-  return Math.abs(Math.round(diff));
- }
-//Fine workout - end
-
-function stopWorkout(){
-  player.stopVideo();
-  stopTimer();
-  document.getElementById("displayEsercizi").innerHTML = " ";
-  document.getElementById("displayEsercizi").style.display = "none";
-  document.getElementById("request").disabled= false;
-  //document.getElementById("personal").style.display = "block";
-  if(verifySession()){
-    //document.getElementById("fineAllenamento").style.display = "block";
-    //var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fineAllenamento')); // Recupero il modal
-    saveModal.show();
-    if(tipoAll.value == "SCHEDA"){
-     schedaEndTime = new Date();
-   }
-  }
-  //verifySession();
-}
-</script>
-
-</body>
+         }
+      </script>
+   </body>
 </html>

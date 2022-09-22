@@ -1,70 +1,10 @@
-#checkPause { /* PER PAUSE EMOM */
-  display : none;
-}
-
-.invisibles { /* SOSTITUIRE TUTTE LE REGOLE SOPRA CON QUESTA CLASSE */
+.invisibles { /* Classe per tutti gli oggetti che al caricamento della pagina non devono essere visibili */
   display : none
 }
 
-/* Login popup - start */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0%;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
 
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  border: 1px solid #888;
-  width: 80%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-  -webkit-animation-name: animatetop;
-  -webkit-animation-duration: 0.4s;
-  animation-name: animatetop;
-  animation-duration: 0.4s
-}
-
-/* Add Animation */
-@-webkit-keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
-
-@keyframes animatetop {
-  from {top:-300px; opacity:0}
-  to {top:0; opacity:1}
-}
-
-/* The Close Button */
-.close {
-  color: white;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.loginModal-header {
+.loginModal-header { /* Stile dell'intestazione di tutti i modal. Creata in principio per il modal del login */
   padding: 2px 16px;
-  /*background-color: #5cb85c;*/
   background: rgb(34,193,195);
   background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
   color: white;
@@ -72,34 +12,20 @@
 
 .modal-body {padding: 2px 16px;}
 
-/*.modal-footer {
-  padding: 2px 16px;
-  background-color: #5cb85c;
-  color: white;
-} */
-
-/* Login popup - end */
-
-.pwdAdvertiser{
-  color : #000099;
-}
-
-.customNavBar{
-  background-color: #4d4dff;
-}
-
 .exerciseDetail{ /* Classe per i dettagli degli allenamenti */
   background-color: #ffffb3;
 }
 
+/* Margini sia della pagina personale che del bottone per accedervi*/
 #personal{
   margin-left:-10px;
 }
 
 #linkProfilo{
-  margin-left:-20;
+  margin-left:-20px;
 }
 
+/* Stile delle voci presenti nella barra di nagigazione a scomparsa */
 .myNav-link{
   padding:.5rem 1rem;
   color : #9b9d99;
@@ -109,35 +35,6 @@
 
 .myNav-link:hover{
   color:rgba(255,255,255,.75);
-}
-/*.wpImage{
-
- background-image: url("../images/wallPaperPersonal.jpg");
-
- filter: blur(5px);
- -webkit-filter: blur(2px);
-
- height: 100%;
-
- background-position: center;
- background-repeat: no-repeat;
- background-size: cover;
-} */
-
-.bg-text {
-  /*background-color: rgb(0,0,0);  Fallback color */
-  /*background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
-  color: black;
-  font-weight: bold;
-  /*border: 3px solid #f1f1f1;*/
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  /*z-index: 2;*/
-  /*width: 80%; */
-  padding: 20px;
-  text-align: center;
 }
 
 body,html{
@@ -150,7 +47,7 @@ body,html{
   font: 130% Arial, sans-serif;
 }
 
-.reservedAreaButton{
+.reservedAreaButton{ /* Bottone area riservata */
   background-color: #000099;
   color : #9b9d99;
 }
@@ -159,20 +56,20 @@ body,html{
   color:rgba(255,255,255,.75);
 }
 
-.controlWorkout{
+.controlWorkout{ /* Stile bottone di controllo del workout */
   background-color: #0d6efd;
   color: #ffffff;
   margin-top: 20%;
 }
 
-.controlWorkout.sub{
+.controlWorkout.sub{ /* Sottoclasse specifica per il modal di conferma di cancellazione */
   margin-top: 10px;
   border: 5px solid #000099;
   border-radius: 5px;
   width: 80px;
 }
 
-.saveButton{
+.saveButton{ /* Bottone di salvataggio workout */
   background-color: #0d6efd;
   color: #ffffff;
   flex: 1 1 0;
@@ -183,7 +80,7 @@ body,html{
   color: #000000;
 }
 
-.exercisePanel{
+.exercisePanel{ /* Stile dedicato agli esercizi che vengono mostrati nella pagina */
   border-color: #000099;
   border-radius: 10px;
   outline-style: solid;
@@ -194,12 +91,9 @@ body,html{
   -webkit-animation-duration: 2s;
   animation-name: popup;
   animation-duration: 2s;
-  /*-webkit-animation-name: popdown;
-  -webkit-animation-duration: 0.8s;
-  animation-name: popdown;
-  animation-duration: 0.8s VERIFICARE PERCHE' NON VA */
 }
 
+/* Animazioni dell'apparizione degli esercizi */
 @-webkit-keyframes popup {
   from {display: none; opacity:0}
   to {display: block; opacity:1}
@@ -210,22 +104,12 @@ body,html{
   to {display: block; opacity:1}
 }
 
-/*@-webkit-keyframes popdown {
-  from {display: block; opacity:0}
-  to {display: none; opacity:1}
-}
-
-@keyframes popdown {
-  from {display: block; opacity:0}
-  to {display: none; opacity:1}
-} */
-
-.flex-container {
+.flex-container { /* Wrapper per eventuali elementi con elementi flex */
   display: flex;
   align-items: center;
 }
 
-.item {
+.item { /* Stile delle voci dei dettagli degli esercizi che vengono richiesti */
   margin: 15px;
   padding: 5px;
   border: 1px solid blue;
@@ -234,7 +118,7 @@ body,html{
   border-radius: 25px;
 }
 
-.workoutName{
+.workoutName{ /* Div dedicato al workout eseguito */
   margin: 10px;
   padding: 2px;
   border: 3px;
@@ -249,7 +133,7 @@ body,html{
   animation-duration: 2s;
 }
 
-.youtubeItem {
+.youtubeItem { /* Stile del player di youtube */
   background-color: #ffffff;
   padding: 5px;
   border: 5px solid #000099;
@@ -261,17 +145,17 @@ body,html{
   animation-duration: 2s;
 }
 
+/* Stile dedicato alla lista che appare nel modal del tutorial */
 ul.customListItem{
   list-style:none; /* Rimuovo gli stili di default dalla lista */
 }
 
-ul.customListItem li::before{
+ul.customListItem li::before{ /* Con questo pseudo elemento specifico che prima di un li ci va l'icona */
   content: url('../images/dumb_icon.png');
   padding-top: 8px;
 }
 
-ul.customListItem > li {
-    /*align-items: center;*/
+ul.customListItem > li { /* Per tutti gli li figli di ul.customListItem */
     display: flex;
 }
 
@@ -279,7 +163,7 @@ li.customListItem{
   margin-bottom: 10px;
 }
 
-.scroll-section {
+.scroll-section { /* scrollbar customizzata */
   max-height: 400px;
   overflow-y: auto;
   border-radius: 5px;
@@ -298,14 +182,15 @@ li.customListItem{
   background: #ffffb3;
   border-radius: 5px;
 }
-/* Select da wrappare in un div con questa classe */
+
+/* Select da wrappare in un div con questa classe per la "tendina" custom */
 select {
   /* Reset Select */
   appearance: none;
   outline: 0;
   border: 0;
   box-shadow: none;
-  /* Personalize */
+  /* Personalizzo */
   flex: 1;
   padding: 0 1em;
   color: #fff;
@@ -313,8 +198,8 @@ select {
   background-image: none;
   cursor: pointer;
 }
-/* Remove IE arrow */
-select::-ms-expand {
+
+select::-ms-expand { /* Resetto rendo invisibile il pulsante di dropdown di default */
   display: none;
 }
 /* Custom Select wrapper */
@@ -327,8 +212,8 @@ select::-ms-expand {
   border-radius: .25em;
   overflow: hidden;
 }
-/* Arrow */
-.select::after {
+
+.select::after { /* Customizzo la freccia di dropdown del select */
   content: '\25BC'; /* Freccia del select. è una entità di css */
   position: absolute;
   top: 0;
@@ -338,12 +223,12 @@ select::-ms-expand {
   transition: .25s all ease;
   pointer-events: none;
 }
-/* Transition */
+
 .select:hover::after {
   color: #f39c12;
 }
 
-.personalArea{
+.personalArea{ /* classe relativa al body della pagina personale. Usata per l'immagine di sfondo */
   background-image: url("../images/wallPaperPersonal.png");
   /* Centro e scala dell'immagine */
   background-position: center;
@@ -351,7 +236,7 @@ select::-ms-expand {
   background-size: cover;
 }
 
-.spanItem{
+.spanItem{ /* Elementi di span che rappresentano le statistiche utente*/
   display: table;
   margin: 0 auto;
   padding-left: 10px;
@@ -361,13 +246,14 @@ select::-ms-expand {
   margin-top: 5px;
 }
 
-.substitutionItem{
+.substitutionItem{ /* Classe dedicata ai div che trattano le propedeutiche agli esercizi */
   border-left: 5px solid #000099;
   border-right: 5px solid #000099;
   border-radius: 5px;
-  color: #ffffff
+  color: #ffffff;
+  padding: 100px 20px;
 }
-
+/* Selettori che cambiano colore a seconda del div */
 .substitutionItem:nth-child(odd){
   background-color: #e4afcd;
 }
@@ -378,7 +264,10 @@ select::-ms-expand {
 
 .myFooter{
   padding:.5rem 1rem;
-  bottom : sticky;
+  bottom : 0;
+  left: 0;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
 }
 
 p:only-child{
@@ -388,7 +277,7 @@ p:only-child{
   font-size: 20px;
 }
 
-.deleteButton{
+.deleteButton{ /* Pulsante di eliminazione del workout */
   color: #ffffff;
   background-color: #a62219;
   border: 5px solid #8c1c14;
@@ -396,7 +285,7 @@ p:only-child{
   margin-top: 10px;
 }
 
-.deleteButton.confirm{
+.deleteButton.confirm{ /* Sottoclasse utilizzata per il pulsante nel modal di conferma eliminazione */
   width: 80px;
 }
 

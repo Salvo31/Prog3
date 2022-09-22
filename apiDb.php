@@ -1,13 +1,14 @@
-<?php
+<?php //File back-end relativo a tutte le interazioni col DB
   require "connection.php";
+  //Ricavo informazioni dalla richiesta. Tra cui un eventuale file nel body
   $method = $_SERVER['REQUEST_METHOD'];
-  $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+  $request = explode('/', trim($_SERVER['PATH_INFO'],'/'));//Creo un array contenente tutti i parametri dell'URI
   $input = json_decode(file_get_contents('php://input'),true);
 
 
-  $primoParametro = preg_replace('/[^a-z0-9_]+/i','',array_shift($request));
+  $primoParametro = preg_replace('/[^a-z0-9_]+/i','',array_shift($request)); //Primo parametro passato nell'URI
   $_key = array_shift($request);
-  $key = $_key;
+  $key = $_key; //Secondo parametro passato nell'URI
 
   if(isset($input) && $primoParametro != "allenamentogenerato"){ //Se è presente l'input, ne prende i valori
     $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
@@ -16,26 +17,26 @@
     return mysqli_real_escape_string($conn,(string)$value);
   },array_values($input));
 }
-
+  //Divido le operazioni in base alla richiesta HTTP
   if($method == 'GET'){
-    $res;
-    switch($primoParametro){
+    $res;//Variabile che salva il risultato della query eseguita
+    switch($primoParametro){//In base al primo parametro varia la query
       case 'AMRAP':
-        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key'";
+        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key' ";
         $res = elaborateQuery($sql,$conn);
         $res = randomAmrap($res);
         break;
       case 'EMOM':
-        $intervallo = array_shift($request);
+        $intervallo = array_shift($request);//In questo caso è presente un terzo parametro
         $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key' limit $intervallo";
         $res = elaborateQuery($sql,$conn);
-        $res = randomEmom($res);
+        $res = randomExercise($res);
         break;
       case 'SCHEDA':
-        $numEs = array_shift($request);
-        $sql = "select IdEsercizio,Nome from Esercizio where tipologia='$key' limit $numEs";
+        $intervallo = array_shift($request);
+        $sql = "select IdEsercizio,Nome from Esercizio where tipologia='$key' limit $intervallo";
         $res = elaborateQuery($sql,$conn);
-        $res = randomScheda($res);
+        $res = randomExercise($res);
         break;
       case 'allenamenti':
         $sql = "select ag.*
@@ -53,19 +54,19 @@
         $res = elaborateQuery($sql,$conn);
         $res = $res->fetch_All(MYSQLI_ASSOC);
     }
-    $json = json_encode($res);
+    $json = json_encode($res); //Tutti i risultati vengono formattati in JSON
     echo $json;
   }
-  else if($method == 'POST'){
+  else if($method == 'POST'){//Questo gestisce le caistiche del metodo POST
     $res;
     switch($primoParametro){
       case 'login':
-        $sql = "select Nome,Cognome,IdUtente from utente where email = '$values[0]' and password = '$values[1]' ";
+        $sql = "select Nome,Cognome,IdUtente from utente where email = '$input[email]' and password = '$input[password]' ";
         $res = elaborateQuery($sql,$conn);
         echo returnFromLogin($res);
         break;
       case 'register':
-        $sql = "Insert into utente (Nome,Cognome,Password,Email) Values ('$values[0]','$values[1]','$values[2]','$values[3]')";
+        $sql = "Insert into utente (Nome,Cognome,Password,Email) Values ('$input[nome]','$input[cognome]','$input[password]','$input[email]')";
         $res = $conn->query($sql);
         if($res == true){
           echo json_encode(["success" => true]);
@@ -74,8 +75,8 @@
           echo json_encode(["success" => false]);
         }
         break;
-      case 'allenamentogenerato':
-        $response = array();
+      case 'allenamentogenerato': //Questo caso in particolare, gestisce l'inserimento di un allenamento completato
+        $response = array(); //I risultati degli inserimenti andranno tutti in questo array
         $IdWorkoutGen = uniqid(); //Id univoco da 13 caratteri, generato da php
         $Data = date("Y-m-d");
         $i = 0;
@@ -102,7 +103,8 @@
         break;
     }
   }
-  else if($method == "DELETE"){
+  else if($method == "DELETE"){//Unico caso col metodo delete, è l'eliminazione di un workout
+    //Prima elimino i dati nelle tabelle relazionate con la query in sqlRelateTable e successivamente elimino il record dalla principale
     $res;
     if($primoParametro == "eliminaWorkout"){
       $response = array();
@@ -134,7 +136,7 @@
     }
   }
 
-  function elaborateQuery($query,$conn){
+  function elaborateQuery($query,$conn){//Funzione che esegue la query
     $result = $conn->query($query);
     if($result){
       return $result;
@@ -144,7 +146,7 @@
     }
   }
 
-  function insertWorkout($tabella,$sql,$conn,$i = -1){
+  function insertWorkout($tabella,$sql,$conn,$i = -1){//Funzione di inserimento. Il parametro i serve per la tabella composizioneWe in modo da tracciarne tutti gli inserimenti
     $res;
     try{
         $res = $conn->query($sql);
@@ -171,7 +173,7 @@
     }
   }
 
-  function returnFromLogin($res){
+  function returnFromLogin($res){//Costruisco un array che diventerà il JSON di risposta con un semplice parametro per l'ACK al login
     $rows = $res->fetch_object();
     if($rows){
       $rows->success = true; //Qui aggiungo la proprietà success ai dati già estrapolati
@@ -182,17 +184,12 @@
     return json_encode($rows);
   }
 
-  function randomScheda($res){
-    $rowsAffected = $res->num_rows;
-    $rows = $res->fetch_All(MYSQLI_ASSOC);
-    $set = new \Ds\Set();
-    do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
-      $set->add($rows[rand(0,$rowsAffected-1)]);
-    }while($set->count() < $rowsAffected);
-    return $set;
-  }
-
-  function randomEmom($res){
+  /* --- Queste ultime 2 funzioni servono a randomizzare la scelta degli esercizi che possono capitare
+  E' stata "installata" la libreria DS sul server, in modo da poter utilizzare l'oggetto set che è un insieme matematico.
+  Tutto ciò è fatto per aggiungere correttamente gli esercizi senza ripetizioni.
+  La differenza è che quella relativa all'AMRAP sceglie anche il numero di esercizi, che parte da 3
+  --- */
+  function randomExercise($res){
     $rowsAffected = $res->num_rows;
     $rows = $res->fetch_All(MYSQLI_ASSOC);
     $set = new \Ds\Set();
@@ -205,7 +202,7 @@
   function randomAmrap($res){
     $rowsAffected = $res->num_rows;
     $rows = $res->fetch_All(MYSQLI_ASSOC);
-    $numEs = rand(3,$rowsAffected);
+    $numEs = rand(3,10);
     $set = new \Ds\Set();
     for($i=0;$i<$numEs;$i++){
       $set->add($rows[rand(0,$rowsAffected-1)]);
