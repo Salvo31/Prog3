@@ -1,7 +1,7 @@
 //Dichiarazione di costanti
 const FULL_DASH_ARRAY = 283;
-const WARNING_THRESHOLD = 10;
-const ALERT_THRESHOLD = 5;
+const WARNING_THRESHOLD = 60;
+const ALERT_THRESHOLD = 10;
 
 const COLOR_CODES = { //Oggetto con i colori che variano in base al tempo
   info: {
@@ -59,6 +59,8 @@ function onTimesUp() {//Funzione scatenata nel momento in cui il timer giunge al
   //Reset dei colori sul timer
   document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.alert.color);
   document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
+  setRemainingPathColor(120); //Reimposto il colore iniziale
+  setCircleDasharray(); //Riporto il cerchio all'inizio
 }
 
 
@@ -76,7 +78,7 @@ function startTimer() { /* Funzione di avvio del timer r ricalcolo dei parametri
       document.getElementById("stop").disabled= true;
       document.getElementById("pause").disabled= true;
       document.getElementById("resume").disabled= true;
-      stopWorkout(); //Richiamo della funzione presente nelle pagine di allenamento
+      //stopWorkout(); //Richiamo della funzione presente nelle pagine di allenamento
       var event = new Event('workoutFinito');
       document.getElementById("fineAllenamento").dispatchEvent(event); //Lancio di un evento che fa scatutire la funzione di salvataggio del workout
       // - end
@@ -123,7 +125,7 @@ function stopTimer(){ //Funzione aggiunta per gestire uno stop non programmato d
   document.getElementById("start").disabled= true;
   document.getElementById("resume").disabled= true;
   document.getElementById("opzioniAllenamento").style.display = "block";
-  setRemainingPathColor(60); //Reimposto il colore iniziale
+  setRemainingPathColor(120); //Reimposto il colore iniziale
   setCircleDasharray(); //Riporto il cerchio all'inizio
 }
 

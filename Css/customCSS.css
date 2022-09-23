@@ -62,6 +62,12 @@ body,html{
   margin-top: 20%;
 }
 
+button.controlWorkout:disabled , button[disabled]{ /* Caso specifico in cui il pulsante sia disabilitato*/
+  background-color: #a62219;
+  border: 5px solid #8c1c14;
+  border-radius: 5px;
+}
+
 .controlWorkout.sub{ /* Sottoclasse specifica per il modal di conferma di cancellazione */
   margin-top: 10px;
   border: 5px solid #000099;

@@ -225,7 +225,7 @@
              listaEsercizi.id = "listaEsercizi";
              listaEsercizi.classList.add("flex-container");
              //Randomizzo il numero di ripetizioni dell'esercizio in un intervallo tra MaxRep e MinRep inclusi
-             numRep = Math.floor(Math.random() * (parseInt(esercizi[i].MaxRep) - parseInt(esercizi[i].MinRep) + 1) + parseInt(esercizi[i].MinRep));
+             numRep = Math.floor(Math.random() * (parseInt(esercizi[i].MaxRep) - parseInt(esercizi[i].MinRep) + 1)) + parseInt(esercizi[i].MinRep);
              Esercizio.innerHTML = esercizi[i].Nome;
              Esercizio.classList.add("item");
              repsEsercizio.innerHTML = numRep;

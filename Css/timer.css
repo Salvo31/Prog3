@@ -1,7 +1,7 @@
 #app { /* Gestisco il div dedicato al timer */
   font-family: sans-serif;
-  display: grid;
-  height: 50vh;
+  display: grid; /* Grid container di css */ 
+  height: 50vh; /* vh sta per viewport height */
   place-items: center;
 }
 
@@ -11,7 +11,7 @@
   height: 300px;
 }
 
-.base-timer__svg { /* Per il tag SVG , ridimensiona l'oggetto rispetto all'asse x */
+.base-timer__svg { /* Per il tag SVG , ridimensiona l'oggetto rispetto all'asse x  ed assicura che l'animaione vada da sinistra a destra*/
   transform: scaleX(-1);
 }
 

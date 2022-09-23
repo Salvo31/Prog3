@@ -10,13 +10,6 @@
   $_key = array_shift($request);
   $key = $_key; //Secondo parametro passato nell'URI
 
-  if(isset($input) && $primoParametro != "allenamentogenerato"){ //Se è presente l'input, ne prende i valori
-    $columns = preg_replace('/[^a-z0-9_]+/i','',array_keys($input));
-    $values = array_map(function ($value) use ($conn) {
-    if ($value===null) return null;
-    return mysqli_real_escape_string($conn,(string)$value);
-  },array_values($input));
-}
   //Divido le operazioni in base alla richiesta HTTP
   if($method == 'GET'){
     $res;//Variabile che salva il risultato della query eseguita
@@ -27,16 +20,11 @@
         $res = randomAmrap($res);
         break;
       case 'EMOM':
-        $intervallo = array_shift($request);//In questo caso è presente un terzo parametro
-        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key' limit $intervallo";
-        $res = elaborateQuery($sql,$conn);
-        $res = randomExercise($res);
-        break;
       case 'SCHEDA':
-        $intervallo = array_shift($request);
-        $sql = "select IdEsercizio,Nome from Esercizio where tipologia='$key' limit $intervallo";
+        $intervallo = array_shift($request);//In questo caso è presente un terzo parametro
+        $sql = "select IdEsercizio,MinRep,MaxRep,Nome from Esercizio where tipologia='$key' ";
         $res = elaborateQuery($sql,$conn);
-        $res = randomExercise($res);
+        $res = randomExercise($res,$intervallo);
         break;
       case 'allenamenti':
         $sql = "select ag.*
@@ -187,15 +175,15 @@
   /* --- Queste ultime 2 funzioni servono a randomizzare la scelta degli esercizi che possono capitare
   E' stata "installata" la libreria DS sul server, in modo da poter utilizzare l'oggetto set che è un insieme matematico.
   Tutto ciò è fatto per aggiungere correttamente gli esercizi senza ripetizioni.
-  La differenza è che quella relativa all'AMRAP sceglie anche il numero di esercizi, che parte da 3
+  La differenza è che quella relativa all'AMRAP sceglie anche il numero di esercizi, che parte da 3 sino a 10
   --- */
-  function randomExercise($res){
+  function randomExercise($res,$intervallo){
     $rowsAffected = $res->num_rows;
     $rows = $res->fetch_All(MYSQLI_ASSOC);
     $set = new \Ds\Set();
     do{ //il do while è inserito per assicurarmi che il set venga riempito sino al numero di esercizi richiesti
       $set->add($rows[rand(0,$rowsAffected-1)]);
-    }while($set->count() < $rowsAffected);
+    }while($set->count() < $intervallo);
     return $set;
   }
 
