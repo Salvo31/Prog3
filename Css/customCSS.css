@@ -63,9 +63,8 @@ body,html{
 }
 
 button.controlWorkout:disabled , button[disabled]{ /* Caso specifico in cui il pulsante sia disabilitato*/
-  background-color: #a62219;
-  border: 5px solid #8c1c14;
-  border-radius: 5px;
+  background-color: #e6e6e6;
+  color : black;
 }
 
 .controlWorkout.sub{ /* Sottoclasse specifica per il modal di conferma di cancellazione */
@@ -225,7 +224,7 @@ select::-ms-expand { /* Resetto rendo invisibile il pulsante di dropdown di defa
   top: 0;
   right: 0;
   padding: 1em;
-  background-color: #34495e;
+  background-color: #e6e6e6;
   transition: .25s all ease;
   pointer-events: none;
 }
@@ -269,11 +268,11 @@ select::-ms-expand { /* Resetto rendo invisibile il pulsante di dropdown di defa
 }
 
 .myFooter{
+  margin-top: -200px;
   padding:.5rem 1rem;
   bottom : 0;
   left: 0;
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
+  position:absolute;
 }
 
 p:only-child{
@@ -285,8 +284,8 @@ p:only-child{
 
 .deleteButton{ /* Pulsante di eliminazione del workout */
   color: #ffffff;
-  background-color: #a62219;
-  border: 5px solid #8c1c14;
+  background-color: #22c1c3;
+  border: 5px solid #0c8788;
   border-radius: 5px;
   margin-top: 10px;
 }
@@ -297,4 +296,12 @@ p:only-child{
 
 .deleteButton:hover{
   color: #9b9d99;
+}
+
+/* Media query per le dimensioni del timer */
+@media screen and (max-width: 699px) , (max-height: 1000px) {
+  p:only-child{
+    font-size: 15px;
+    padding: 0.5em;
+  }
 }

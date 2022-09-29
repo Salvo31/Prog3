@@ -399,7 +399,7 @@
          <div id="nomeWorkout" class="text-center"> </div>
       </div>
       </div>
-      <div class="container">
+      <div class="container pb-5 mb-5">
          <br> <!-- Container pricipale con i comandi del workout, il timer, il player youtube e gli esercizi -->
          <div id="core" class="row">
             <!-- Sfrutto un'organizzazione degli elementi con il grid system di bootstrap -->
@@ -662,6 +662,11 @@
                  profilo.style.display = "block";
                  sessionStorage.setItem("userLogged",response.Nome);//Memorizzo nel session storage delle informazioni relative all'utente, per mantenere la sessione
                  sessionStorage.setItem("userId",response.IdUtente);
+                 alerts.innerHTML = `
+                 <div class="alert alert-success alert-dismissible fade show">
+                   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                   Login effettuato con successo!
+                 </div> `;
                }
                else{
                  alerts.innerHTML = `

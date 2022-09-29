@@ -285,7 +285,7 @@
          <div id="nomeWorkout" class="text-center"> </div>
       </div>
       </div>
-      <div class="container">
+      <div class="container pb-5 mb-5">
          <br> <!-- Container pricipale con i comandi del workout, il timer, il player youtube e gli esercizi -->
          <div id="core" class="row">
             <!-- Sfrutto un'organizzazione degli elementi con il grid system di bootstrap -->
@@ -376,7 +376,7 @@
                </div>
             </div>
          </div> <!-- Modal di salvataggio dell'allenamento - end -->
-      </div>
+      </div> <br>
       <footer id="footer" class="bg-dark container-fluid text-light myFooter col-12">
          <p> DISCLAIMER: Questo sito non garantisce allenamenti miracolosi e/o combinazioni di esercizi perfette.
             È nato per puro divertimento e per colmare carenze di "fantasia" per gli allenamenti di tutti i giorni.
@@ -530,6 +530,11 @@
                    profilo.style.display = "block";
                    sessionStorage.setItem("userLogged",response.Nome); //Memorizzo nel session storage delle informazioni relative all'utente, per mantenere la sessione
                    sessionStorage.setItem("userId",response.IdUtente);
+                   alerts.innerHTML = `
+                   <div class="alert alert-success alert-dismissible fade show">
+                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                     Login effettuato con successo!
+                   </div> `;
                  }
                  else{
                    alerts.innerHTML = `
